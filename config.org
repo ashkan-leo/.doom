@@ -1,0 +1,722 @@
+#+TITLE: PipBoy Configurations
+
+* Table of Contents :TOC_2:
+- [[#preamble][Preamble]]
+  - [[#general][General]]
+- [[#os][OS]]
+  - [[#mac-os][Mac OS]]
+- [[#ui][UI]]
+  - [[#theme][Theme]]
+  - [[#editor][Editor]]
+- [[#dired][Dired]]
+- [[#projectile][Projectile]]
+- [[#data][data]]
+  - [[#dash][dash]]
+- [[#org-mode][org mode]]
+  - [[#org-directory-structure][org Directory Structure]]
+  - [[#org-super-agenda][org-super-agenda]]
+  - [[#configure-org][Configure org]]
+  - [[#org-ref][org-ref]]
+  - [[#helm-bibtex--ivy-bibtex][helm-bibtex & ivy-bibtex]]
+  - [[#org-noter][org-noter]]
+  - [[#org-roam-bibtex][org-roam-bibtex]]
+  - [[#enable-minor-modes][Enable minor modes]]
+  - [[#--set-xelatex-to-be-the-default-latex-export][[ ] Set ~XeLaTeX~ to be the default latex export]]
+  - [[#--define-a-function-for-generating-cv][[ ] Define a function for generating CV]]
+  - [[#--configure-priority-faces-using-org-fancy-priorities-package][[ ] Configure priority faces using org-fancy-priorities package.]]
+  - [[#org-export][org-export]]
+  - [[#org-drill][org-drill]]
+  - [[#deft][Deft]]
+- [[#latex][LaTeX]]
+- [[#flycheck][Flycheck]]
+- [[#languages][Languages]]
+  - [[#lsp][LSP]]
+  - [[#python][Python]]
+  - [[#scala][Scala]]
+  - [[#haskell][Haskell]]
+
+* Preamble
+#+BEGIN_SRC emacs-lisp
+;;; -*- lexical-binding: t; -*-
+#+END_SRC
+** General
+https://github.com/noctuid/general.el
+#+BEGIN_SRC emacs-lisp
+(setq user-full-name "Ashkan Aleali"
+      user-mail-address "ashkan.aleali@gmail.com")
+(defalias 'gsetq #'general-setq)
+#+END_SRC
+* OS
+** Mac OS
+#+BEGIN_SRC emacs-lisp
+(setq mac-option-modifier 'meta)
+(setq mac-command-modifier 'super)
+#+END_SRC
+* UI
+** Theme
+*** Main Theme
+- Set the theme, splash image, and mouse pointer color.
+  #+BEGIN_SRC emacs-lisp
+  (set-mouse-color "red")
+  (setq doom-theme 'doom-solarized-dark
+
+        fancy-splash-image (expand-file-name "splash/pipboy.png" doom-private-dir)
+        evil-normal-state-cursor '(box "brown1")
+        evil-insert-state-cursor '(bar "brown")
+        evil-visual-state-cursor '(hollow "orange"))
+  #+END_SRC
+  + [[https://github.com/hlissner/emacs-doom-themes/tree/screenshots][this link]] for a complete list of themes
+  + [[https://github.com/hlissner/emacs-doom-themes#install][this link]] for install and configuration guide
+
+*** Modeline
+- Configure doom-Modeline
+  #+BEGIN_SRC emacs-lisp
+  (setq doom-modeline-icon (display-graphic-p)
+        doom-modeline-major-mode-icon t
+        doom-modeline-lsp t
+        doom-modeline-buffer-file-name-style 'truncate-with-project
+        doom-modeline-buffer-encoding nil)
+  #+END_SRC
+- Show battery usage
+  #+BEGIN_SRC emacs-lisp
+  (display-battery-mode)
+  #+END_SRC
+- Disable buffer size
+  #+BEGIN_SRC emacs-lisp
+  (size-indication-mode nil)
+  #+END_SRC
+    
+*** Treemacs
+- Use the colorful treemacs theme and doom additions
+   #+BEGIN_SRC emacs-lisp
+   (setq doom-themes-treemacs-theme "doom-colors")
+   (doom-themes-treemacs-config)
+   #+END_SRC
+- hide files ignored by Git from treemacs
+  #+BEGIN_SRC emacs-lisp
+  (after! treemacs
+    (add-to-list 'treemacs-pre-file-insert-predicates #'treemacs-is-file-git-ignored?))
+  #+END_SRC
+** Editor
+*** line numbers
+- Do not show line numbers. It slows down Emacs.
+  #+BEGIN_SRC emacs-lisp
+  (setq display-line-numbers-type nil)
+  #+END_SRC
+*** font
+- Set the font
+  #+BEGIN_SRC emacs-lisp
+  (setq doom-font (font-spec :family "Fira Code" :size 11))
+  #+END_SRC
+- Enable ligatures -- works only on Emacs Mac port.
+  #+BEGIN_SRC emacs-lisp
+  (ignore-errors (mac-auto-operator-composition-mode))
+  #+END_SRC
+* Dired
+#+BEGIN_SRC emacs-lisp
+(setq dired-dwim-target t)
+#+END_SRC
+* Projectile
+- Set project search path
+  #+BEGIN_SRC emacs-lisp
+  (setq projectile-project-search-path '("~/w"))
+  #+END_SRC
+* data
+** dash
+- Search Dash GUI from emacs. Pretty handy!
+#+BEGIN_SRC emacs-lisp
+(map! "\C-cd" 'dash-at-point)
+(map! "\C-ce" 'dash-at-point-with-docset)
+#+END_SRC
+* org mode
+** org Directory Structure
+  #+BEGIN_SRC emacs-lisp
+(setq! documents-directory "~/Documents" ;; Root Documents directory -- potentially in iCloud drive
+      leot/library-directory (expand-file-name "Library/")
+      leot/root-bib-directory (expand-file-name "Library/bib/" documents-directory)
+
+      ;; bibtex files
+      leot/bibtex-files (directory-files leot/root-bib-directory 'full ".bib")
+      reftex-default-bibliography (expand-file-name "master.bib" leot/root-bib-directory)
+
+      ;; Root org files directory
+      org-files-directory (expand-file-name "org" documents-directory)
+      org-pub-notes-directory (expand-file-name "pub" org-files-directory)
+      leot/bibnotes-file (expand-file-name "bibnotes.org" org-files-directory)
+
+      ;; Root org files for task management
+      org-gtd-files-directory (expand-file-name "gtd" documents-directory)
+
+      ;; Special purpose files needed for org captures, agenda, etc.
+      org-inbox-file-name (expand-file-name "inbox.org" org-gtd-files-directory)
+      org-notes-file-name (expand-file-name "notes.org" org-gtd-files-directory)
+      org-meeting-file-name (expand-file-name "meeting.org" org-gtd-files-directory))
+  #+END_SRC
+*** org-refile directories
+#+BEGIN_SRC emacs-lisp
+(setq! org-refile-targets (quote (("next.org" :maxlevel . 1)
+                                 ("someday.org" :level . 2)
+                                 ("reading.org" :level . 2)
+                                 ("projects.org" :level . 2))))
+#+END_SRC
+
+** org-super-agenda
+#+BEGIN_SRC emacs-lisp
+(use-package! org-super-agenda
+  :defer
+  :commands (org-super-agenda-mode))
+
+(after! org-agenda
+  (org-super-agenda-mode))
+
+(setq org-agenda-skip-scheduled-if-done t
+      org-agenda-skip-deadline-if-done t
+      org-agenda-include-deadlines t
+      org-agenda-block-separator nil
+      org-agenda-tags-column 100 ;; from testing this seems to be a good value
+      org-agenda-compact-blocks t)
+
+;; define custom agenda views
+(setq org-agenda-custom-commands
+      '(("o" "Overview"
+         ((agenda "" ((org-agenda-span 'day)
+                      (org-super-agenda-groups
+                       '((:name "Today" :time-grid t :date today :scheduled today :order 1)))))
+          (todo "" ((org-agenda-overriding-header "")
+                    (org-super-agenda-groups
+                     '((:name "Next to do" :todo "NEXT" :order 1)
+                       (:name "Important" :priority "A" :order 6)
+                       (:name "Due Today" :deadline today :order 2)
+                       (:name "Due Soon" :deadline future :order 8)
+                       (:name "Overdue" :deadline past :face error :order 7)
+                       (:name "Inbox" :category "inbox" :order 10)
+                       (:name "Projects" :tag "Project" :order 14)
+                       (:name "To read" :tag "Read" :order 30)
+                       (:name "Waiting" :todo "WAIT" :order 20)
+                       (:name "University" :tag "University" :order 32)
+                       (:discard (:tag ("Chore" "Routine" "Daily")))))))))
+
+        ("x" "experimental"
+         ((todo "" ((org-agenda-overriding-header nil)
+                    (org-agenda-remove-tags 1)
+                    (org-super-agenda-groups
+                     '((:name "Next" :todo "NEXT" :order 1)
+                       (:name "Due Today" :deadline today :order 2)
+                       (:name "Overdue" :deadline past :face error :order 7)
+                       (:name "Epsilon" :tag "Work" :order 30)
+                       ;; (:name "University" :tag "University" :order 40)
+                       (:discard (:anything t))))))))
+
+
+        ("i" "Inbox"
+         ((alltodo "" ((org-agenda-overriding-header nil)
+                       (org-super-agenda-groups
+                        '((:name "Inbox" :category "inbox")
+                          (:discard (:anything t))))))))))
+
+#+END_SRC
+
+** Configure org
++ Configure agenda
++ Capture timestamp when a task is marked as done
++ Set some keybindings
++ Set directories based on variables defined above
++ Set the keywords and their theme
++ Define the tags
++ ...
+
+#+BEGIN_SRC emacs-lisp
+(after! org
+  (setq! org-directory org-files-directory
+        org-archive-location (expand-file-name "archive.org" org-gtd-files-directory)
+        org-default-notes-file org-notes-file-name
+        org-agenda-files (list org-gtd-files-directory)
+
+        ;; org-roam configuration
+        org-roam-directory org-files-directory
+
+
+        org-tags-exclude-from-inheritance '("Project")
+        org-agenda-show-inherited-tags t
+
+        ;; Set the TODO keywords GTD style
+        org-todo-keywords '((sequence "TODO(t)"
+                                      "NEXT(n)"
+                                      "WAIT(w)"
+                                      "SOMEDAY(h)"
+                                      "PROJECT(p)"
+                                      "|"
+                                      "DONE(d)"
+                                      "CANCELLED(c)")
+                            (sequence "[ ](T)"
+                                      "[?](W)"
+                                      "[-](N)"
+                                      "|"
+                                      "[X](x)"))
+
+        ;; Theme the TODO keywords
+        org-todo-keyword-faces '(("NEXT" . (:foreground "magenta" :weight "bold"))
+                                 ("SOMEDAY" . +org-todo-onhold)
+                                 ("WAIT" . +org-todo-onhold)
+                                 ("PROJECT" . (:foreground "violet" :weight "bold"))
+                                 ("[-]" . +org-todo-active)
+                                 ("[?]" . +org-todo-onhold))
+
+        ;; Define the org-mode capture buffer
+        org-capture-templates `(("i"
+                                 "inbox"
+                                 entry
+                                 (file+headline ,org-inbox-file-name "Inbox")
+                                 "* TODO %?\n%U\n%a\n")
+                                ("e"
+                                 "event"
+                                 entry
+                                 (file, org-meeting-file-name)
+                                 "* %? \n%^T\n%a\n")
+                                ("n"
+                                 "notes"
+                                 entry
+                                 (file+headline ,org-notes-file-name "Notes")
+                                 "* %?\n%U\n%a\n")
+                                ("p"
+                                 "Protocol"
+                                 entry
+                                 (file+headline ,org-notes-file-name "Notes")
+                                 "* %? [[%:link][%:description]]\n%U\n#+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n\n")
+                                ("L"
+                                 "Protocol Link"
+                                 entry
+                                 (file+headline ,org-notes-file-name "Notes")
+                                 "* %?[[%:link][%:description]]\n%U\n"))
+
+        ;; (defun leot/org-agenda-process-inbox-item ()
+        ;;   "Process a single item in the org-agenda"
+        ;;   (org-with-wide-buffer
+        ;;    (org-agenda-set-tags)
+        ;;    (org-agenda-priority)
+        ;;    (call-interactively 'org-agenda-set-effort)
+        ;;    (org-agenda-refile nil nil t)))
+
+
+        ;; Define the tags
+        org-tag-alist '((:startgroup . nil)
+                        ("Work" . ?w)
+                        ("Immigration" . ?m)
+                        ("University" . ?u)
+                        (:endgroup)
+                        (:startgroup . nil)
+                        ("Errand" . ?e)
+                        ("Friends" . ?f)
+                        (:endgroup . nil)
+                        (:startgroup . nil)
+                        ("Baz" . ?b)
+                        ("Tooling" . ?t)
+                        ("Read" . ?r)
+                        (:endgroup . nil)
+                        (:startgroup . "Meta")
+                        ("Project" . ?p)
+                        (:endgroup . nil))
+
+        ;; Configure refile behavior
+
+        ;; org-refile-targets (quote (("next.org" :maxlevel . 0)
+        ;;                            ("someday.org" :maxlevel . 1)
+        ;;                            ("reading.org" :maxlevel . 2)
+        ;;                            ("projects.org" :maxlevel . 2)))
+        org-refile-allow-creating-parent-nodes 'confirm
+
+        ;; log the time of doing each task
+        org-log-done 'time
+        org-log-into-drawer t
+        org-clock-persist t
+        org-log-state-notes-insert-after-drawers t
+
+        ;; org-mode aesthetics
+        org-hide-emphasis-markers t
+        org-fontify-done-headline t
+        org-fontify-whole-heading-line t
+        org-fontify-todo-headline t
+        org-fontify-emphasized-text t
+        org-fontify-quote-and-verse-blocks t)
+
+  ;; set key bindings
+  (map! :map org-mode-map
+        :n "M-j" #'org-metadown
+        :n "M-k" #'org-metaup
+        :n  ))
+#+END_SRC
+
+** org-ref
+#+BEGIN_SRC emacs-lisp
+(use-package! org-ref
+    :defer
+    :config
+    (setq! org-ref-bibliography-files leot/bibtex-files
+           org-ref-bibliography-notes leot/bibnotes-file
+
+           ;; org-ref-pdf-directory "~/Documents/org/pdfs"
+           org-ref-notes-directory org-pub-notes-directory
+
+           org-ref-completion-library 'org-ref-ivy-cite
+           org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex
+           org-ref-note-title-format "* TODO %y - %t\n :PROPERTIES:\n  :Custom_ID: %k\n  :NOTER_DOCUMENT: %F\n :ROAM_KEY: cite:%k\n  :AUTHOR: %9a\n  :JOURNAL: %j\n  :YEAR: %y\n  :VOLUME: %v\n  :PAGES: %p\n  :DOI: %D\n  :URL: %U\n :END:\n\n"
+           org-ref-notes-function 'orb-edit-notes))
+#+END_SRC
+
+*** [ ] Rewrite title formats using the ~(concat ...)~ function.
+See examples in[[*helm-bibtex][ helm-bibtex]] section.
+** helm-bibtex & ivy-bibtex
+#+BEGIN_SRC emacs-lisp
+(setq! bibtex-completion-notes-path org-pub-notes-directory
+       bibtex-completion-bibliography leot/bibtex-files
+       bibtex-completion-pdf-field "file"
+       bibtex-completion-notes-template-multiple-files (concat
+                                                          "#+TITLE: ${title}\n"
+                                                          "#+ROAM_KEY: cite:${=key=}\n"
+                                                          "* TODO Notes\n"
+                                                          ":PROPERTIES:\n"
+                                                          ":Custom_ID: ${=key=}\n"
+                                                          ":NOTER_DOCUMENT: %(orb-process-file-field \"${=key=}\")\n"
+                                                          ":AUTHOR: ${author-abbrev}\n"
+                                                          ":JOURNAL: ${journaltitle}\n"
+                                                          ":DATE: ${date}\n"
+                                                          ":YEAR: ${year}\n"
+                                                          ":DOI: ${doi}\n"
+                                                          ":URL: ${url}\n"
+                                                          ":END:\n\n"))
+#+END_SRC
+
+** org-noter
+#+BEGIN_SRC emacs-lisp
+(setq! org-noter-notes-search-path (list org-files-directory))
+#+END_SRC
+
+*** org-noter-pdftools
+#+BEGIN_SRC emacs-lisp
+(use-package! org-noter-pdftools
+  :defer
+  :after org-noter
+  :config
+  (with-eval-after-load 'pdf-annot
+    (add-hook 'pdf-annot-activate-handler-functions#'org-noter-pdftools-jump-to-note)))
+#+END_SRC
+** org-roam-bibtex
+~org-roam-bibtex~ is a library which offers a tighter integration between
+~org-roam~, ~helm-bibtex~, and ~org-ref~.
+
+It allows users to access their bibliographical notes in org-roam-directory via
+~helm-bibtex~, ~ivy-bibtex~, or by opening org-ref’s cite: links and running
+~3. Add notes~. If the note does not exist, it is created.
+
+#+BEGIN_SRC emacs-lisp
+(use-package! org-roam-bibtex
+  :defer
+  :after (org-roam)
+  :hook (org-roam-mode . org-roam-bibtex-mode)
+  :config
+  (setq orb-preformat-keywords
+        '("=key=" "title" "url" "file" "author-or-editor" "keywords"))
+  (setq orb-templates
+        '(("r" "ref" plain (function org-roam-capture--get-point)
+           ""
+           :file-name "${slug}"
+           :head "#+TITLE: ${=key=}: ${title}\n#+ROAM_KEY: ${ref}
+- tags ::
+- keywords :: ${keywords}
+\n* ${title}\n  :PROPERTIES:\n  :Custom_ID: ${=key=}\n  :URL: ${url}\n  :AUTHOR: ${author-or-editor}\n  :NOTER_DOCUMENT: %(orb-process-file-field \"${=key=}\")\n  :NOTER_PAGE: \n  :END:\n\n"
+           :unnarrowed t))))
+#+END_SRC
+
+** Enable minor modes
+  #+begin_src emacs-lisp
+  (add-hook! 'org-mode-hook #'auto-fill-mode)
+  #+end_src
+** [ ] Set ~XeLaTeX~ to be the default latex export
+** [ ] Define a function for generating CV
+** [ ] Configure priority faces using [[https://github.com/harrybournis/org-fancy-priorities][org-fancy-priorities]] package.
+  #+BEGIN_SRC elisp
+  ;; (use-package! org-fancy-priorities
+  ;;   :hook
+  ;;   (org-mode . org-fancy-priorities-mode)
+  ;;   :config
+  ;;   (setq org-fancy-priorities-list '("⚡" "⬆" "⬇" "☕")))
+  #+END_SRC
+** org-export
+*** LaTex
+- Enable bibtex compilation
+- Set log files to intermediate files generated by the exporter so org-export
+  delete these after exporting
+#+BEGIN_SRC emacs-lisp
+(setq org-latex-pdf-process
+      '("%latex -interaction nonstopmode -output-directory %o %f"
+        "bibtex %b"
+        "%latex -interaction nonstopmode -output-directory %o %f"
+        "%latex -interaction nonstopmode -output-directory %o %f")
+      org-latex-logfiles-extensions
+      '("lof" "lot" "tex" "aux" "idx" "log" "out" "toc" "nav" "snm" "vrb"
+        "dvi" "fdb_latexmk" "blg" "brf" "fls" "entoc" "ps" "spl" "bbl"
+        "pygtex" "pygstyle"))
+#+END_SRC
+
+- [ ] Set LaTex export engine to be XeLaTex
+
+*** TODO Resume and CV
+**** org-CV
+***** LaTex backends
+- Define two backends to export resumes to latex.
+#+BEGIN_SRC emacs-lisp
+(use-package! ox-moderncv
+  :defer
+  :load-path "~/w/org-cv/"
+  :init(require 'ox-moderncv))
+(use-package! ox-altacv
+  :defer
+  :load-path "~/w/org-cv/"
+  :init (require 'ox-altacv))
+#+END_SRC
+** org-drill
+#+BEGIN_SRC emacs-lisp
+(after! org
+  (require 'cl)
+  (require 'org-drill))
+#+END_SRC
+** Deft
++ Set deft directory and search all the sub-directories.
+#+BEGIN_SRC emacs-lisp
+(setq! deft-directory org-files-directory
+       deft-recursive t)
+
+(defun my-deft/strip-quotes (str)
+  (cond ((string-match "\"\\(.+\\)\"" str) (match-string 1 str))
+        ((string-match "'\\(.+\\)'" str) (match-string 1 str))
+        (t str)))
+
+(defun my-deft/parse-title-from-front-matter-data (str)
+  (if (string-match "^title: \\(.+\\)" str)
+      (let* ((title-text (my-deft/strip-quotes (match-string 1 str)))
+             (is-draft (string-match "^draft: true" str)))
+        (concat (if is-draft "[DRAFT] " "") title-text))))
+
+(defun my-deft/deft-file-relative-directory (filename)
+  (file-name-directory (file-relative-name filename deft-directory)))
+
+(defun my-deft/title-prefix-from-file-name (filename)
+  (let ((reldir (my-deft/deft-file-relative-directory filename)))
+    (if reldir
+        (concat (directory-file-name reldir) " > "))))
+
+(defun my-deft/parse-title-with-directory-prepended (orig &rest args)
+  (let ((str (nth 1 args))
+        (filename (car args)))
+    (concat
+      (my-deft/title-prefix-from-file-name filename)
+      (let ((nondir (file-name-nondirectory filename)))
+        (if (or (string-prefix-p "README" nondir)
+                (string-suffix-p ".txt" filename))
+            nondir
+          (if (string-prefix-p "---\n" str)
+              (my-deft/parse-title-from-front-matter-data
+               (car (split-string (substring str 4) "\n---\n")))
+            (apply orig args)))))))
+
+(provide 'my-deft-title)
+(require 'my-deft-title)                   
+(advice-add 'deft-parse-title :around #'my-deft/parse-title-with-directory-prepended)
+#+END_SRC
+
+* LaTeX
+- Use xalatex by default
+  #+BEGIN_SRC emacs-lisp
+   (setq-default TeX-engine 'xetex)
+  #+END_SRC
+- Always Generate PDF for TeX files
+  #+BEGIN_SRC emacs-lisp
+  (setq-default TeX-PDF-mode t)
+  #+END_SRC
+- Use luatex in latex-preview-pate
+  #+BEGIN_SRC emacs-lisp
+  (setq pdf-latex-command "xetex")
+  #+END_SRC
+* Flycheck
+- Check syntax automatically.
+  #+BEGIN_SRC emacs-lisp
+  (after! flycheck
+    (setq flycheck-check-syntax-automatically '(mode-enabled save idle-change)))
+  #+END_SRC
+* Languages
+** LSP
+*** Key Bindings
+#+BEGIN_SRC emacs-lisp
+(map! :leader
+      (:prefix-map ("l" . "lsp")
+        :desc "doc" "d" #'lsp-ui-doc-glance
+        :desc "find reference" "f" #'lsp-ui-peek-find-references))
+#+END_SRC
+*** LSP Configurations
+#+BEGIN_SRC emacs-lisp
+(after! lsp
+  (setq company-minimum-prefix-length   1
+        company-idle-delay              0.0
+        company-tooltip-idle-delay      0.2
+        lsp-prefer-capf                 t
+        lsp-eldoc-render-all            nil
+        lsp-signature-auto-activate     t
+        lsp-lens-auto-enable            t))
+#+END_SRC
+
+*** LSP UI Configurations
+#+BEGIN_SRC emacs-lisp
+(after! lsp-ui
+  (setq lsp-ui-sideline-enable         nil
+        lsp-ui-doc-include-signature   t
+        lsp-ui-doc-max-height          15
+        lsp-ui-doc-max-width           150
+        lsp-ui-doc-position            'at-point
+        lsp-ui-peek-always-show        t
+        lsp-ui-peek-fontify            'always))
+#+END_SRC
+*** LSP Treemacs
+#+BEGIN_SRC emacs-lisp
+(use-package! lsp-treemacs
+  :defer t
+  :config
+  (lsp-treemacs-sync-mode 1))
+#+END_SRC
+
+** Python
+- Set flycheck checkers.
+- Enable rainbow delimiters.
+- Configure REPLs.
+#+BEGIN_SRC emacs-lisp
+(after! python
+  (rainbow-delimiters-mode t))
+(setq +python-ipython-repl-args '("-i" "--simple-prompt" "--no-color-info"))
+(setq +python-jupyter-repl-args '("--simple-prompt"))
+#+END_SRC
+
+*** Sphinx
+- Enable [[https://github.com/naiquevin/sphinx-doc.el][sphinx-doc]], which generate Python docstrings for function and methods.
+- It does not work with python type hints.
+#+BEGIN_SRC emacs-lisp
+(use-package! sphinx-doc
+  :defer
+  :after python
+  :config
+  (sphinx-doc-mode t))
+
+#+END_SRC
+*** Pyls
+*This server is very slow and unreliable. Moving to Microsoft version.*
+
+Configure pyls. [[https://github.com/emacs-lsp/lsp-mode/blob/master/doc/src/lsp-pyls/lsp-pyls-vars.adoc][This link]] contains some useful variables that can be set.
+#+BEGIN_SRC emacs-lisp
+(after! lsp-pyls
+  (setq lsp-pyls-configuration-sources                          ["flake8"]
+        lsp-pyls-plugins-pydocstyle-enabled                     nil
+        lsp-pyls-plugins-yapf-enabled                           nil
+        lsp-pyls-plugins-jedi-definition-follow-imports         t
+        lsp-pyls-plugins-jedi-definition-follow-builtin-imports t
+        lsp-pyls-plugins-jedi-signature-help-enabled            t
+        lsp-pyls-plugins-jedi-symbols-enabled                   t
+        lsp-pyls-plugins-flake8-enabled                         nil
+        lsp-pyls-plugins-pylint-enabled                         t
+        lsp-pyls-plugins-pyflakes-enabled                       nil
+        lsp-pyls-plugins-pyls_mypy-live-mode                    nil))
+#+END_SRC
+
+*** Microsoft LSP
+- Set errors and warnings. Look at the [[https://github.com/microsoft/python-language-server/blob/master/src/Analysis/Ast/Impl/Diagnostics/ErrorCodes.cs][source code]] to see a full list of all
+  diagnostic messages available.
+- Enable =python-mypy= and =python-flake8= in flycheck.
+- Disable =python-pylint=. It's way slower than flake.
+#+BEGIN_SRC emacs-lisp
+(after! lsp-python-ms
+  (setq lsp-python-ms-errors   ["unknown-parameter-name"
+                                "no-self-argument"
+                                "undefined-variable"
+                                "parameter-missing"
+                                "positional-argument-after-keyword"
+                                "positional-only-named"
+                                "too-many-function-arguments"
+                                "unresolved-import"
+                                "parameter-missing"
+                                "typing-typevar-arguments"
+                                "typing-newtype-arguments"
+                                "typing-generic-arguments"]
+        lsp-python-ms-warnings ["variable-not-defined-nonlocal"
+                                "variable-not-defined-globally"
+                                "return-in-init"
+                                "parameter-already-specified"
+                                "no-method-argument"
+                                "no-cls-argument"
+                                "inherit-non-class"])
+  (setq-default flycheck-disabled-checkers '(python-pylint))
+  (flycheck-add-next-checker 'lsp '(warning . python-mypy))
+  (flycheck-add-next-checker 'lsp '(warning . python-flake8)))
+#+END_SRC
+
+- Fix company issue showing garbage result in lsp-python-ms. From [[https://github.com/emacs-lsp/lsp-python-ms/issues/79][this github
+  issue.]]
+#+BEGIN_SRC emacs-lisp
+;; (after! lsp-python-ms
+;;   (add-to-list 'company-lsp-filter-candidates '(mspyls . t))
+;;   (setq company-lsp-cache-candidates 'auto)
+
+;;   (defun company-lsp--on-completion (response prefix)
+;;     "Handle completion RESPONSE.
+
+;;   PREFIX is a string of the prefix when the completion is requested.
+
+;;   Return a list of strings as the completion candidates."
+;;     (let* ((incomplete (and (hash-table-p response) (gethash "isIncomplete" response)))
+;;            (items (cond ((hash-table-p response) (gethash "items" response))
+;;                         ((sequencep response) response)))
+;;            (candidates (mapcar (lambda (item)
+;;                                  (company-lsp--make-candidate item prefix))
+;;                                (lsp--sort-completions items)))
+;;            (server-id (lsp--client-server-id (lsp--workspace-client lsp--cur-workspace)))
+;;            (should-filter (or (eq company-lsp-cache-candidates 'auto)
+;;                               (and (null company-lsp-cache-candidates)
+;;                                    (company-lsp--get-config company-lsp-filter-candidates server-id)))))
+;;       (when (null company-lsp--completion-cache)
+;;         (add-hook 'company-completion-cancelled-hook #'company-lsp--cleanup-cache nil t)
+;;         (add-hook 'company-completion-finished-hook #'company-lsp--cleanup-cache nil t))
+;;       (when (eq company-lsp-cache-candidates 'auto)
+;;         ;; Only cache candidates on auto mode. If it's t company caches the
+;;         ;; candidates for us.
+;;         (company-lsp--cache-put prefix (company-lsp--cache-item-new candidates incomplete)))
+;;       (if should-filter
+;;           (company-lsp--filter-candidates candidates prefix)
+;;         candidates))))
+#+END_SRC
+** Scala
+- Register to projectile
+  #+BEGIN_SRC emacs-lisp
+  ;; (after! projectile
+  ;;   (projectile-register-project-type 'sbt '("build.sbt")
+  ;;                                     :src-dir "src/main"
+  ;;                                     :test-dir "src/test"
+  ;;                                     :compilation-dir "."
+  ;;                                     :compile "bloop compile root"
+  ;;                                     :test "sbt test"
+  ;;                                     :test-suffix "Spec"))
+  #+END_SRC
+#+BEGIN_SRC emacs-lisp
+(setq create-lockfiles nil)
+(setq backup-directory-alist `((".*" . ,temporary-file-directory))
+      auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
+
+(after! scala-mode
+  (setq compile-command "bloop compile root"
+        compilation-directory ".")
+  (add-hook 'before-save-hook 'lsp-format-buffer)
+  (map! "\C-c r" 'lsp-metals-build-import)
+  (map! "\C-c s" 'lsp-metals-sources-scan)
+  (map! "\C-c d" 'lsp-describe-thing-at-point)
+  (map! "\C-c s" 'lsp-metals-sources-scan))
+#+END_SRC
+** Haskell
+#+BEGIN_SRC emacs-lisp
+(after! haskell-mode
+ (setq lsp-document-sync-method 'full))
+#+END_SRC
