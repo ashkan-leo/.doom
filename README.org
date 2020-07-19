@@ -29,6 +29,9 @@ branch.
    set -U fish_user_paths ~/.emacs.od/bin $fish_user_paths
    #+END_SRC
    Otherwise, add it to your bash profile.
+4. Make sure you run =doom sync= every time the configurations changed. You can
+   also do =SPC h r r= inside Emacs to change the configuration interactively.
+5. Upgrade Doom regularly by running =doom up=.
 
 *** Setup Script
 This is a work-in-progress installation script.
