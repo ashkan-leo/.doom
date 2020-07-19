@@ -1,4 +1,6 @@
-#+TITLE:   My Doom Emacs Private Configurations
+#+TITLE:   My Doom Pip Boy Emacs Private Configurations
+
+Pip boy Emacs is my literate private configuration files for Doom Emacs.
 
 * Table of Content :TOC_3:
 - [[#introduction][Introduction]]
