@@ -1,5 +1,11 @@
 #+TITLE:   My Doom Emacs Private Configurations
 
+* Table of Content :TOC_3:
+- [[#introduction][Introduction]]
+  - [[#how-to-install][How to Install]]
+  - [[#dependencies][Dependencies]]
+    - [[#mac-os][Mac OS]]
+
 * Introduction
 Doom Emacs is an awesome Emacs configuration that is easily extendable. This
 repository contains my configurations working on top of the Doom Emacs develop
