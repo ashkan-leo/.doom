@@ -20,7 +20,7 @@ branch.
    by =echo $DOOMDIR=.
 3. Make sure to add =~/.emacs.d/bin= to your =$PATH=.
 
-   In fish, you can write:
+   In fish, you can write the following and forget about it.
    #+BEGIN_SRC fish
    set -U fish_user_paths ~/.emacs.od/bin $fish_user_paths
    #+END_SRC
@@ -53,7 +53,6 @@ git clone https://github.com/ashkan-leo/.doom.git ~/.config/doom/
 
 # Lastly, install the icon fonts Doom uses:
 emacs --batch -f all-the-icons-install-fonts
-
 #+END_SRC
 
 ** Dependencies
@@ -63,6 +62,5 @@ emacs --batch -f all-the-icons-install-fonts
 + coreutils
 + fd
 + clang
-
 *** Mac OS
 + xcode CLI tools
