@@ -10,7 +10,13 @@ called pip boy since I like Fallout very much and Emacs is my pip boy!
   - [[#dependencies][Dependencies]]
     - [[#mac-os][Mac OS]]
 
-* Introduction
+* Introduction :ATTACH:
+:PROPERTIES:
+:ID:       afe494a9-7445-4d77-887a-818a5c5784a9
+:END:
+
+[[attachment:_20200719_180532pipboy.png]]
+
 Doom Emacs is an awesome Emacs configuration that is easily extendable. This
 repository contains my configurations working on top of the Doom Emacs develop
 branch.
