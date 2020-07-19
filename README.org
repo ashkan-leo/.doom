@@ -1,6 +1,7 @@
 #+TITLE:   My Doom Pip Boy Emacs Private Configurations
 
-Pip boy Emacs is my literate private configuration files for Doom Emacs.
+Pip boy Emacs is my literate private configuration files for Doom Emacs. It's
+called pip boy since I like Fallout very much and Emacs is my pip boy!
 
 * Table of Content :TOC_3:
 - [[#introduction][Introduction]]
