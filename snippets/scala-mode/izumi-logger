@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: izumi-logger
+# uuid: 
+# key: izlog
+# condition: t
+# --
+import izumi.logstage.api.IzLogger, logstage.LogstageZIO
+val logger = IzLogger()
+val log = LogstageZIO withFiberId logger
+import log._

@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: yas-choose-value
+# key: yas-multi
+# condition: t
+# --
+
+\${${0}:\$\$(yas-choose-value '("${1:KitKat}" "${2:Camel}" "${3:Tomato}"))}
