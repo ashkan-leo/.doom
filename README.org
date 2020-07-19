@@ -24,7 +24,7 @@ branch.
    #+BEGIN_SRC fish
    set -U fish_user_paths ~/.emacs.od/bin $fish_user_paths
    #+END_SRC
-   Otherwise, add it to your bash script load files.
+   Otherwise, add it to your bash profile.
 
 *** Setup Script
 This is a work-in-progress installation script.
