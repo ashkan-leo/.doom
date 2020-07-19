@@ -1,6 +1,4 @@
 ;; -*- no-byte-compile: t; -*-
-;;; ~/.doom.d/packages.el
-
 
 ;; org extensions
 (package! org-drill)
