@@ -3,6 +3,7 @@
 * Table of Content :TOC_3:
 - [[#introduction][Introduction]]
   - [[#how-to-install][How to Install]]
+    - [[#setup-script][Setup Script]]
   - [[#dependencies][Dependencies]]
     - [[#mac-os][Mac OS]]
 
@@ -18,6 +19,41 @@ branch.
 2. Clone this repository in =~/.config/doom= or =~/.doom.d= or other paths specified
    by =echo $DOOMDIR=.
 3. Make sure to add =~/.emacs.d/bin= to your =$PATH=.
+   In fish do:
+   #+BEGIN_SRC fish
+   set -U fish_user_paths ~/.emacs.od/bin $fish_user_paths
+   #+END_SRC
+   Otherwise, add it to your bash script load files.
+
+*** Setup Script
+This is a work-in-progress installation script.
+#+BEGIN_SRC bash
+# Install Doom Emacs by hlissner
+git clone https://github.com/hlissner/doom-emacs ~/.emacs.d
+
+# Install the package manager stuff
+# If your ISP or proxy doesn't allow you to install from
+# raw.githubusercontent.com, then you'll have to install straight (our package
+# manager) manually:
+mkdir -p ~/.emacs.d/.local/straight/repos
+git clone -b develop https://github.com/raxod502/straight.el ~/.emacs.d/.local/straight/repos/straight.el
+
+# Install these configurations
+git clone https://github.com/ashkan-leo/.doom.git ~/.config/doom/
+
+# sync the configs
+~/.emacs.d/bin/doom sync
+
+# If you know Emacs won't be launched from your shell environment (e.g. you're
+# on macOS or use an app launcher that doesn't launch programs with the correct
+# shell) then create an envvar file to ensure Doom correctly inherits your shell
+# environment.
+~/.emacs.d/bin/doom env
+
+# Lastly, install the icon fonts Doom uses:
+emacs --batch -f all-the-icons-install-fonts
+
+#+END_SRC
 
 ** Dependencies
 + Emacs
