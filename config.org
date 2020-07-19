@@ -21,9 +21,7 @@
   - [[#org-noter][org-noter]]
   - [[#org-roam-bibtex][org-roam-bibtex]]
   - [[#enable-minor-modes][Enable minor modes]]
-  - [[#--set-xelatex-to-be-the-default-latex-export][[ ] Set ~XeLaTeX~ to be the default latex export]]
-  - [[#--define-a-function-for-generating-cv][[ ] Define a function for generating CV]]
-  - [[#--configure-priority-faces-using-org-fancy-priorities-package][[ ] Configure priority faces using org-fancy-priorities package.]]
+  - [[#org-priorities][org-priorities]]
   - [[#org-export][org-export]]
   - [[#org-drill][org-drill]]
   - [[#deft][Deft]]
@@ -431,9 +429,8 @@ It allows users to access their bibliographical notes in org-roam-directory via
   #+begin_src emacs-lisp
   (add-hook! 'org-mode-hook #'auto-fill-mode)
   #+end_src
-** [ ] Set ~XeLaTeX~ to be the default latex export
-** [ ] Define a function for generating CV
-** [ ] Configure priority faces using [[https://github.com/harrybournis/org-fancy-priorities][org-fancy-priorities]] package.
+
+** org-priorities
   #+BEGIN_SRC elisp
   ;; (use-package! org-fancy-priorities
   ;;   :hook
@@ -441,6 +438,7 @@ It allows users to access their bibliographical notes in org-roam-directory via
   ;;   :config
   ;;   (setq org-fancy-priorities-list '("⚡" "⬆" "⬇" "☕")))
   #+END_SRC
+
 ** org-export
 *** LaTex
 - Enable bibtex compilation
