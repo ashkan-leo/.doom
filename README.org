@@ -1,0 +1,25 @@
+#+TITLE:   My Doom Emacs Private Configurations
+
+* Introduction
+Doom Emacs is an awesome Emacs configuration that is easily extendable. This
+repository contains my configurations working on top of the Doom Emacs develop
+branch.
+
+** How to Install
+1. Follow the instructions on [[https://github.com/hlissner/doom-emacs/blob/develop/docs/getting_started.org#emacs--dependencies][Doom installation]]. I have only used this on Mac so
+   far.
+   a. I use [[https://github.com/railwaycat/homebrew-emacsmacport][Emacs mac-port]] as primary on Mac OS.
+2. Clone this repository in =~/.config/doom= or =~/.doom.d= or other paths specified
+   by =echo $DOOMDIR=.
+3. Make sure to add =~/.emacs.d/bin= to your =$PATH=.
+
+** Dependencies
++ Emacs
++ Git
++ ripgrep
++ coreutils
++ fd
++ clang
+
+*** Mac OS
++ xcode CLI tools
