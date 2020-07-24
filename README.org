@@ -11,6 +11,9 @@ as a pip boy!
   - [[#directory-structure][Directory Structure]]
   - [[#dependencies][Dependencies]]
     - [[#mac-os][Mac OS]]
+- [[#workflow][Workflow]]
+  - [[#get-things-done][Get Things Done]]
+    - [[#configurations][Configurations]]
 
 * Introduction
 Doom Emacs is an awesome Emacs configuration that is easily extendable. This
@@ -80,3 +83,12 @@ related functionalities:
 + clang
 *** Mac OS
 + xcode CLI tools
+* Workflow
+** Get Things Done
+The *Get Things Done* workflow is the task management workflow in Pip Boy.
+*** Configurations
+**** Files & Directories
+| Directory               | Purpose                      | Default Path             |
+|-------------------------+------------------------------+--------------------------|
+| leot/root-bib-directory | bib files synced with Zotero | ~/Documents/Library/bib/ |
+| org-gtd-files-directory | org files for GTD workflow   | ~/Documents/gtd/         |
