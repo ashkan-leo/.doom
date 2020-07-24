@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: emacs-lisp
+# uuid: src-el
+# key: el
+# condition: t
+# --
+
+#+BEGIN_SRC emacs-lisp
+$0
+#+END_SRC
