@@ -85,7 +85,7 @@ related functionalities:
 + xcode CLI tools
 * Workflow
 ** Get Things Done
-The *Get Things Done* workflow is the task management workflow in Pip Boy.
+*Get Things Done (GTD)* is the task management workflow in Pip Boy.
 *** Configurations
 **** Files & Directories
 | Directory               | Purpose                      | Default Path             |
