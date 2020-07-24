@@ -66,10 +66,10 @@ emacs --batch -f all-the-icons-install-fonts
 ** Directory Structure
 Pip boy assumes numerous directories already exist -- mainly for org-mode
 related functionalities:
-| Directory               | Purpose                      | Default Path               |
-|-------------------------+------------------------------+----------------------------|
-| leot/root-bib-directory | bib files synced with Zotero | "~/Documents/Library/bib/" |
-| org-gtd-files-directory | org files for GTD workflow   | "~/Documents/gtd/"         |
+| Directory               | Purpose                      | Default Path             |
+|-------------------------+------------------------------+--------------------------|
+| leot/root-bib-directory | bib files synced with Zotero | ~~/Documents/Library/bib/~ |
+| org-gtd-files-directory | org files for GTD workflow   | ~~/Documents/gtd/~         |
 
 ** Dependencies
 + Emacs
