@@ -1,4 +1,4 @@
-#+TITLE:   Pip Boy Emacs Private Configurations
+#+TITLE:   Pip Boy Emacs
 
 Pip boy Emacs is my literate private configuration files for Doom Emacs. It's
 called pip boy since I like Fallout very much and would like to make Emacs as useful
