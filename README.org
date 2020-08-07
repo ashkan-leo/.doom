@@ -1,4 +1,4 @@
-#+TITLE:   Pip Boy Emacs Private Configurations
+#+TITLE:   Pip Boy Emacs
 
 Pip boy Emacs is my literate private configuration files for Doom Emacs. It's
 called pip boy since I like Fallout very much and would like to make Emacs as useful
@@ -8,8 +8,12 @@ as a pip boy!
 - [[#introduction][Introduction]]
   - [[#how-to-install][How to Install]]
     - [[#setup-script][Setup Script]]
+  - [[#directory-structure][Directory Structure]]
   - [[#dependencies][Dependencies]]
     - [[#mac-os][Mac OS]]
+- [[#workflow][Workflow]]
+  - [[#get-things-done][Get Things Done]]
+    - [[#configurations][Configurations]]
 
 * Introduction
 Doom Emacs is an awesome Emacs configuration that is easily extendable. This
@@ -26,7 +30,7 @@ branch.
 
    In fish, you can write the following and forget about it.
    #+BEGIN_SRC fish
-   set -U fish_user_paths ~/.emacs.od/bin $fish_user_paths
+   set -U fish_user_paths ~/.emacs.d/bin $fish_user_paths
    #+END_SRC
    Otherwise, add it to your bash profile.
 4. Make sure you run =doom sync= every time the configurations changed. You can
@@ -62,6 +66,14 @@ git clone https://github.com/ashkan-leo/.doom.git ~/.config/doom/
 emacs --batch -f all-the-icons-install-fonts
 #+END_SRC
 
+** Directory Structure
+Pip boy assumes numerous directories already exist -- mainly for org-mode
+related functionalities:
+| Directory               | Purpose                      | Default Path             |
+|-------------------------+------------------------------+--------------------------|
+| leot/root-bib-directory | bib files synced with Zotero | ~/Documents/Library/bib/ |
+| org-gtd-files-directory | org files for GTD workflow   | ~/Documents/gtd/         |
+
 ** Dependencies
 + Emacs
 + Git
@@ -71,3 +83,12 @@ emacs --batch -f all-the-icons-install-fonts
 + clang
 *** Mac OS
 + xcode CLI tools
+* Workflow
+** Get Things Done
+*Get Things Done (GTD)* is the task management workflow in Pip Boy.
+*** Configurations
+**** Files & Directories
+| Directory               | Purpose                      | Default Path             |
+|-------------------------+------------------------------+--------------------------|
+| leot/root-bib-directory | bib files synced with Zotero | ~/Documents/Library/bib/ |
+| org-gtd-files-directory | org files for GTD workflow   | ~/Documents/gtd/         |
