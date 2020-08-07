@@ -179,7 +179,8 @@ https://github.com/noctuid/general.el
       '(("o" "Overview"
          ((agenda "" ((org-agenda-span 'day)
                       (org-super-agenda-groups
-                       '((:name "Today" :time-grid t :date today :scheduled today :order 1)))))
+                       '((:name "Today" :time-grid t :date today :scheduled today :order 1)
+                         (:name "Due" :deadline today :order 2)))))
           (todo "" ((org-agenda-overriding-header "")
                     (org-super-agenda-groups
                      '((:name "Next to do" :todo "NEXT" :order 1)
@@ -195,14 +196,15 @@ https://github.com/noctuid/general.el
                        (:discard (:tag ("Chore" "Routine" "Daily")))))))))
 
         ("x" "experimental"
-         ((todo "" ((org-agenda-overriding-header nil)
+         ((agenda "" ((org-agenda-span 'week)))
+          (todo "" ((org-agenda-overriding-header "")
                     (org-agenda-remove-tags 1)
                     (org-super-agenda-groups
                      '((:name "Next" :todo "NEXT" :order 1)
                        (:name "Due Today" :deadline today :order 2)
+                       (:name "Due Soon" :deadline future :order 3)
                        (:name "Overdue" :deadline past :face error :order 7)
-                       (:name "Epsilon" :tag "Work" :order 30)
-                       ;; (:name "University" :tag "University" :order 40)
+                       (:name "Waiting" :todo "WAIT" :order 20)
                        (:discard (:anything t))))))))
 
 
@@ -575,10 +577,10 @@ It allows users to access their bibliographical notes in org-roam-directory via
 #+END_SRC
 *** LSP Treemacs
 #+BEGIN_SRC emacs-lisp
-(use-package! lsp-treemacs
-  :defer t
-  :config
-  (lsp-treemacs-sync-mode 1))
+;; (use-package! lsp-treemacs
+;;   :defer t
+;;   :config
+;;   (lsp-treemacs-sync-mode 1))
 #+END_SRC
 
 ** Python
