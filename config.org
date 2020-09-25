@@ -129,21 +129,22 @@ https://github.com/noctuid/general.el
 * org mode
 ** org Directory Structure
   #+BEGIN_SRC emacs-lisp
-(setq! documents-directory "~/Documents" ;; Root Documents directory -- potentially in iCloud drive
+(setq! leot/documents-directory "~/Documents" ;; Root Documents directory -- potentially in iCloud drive
       leot/library-directory (expand-file-name "Library/")
-      leot/root-bib-directory (expand-file-name "Library/bib/" documents-directory)
+      leot/root-bib-directory (expand-file-name "Library/bib/" leot/documents-directory)
+      leot/dropbox-directory "~/Dropbox"
 
       ;; bibtex files
       leot/bibtex-files (directory-files leot/root-bib-directory 'full ".bib")
       reftex-default-bibliography (expand-file-name "master.bib" leot/root-bib-directory)
 
       ;; Root org files directory
-      org-files-directory (expand-file-name "org" documents-directory)
+      org-files-directory (expand-file-name "org" leot/documents-directory)
       org-pub-notes-directory (expand-file-name "pub" org-files-directory)
       leot/bibnotes-file (expand-file-name "bibnotes.org" org-files-directory)
 
       ;; Root org files for task management
-      org-gtd-files-directory (expand-file-name "gtd" documents-directory)
+      org-gtd-files-directory (expand-file-name "gtd" leot/dropbox-directory)
 
       ;; Special purpose files needed for org captures, agenda, etc.
       org-inbox-file-name (expand-file-name "inbox.org" org-gtd-files-directory)
