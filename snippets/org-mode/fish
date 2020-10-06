@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: fish
+# uuid: org-mode-fish
+# key: fish
+# condition: t
+# --
+#+BEGIN_SRC fish
+$0
+#+END_SRC

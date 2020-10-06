@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: nix-sha256
+# uuid: nix-sha256-zero
+# key: nix-sha256
+# condition: t
+# --
+sha256="${4:0000000000000000000000000000000000000000000000000000000000000000}";

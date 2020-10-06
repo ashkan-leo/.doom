@@ -1,0 +1,7 @@
+# key: bash
+# name: bash
+# condition: t
+# --
+#+BEGIN_SRC bash
+$0
+#+END_SRC

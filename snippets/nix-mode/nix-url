@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: nix-url
+# uuid: nix-fetch-url
+# key: nix-url
+# condition: t
+# --
+$1 = fetchurl{
+  url = "$2";
+  sha256 = "${3:0000000000000000000000000000000000000000000000000000000000000000}";
+};

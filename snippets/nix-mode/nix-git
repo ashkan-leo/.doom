@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: nix-git
+# uuid: nix-fetch-git
+# key: nix-git
+# condition: t
+# --
+
+  $1 = pkgs.fetchgit {
+    url="${2:https://github.com/foo/bar }";
+    rev = "${3:HEAD}";
+    sha256="${4:0000000000000000000000000000000000000000000000000000000000000000}";
+  };

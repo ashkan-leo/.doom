@@ -1,0 +1,12 @@
+# key: fish-plugin
+# name: nix-fish-plugin
+# --
+{
+  name = "$1";
+  src = fetchFromGitHub {
+      owner = "$2";
+      repo = "$3";
+      rev= "${4:HEAD}";
+      sha256 = "${5:0000000000000000000000000000000000000000000000000000000000000000}";
+  };
+}
