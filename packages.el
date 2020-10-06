@@ -27,6 +27,6 @@
 
 (unpin! org-roam company-org-roam)
 (unpin! bibtex-completion helm-bibtex ivy-bibtex)
-(unpin! lsp-mode)
+;; (unpin! lsp-mode)
 
 ;; (package! exec-path-from-shell)
