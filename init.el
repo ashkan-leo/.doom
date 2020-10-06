@@ -24,7 +24,8 @@
         +all
         +defaults
         +icons)
-       pretty-code
+       (ligatures
+        +extra)
        unicode
        vc-gutter
        vi-tilde-fringe
@@ -38,7 +39,7 @@
        file-templates
        snippets
        fold
-       (format)
+       (format +onsave)
        multiple-cursors
        parinfer
        rotate-text
@@ -54,6 +55,9 @@
        :term
        eshell
        vterm
+
+       :os
+       macos
 
        :checkers
        (syntax) ;; supports +childframe
@@ -71,7 +75,6 @@
        ;; ein
        gist
        (lsp +peek)
-       macos
        (magit +forge)
        make
        pass

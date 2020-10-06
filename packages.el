@@ -11,6 +11,7 @@
 ;; org exporters
 (package! ox-moderncv :recipe (:host gitlab :repo "Titan-C/org-cv"))
 (package! ox-altacv   :recipe (:host gitlab :repo "Titan-C/org-cv"))
+(package! org-fs-tree :recipe (:host github :repo "ScriptDevil/org-fs-tree"))
 
 ;; ui
 (package! nyan-mode)

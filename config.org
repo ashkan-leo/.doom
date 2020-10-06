@@ -59,9 +59,15 @@ https://github.com/noctuid/general.el
   (setq doom-theme 'doom-solarized-dark
 
         fancy-splash-image (expand-file-name "splash/pipboy.png" doom-private-dir)
-        evil-normal-state-cursor '(box "brown1")
-        evil-insert-state-cursor '(bar "brown")
-        evil-visual-state-cursor '(hollow "orange"))
+
+        ;; Set cursor colors
+        evil-default-cursor '("DodgerBlue1" box)
+        evil-normal-state-cursor  '("gray" box)
+        evil-emacs-state-cursor   '("orange" box)
+        evil-motion-state-cursor  '("SeaGreen1" box)
+        evil-insert-state-cursor  '("white" bar)
+        evil-visual-state-cursor  '("white" hbar)
+        evil-replace-state-cursor '("pink" hbar))
   #+END_SRC
   + [[https://github.com/hlissner/emacs-doom-themes/tree/screenshots][this link]] for a complete list of themes
   + [[https://github.com/hlissner/emacs-doom-themes#install][this link]] for install and configuration guide
@@ -104,8 +110,9 @@ https://github.com/noctuid/general.el
 *** font
 - Set the font
   #+BEGIN_SRC emacs-lisp
-  (setq doom-font (font-spec :family "Fira Code" :size 11))
+  (setq doom-font (font-spec :family "JetBrains Mono" :size 11))
   #+END_SRC
+
 - Enable ligatures -- works only on Emacs Mac port.
   #+BEGIN_SRC emacs-lisp
   (ignore-errors (mac-auto-operator-composition-mode))
@@ -144,7 +151,7 @@ https://github.com/noctuid/general.el
       leot/bibnotes-file (expand-file-name "bibnotes.org" org-files-directory)
 
       ;; Root org files for task management
-      org-gtd-files-directory (expand-file-name "gtd" leot/dropbox-directory)
+      org-gtd-files-directory (expand-file-name "beorg" leot/dropbox-directory)
 
       ;; Special purpose files needed for org captures, agenda, etc.
       org-inbox-file-name (expand-file-name "inbox.org" org-gtd-files-directory)
@@ -205,6 +212,11 @@ https://github.com/noctuid/general.el
                        (:name "Epsilon" :tag "Work" :order 30)
                        ;; (:name "University" :tag "University" :order 40)
                        (:discard (:anything t))))))))
+        ("c" "Categories"
+         ((todo "" ((org-agenda-overriding-header "CATEGORIES")
+                    (org-agenda-remove-tags 1)
+                    (org-super-agenda-groups
+                     '((:auto-category t)))))))
 
 
         ("i" "Inbox"
@@ -227,7 +239,7 @@ https://github.com/noctuid/general.el
 #+BEGIN_SRC emacs-lisp
 (after! org
   (setq! org-directory org-files-directory
-        org-archive-location (expand-file-name "archive.org" org-gtd-files-directory)
+        org-archive-location   (concat  (expand-file-name "archive.org" org-gtd-files-directory) "::")
         org-default-notes-file org-notes-file-name
         org-agenda-files (list org-gtd-files-directory)
 
@@ -652,6 +664,12 @@ Configure pyls. [[https://github.com/emacs-lsp/lsp-mode/blob/master/doc/src/lsp-
   (setq-default flycheck-disabled-checkers '(python-pylint))
   (flycheck-add-next-checker 'lsp '(warning . python-mypy))
   (flycheck-add-next-checker 'lsp '(warning . python-flake8)))
+#+END_SRC
+#+BEGIN_SRC emacs-lisp
+;; (after! lsp-python-ms
+;;   (setq-default flycheck-disabled-checkers '(python-pylint))
+;;   (flycheck-add-next-checker 'lsp '(warning . python-mypy))
+;;   (flycheck-add-next-checker 'lsp '(warning . python-flake8)))
 #+END_SRC
 
 - Fix company issue showing garbage result in lsp-python-ms. From [[https://github.com/emacs-lsp/lsp-python-ms/issues/79][this github
