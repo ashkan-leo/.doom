@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: yabai-blacklist-app
+# uuid: 
+# key: ybl
+# condition: t
+# --
+yabai -m rule --add app="$1" manage=off

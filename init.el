@@ -5,10 +5,11 @@
        (company) ;; supports +childframe
        (ivy
         +prescient
+        +childframe
         +icons) ;; supports +childframe
-       ;; (helm)
 
        :ui
+       minimap
        workspaces
        hydra
        deft
@@ -58,10 +59,15 @@
 
        :os
        macos
+       tty
 
        :checkers
-       (syntax) ;; supports +childframe
-       spell
+       (spell
+        +flyspell
+        +hunspell)
+       grammar
+       (syntax
+        +childframe)
 
        :tools
        (lookup
@@ -88,7 +94,7 @@
        json
        data
        emacs-lisp
-       (haskell +dante)
+       (haskell +lsp)
        (java +meghanada)
        javascript
        julia
@@ -101,6 +107,7 @@
        nix
        (org
         +present
+        +pretty
         +roam
         +pomodoro
         +pandoc

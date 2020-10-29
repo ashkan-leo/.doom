@@ -8,6 +8,9 @@
 - [[#ui][UI]]
   - [[#theme][Theme]]
   - [[#editor][Editor]]
+- [[#terminal][Terminal]]
+  - [[#vterm][vterm]]
+- [[#spell-checker][Spell Checker]]
 - [[#dired][Dired]]
 - [[#projectile][Projectile]]
 - [[#data][data]]
@@ -117,6 +120,17 @@ https://github.com/noctuid/general.el
   #+BEGIN_SRC emacs-lisp
   (ignore-errors (mac-auto-operator-composition-mode))
   #+END_SRC
+* Terminal
+** vterm
+- Set =fish= to be the default terminal.
+  #+BEGIN_SRC emacs-lisp
+  (setq vterm-shell "~/.nix-profile/bin/fish")
+  #+END_SRC
+* Spell Checker
+- set personal dictionary
+  #+begin_src emacs-lisp
+  (setq ispell-personal-dictionary "/Users/ashkanaleali/Dropbox/stuff/ispell/english.pws")
+  #+end_src
 * Dired
 #+BEGIN_SRC emacs-lisp
 (setq dired-dwim-target t)
@@ -241,116 +255,121 @@ https://github.com/noctuid/general.el
 #+BEGIN_SRC emacs-lisp
 (after! org
   (setq! org-directory org-files-directory
-        org-archive-location   (concat  (expand-file-name "archive.org" org-gtd-files-directory) "::")
-        org-default-notes-file org-notes-file-name
-        org-agenda-files (list org-gtd-files-directory)
+         org-archive-location   (concat  (expand-file-name "archive.org" org-gtd-files-directory) "::")
+         org-default-notes-file org-notes-file-name
+         org-agenda-files (list org-gtd-files-directory)
 
-        ;; org-roam configuration
-        org-roam-directory org-files-directory
-
-
-        org-tags-exclude-from-inheritance '("Project")
-        org-agenda-show-inherited-tags t
-
-        ;; Set the TODO keywords GTD style
-        org-todo-keywords '((sequence "TODO(t)"
-                                      "NEXT(n)"
-                                      "WAIT(w)"
-                                      "SOMEDAY(h)"
-                                      "PROJECT(p)"
-                                      "|"
-                                      "DONE(d)"
-                                      "CANCELLED(c)")
-                            (sequence "[ ](T)"
-                                      "[?](W)"
-                                      "[-](N)"
-                                      "|"
-                                      "[X](x)"))
-
-        ;; Theme the TODO keywords
-        org-todo-keyword-faces '(("NEXT" . (:foreground "magenta" :weight "bold"))
-                                 ("SOMEDAY" . +org-todo-onhold)
-                                 ("WAIT" . +org-todo-onhold)
-                                 ("PROJECT" . (:foreground "violet" :weight "bold"))
-                                 ("[-]" . +org-todo-active)
-                                 ("[?]" . +org-todo-onhold))
-
-        ;; Define the org-mode capture buffer
-        org-capture-templates `(("i"
-                                 "inbox"
-                                 entry
-                                 (file+headline ,org-inbox-file-name "Inbox")
-                                 "* TODO %?\n%U\n%a\n")
-                                ("e"
-                                 "event"
-                                 entry
-                                 (file, org-meeting-file-name)
-                                 "* %? \n%^T\n%a\n")
-                                ("n"
-                                 "notes"
-                                 entry
-                                 (file+headline ,org-notes-file-name "Notes")
-                                 "* %?\n%U\n%a\n")
-                                ("p"
-                                 "Protocol"
-                                 entry
-                                 (file+headline ,org-notes-file-name "Notes")
-                                 "* %? [[%:link][%:description]]\n%U\n#+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n\n")
-                                ("L"
-                                 "Protocol Link"
-                                 entry
-                                 (file+headline ,org-notes-file-name "Notes")
-                                 "* %?[[%:link][%:description]]\n%U\n"))
-
-        ;; (defun leot/org-agenda-process-inbox-item ()
-        ;;   "Process a single item in the org-agenda"
-        ;;   (org-with-wide-buffer
-        ;;    (org-agenda-set-tags)
-        ;;    (org-agenda-priority)
-        ;;    (call-interactively 'org-agenda-set-effort)
-        ;;    (org-agenda-refile nil nil t)))
+         ;; org-roam configuration
+         org-roam-directory org-files-directory
 
 
-        ;; Define the tags
-        org-tag-alist '((:startgroup . nil)
-                        ("Work" . ?w)
-                        ("Immigration" . ?m)
-                        ("University" . ?u)
-                        (:endgroup)
-                        (:startgroup . nil)
-                        ("Errand" . ?e)
-                        ("Friends" . ?f)
-                        (:endgroup . nil)
-                        (:startgroup . nil)
-                        ("Baz" . ?b)
-                        ("Tooling" . ?t)
-                        ("Read" . ?r)
-                        (:endgroup . nil)
-                        (:startgroup . "Meta")
-                        ("Project" . ?p)
-                        (:endgroup . nil))
+         org-tags-exclude-from-inheritance '("Project")
+         org-agenda-show-inherited-tags t
 
-        ;; Configure refile behavior
+         ;; Set the TODO keywords GTD style
+         org-todo-keywords '((sequence "TODO(t)"
+                                       "NEXT(n)"
+                                       "WAIT(w)"
+                                       "SOMEDAY(h)"
+                                       "PROJECT(p)"
+                                       "|"
+                                       "DONE(d)"
+                                       "CANCELLED(c)")
+                             (sequence "[ ](T)"
+                                       "[?](W)"
+                                       "[-](N)"
+                                       "|"
+                                       "[X](x)"))
 
-        ;; org-refile-targets (quote (("next.org" :maxlevel . 0)
-        ;;                            ("someday.org" :maxlevel . 1)
-        ;;                            ("reading.org" :maxlevel . 2)
-        ;;                            ("projects.org" :maxlevel . 2)))
-        org-refile-allow-creating-parent-nodes 'confirm
+         ;; Theme the TODO keywords
+         org-todo-keyword-faces '(("NEXT" . (:foreground "magenta" :weight "bold"))
+                                  ("SOMEDAY" . +org-todo-onhold)
+                                  ("WAIT" . +org-todo-onhold)
+                                  ("PROJECT" . (:foreground "violet" :weight "bold"))
+                                  ("[-]" . +org-todo-active)
+                                  ("[?]" . +org-todo-onhold))
 
-        ;; log the time of doing each task
-        org-log-done 'time
-        org-log-into-drawer t
-        org-clock-persist t
-        org-log-state-notes-insert-after-drawers t
+         ;; Define the org-mode capture buffer
+         org-capture-templates `(("i"
+                                  "Inbox"
+                                  entry
+                                  (file ,org-inbox-file-name)
+                                  "* TODO %?\n%U\n")
+                                 ("I"
+                                  "Inbox This Line"
+                                  entry
+                                  (file ,org-inbox-file-name)
+                                  "* TODO %?\n%U\n%a\n")
+                                 ("e"
+                                  "event"
+                                  entry
+                                  (file, org-meeting-file-name)
+                                  "* %? \n%^T\n%a\n")
+                                 ("n"
+                                  "notes"
+                                  entry
+                                  (file ,org-notes-file-name)
+                                  "* %?\n%U\n%a\n")
+                                 ("p"
+                                  "Protocol"
+                                  entry
+                                  (file+headline ,org-notes-file-name "Notes")
+                                  "* %? [[%:link][%:description]]\n%U\n#+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n\n")
+                                 ("L"
+                                  "Protocol Link"
+                                  entry
+                                  (file+headline ,org-notes-file-name "Notes")
+                                  "* %?[[%:link][%:description]]\n%U\n"))
 
-        ;; org-mode aesthetics
-        org-hide-emphasis-markers t
-        org-fontify-done-headline t
-        org-fontify-whole-heading-line t
-        org-fontify-todo-headline t
-        org-fontify-emphasized-text t
-        org-fontify-quote-and-verse-blocks t)
+         ;; (defun leot/org-agenda-process-inbox-item ()
+         ;;   "Process a single item in the org-agenda"
+         ;;   (org-with-wide-buffer
+         ;;    (org-agenda-set-tags)
+         ;;    (org-agenda-priority)
+         ;;    (call-interactively 'org-agenda-set-effort)
+         ;;    (org-agenda-refile nil nil t)))
+
+
+         ;; Define the tags
+         org-tag-alist '((:startgroup . nil)
+                         ("Work" . ?w)
+                         ("Immigration" . ?m)
+                         ("University" . ?u)
+                         (:endgroup)
+                         (:startgroup . nil)
+                         ("Errand" . ?e)
+                         ("Friends" . ?f)
+                         (:endgroup . nil)
+                         (:startgroup . nil)
+                         ("Baz" . ?b)
+                         ("Tooling" . ?t)
+                         ("Read" . ?r)
+                         (:endgroup . nil)
+                         (:startgroup . "Meta")
+                         ("Project" . ?p)
+                         (:endgroup . nil))
+
+         ;; Configure refile behavior
+
+         ;; org-refile-targets (quote (("next.org" :maxlevel . 0)
+         ;;                            ("someday.org" :maxlevel . 1)
+         ;;                            ("reading.org" :maxlevel . 2)
+         ;;                            ("projects.org" :maxlevel . 2)))
+         org-refile-allow-creating-parent-nodes 'confirm
+
+         ;; log the time of doing each task
+         org-log-done 'time
+         org-log-into-drawer t
+         org-clock-persist t
+         org-log-state-notes-insert-after-drawers t
+
+         ;; org-mode aesthetics
+         org-hide-emphasis-markers t
+         org-fontify-done-headline t
+         org-fontify-whole-heading-line t
+         org-fontify-todo-headline t
+         org-fontify-emphasized-text t
+         org-fontify-quote-and-verse-blocks t)
 
   ;; set key bindings
   (map! :map org-mode-map
@@ -674,40 +693,6 @@ Configure pyls. [[https://github.com/emacs-lsp/lsp-mode/blob/master/doc/src/lsp-
 ;;   (flycheck-add-next-checker 'lsp '(warning . python-flake8)))
 #+END_SRC
 
-- Fix company issue showing garbage result in lsp-python-ms. From [[https://github.com/emacs-lsp/lsp-python-ms/issues/79][this github
-  issue.]]
-#+BEGIN_SRC emacs-lisp
-;; (after! lsp-python-ms
-;;   (add-to-list 'company-lsp-filter-candidates '(mspyls . t))
-;;   (setq company-lsp-cache-candidates 'auto)
-
-;;   (defun company-lsp--on-completion (response prefix)
-;;     "Handle completion RESPONSE.
-
-;;   PREFIX is a string of the prefix when the completion is requested.
-
-;;   Return a list of strings as the completion candidates."
-;;     (let* ((incomplete (and (hash-table-p response) (gethash "isIncomplete" response)))
-;;            (items (cond ((hash-table-p response) (gethash "items" response))
-;;                         ((sequencep response) response)))
-;;            (candidates (mapcar (lambda (item)
-;;                                  (company-lsp--make-candidate item prefix))
-;;                                (lsp--sort-completions items)))
-;;            (server-id (lsp--client-server-id (lsp--workspace-client lsp--cur-workspace)))
-;;            (should-filter (or (eq company-lsp-cache-candidates 'auto)
-;;                               (and (null company-lsp-cache-candidates)
-;;                                    (company-lsp--get-config company-lsp-filter-candidates server-id)))))
-;;       (when (null company-lsp--completion-cache)
-;;         (add-hook 'company-completion-cancelled-hook #'company-lsp--cleanup-cache nil t)
-;;         (add-hook 'company-completion-finished-hook #'company-lsp--cleanup-cache nil t))
-;;       (when (eq company-lsp-cache-candidates 'auto)
-;;         ;; Only cache candidates on auto mode. If it's t company caches the
-;;         ;; candidates for us.
-;;         (company-lsp--cache-put prefix (company-lsp--cache-item-new candidates incomplete)))
-;;       (if should-filter
-;;           (company-lsp--filter-candidates candidates prefix)
-;;         candidates))))
-#+END_SRC
 ** Scala
 - Register to projectile
   #+BEGIN_SRC emacs-lisp
