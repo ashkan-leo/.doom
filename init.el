@@ -2,7 +2,7 @@
 
 (doom! :completion
 
-       (company) ;; supports +childframe
+       (company +childframe) ;; supports +childframe
        (ivy
         +prescient
         +childframe
@@ -40,7 +40,7 @@
        file-templates
        snippets
        fold
-       (format +onsave)
+       format
        multiple-cursors
        parinfer
        rotate-text
