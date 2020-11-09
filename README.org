@@ -1,8 +1,4 @@
-#+TITLE:   Pip Boy Emacs
-
-Pip boy Emacs is my literate private configuration files for Doom Emacs. It's
-called pip boy since I like Fallout very much and would like to make Emacs as useful
-as a pip boy!
+#+TITLE: Doom Emacs Private Configurations
 
 * Table of Content :TOC_3:
 - [[#introduction][Introduction]]
@@ -67,8 +63,8 @@ emacs --batch -f all-the-icons-install-fonts
 #+END_SRC
 
 ** Directory Structure
-Pip boy assumes numerous directories already exist -- mainly for org-mode
-related functionalities:
+I assumes numerous directories already exist -- mainly for org-mode related
+functionalities:
 | Directory               | Purpose                      | Default Path             |
 |-------------------------+------------------------------+--------------------------|
 | leot/root-bib-directory | bib files synced with Zotero | ~/Documents/Library/bib/ |
