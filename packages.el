@@ -3,7 +3,6 @@
 ;; org extensions
 (package! org-drill)
 (package! org-super-agenda)
-;; (package! org-fancy-priorities)
 (package! org-ref)
 (package! org-noter-pdftools)
 (package! org-roam-bibtex :recipe (:host github :repo "org-roam/org-roam-bibtex"))

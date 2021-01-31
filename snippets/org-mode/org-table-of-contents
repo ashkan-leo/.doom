@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: org-table-of-contents
+# uuid: org-toc
+# key: toc
+# condition: t
+# --
+
+* Table of Contents :TOC_${1:3}:noexport:

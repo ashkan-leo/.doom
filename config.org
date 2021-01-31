@@ -2,29 +2,34 @@
 
 * Table of Contents :TOC_2:
 - [[#preamble][Preamble]]
-  - [[#general][General]]
-- [[#os][OS]]
+  - [[#lexical-bindings][Lexical Bindings]]
+  - [[#personal-information][Personal Information]]
+- [[#os-specific-settings][OS Specific Settings]]
   - [[#mac-os][Mac OS]]
 - [[#ui][UI]]
-  - [[#theme][Theme]]
+  - [[#splash-image][Splash Image]]
+  - [[#main-theme][Main Theme]]
+  - [[#mouse-cursor-color][Mouse Cursor Color]]
+  - [[#evil-cursor-state-colors][Evil Cursor State Colors]]
+  - [[#modeline][Modeline]]
+  - [[#treemacs][Treemacs]]
   - [[#editor][Editor]]
 - [[#terminal][Terminal]]
   - [[#vterm][vterm]]
 - [[#spell-checker][Spell Checker]]
-- [[#dired][Dired]]
+- [[#dired][dired]]
 - [[#projectile][Projectile]]
 - [[#data][data]]
   - [[#dash][dash]]
 - [[#org-mode][org mode]]
   - [[#org-directory-structure][org Directory Structure]]
-  - [[#org-super-agenda][org-super-agenda]]
+  - [[#org-agenda][org Agenda]]
   - [[#configure-org][Configure org]]
   - [[#org-ref][org-ref]]
   - [[#helm-bibtex--ivy-bibtex][helm-bibtex & ivy-bibtex]]
   - [[#org-noter][org-noter]]
   - [[#org-roam-bibtex][org-roam-bibtex]]
   - [[#enable-minor-modes][Enable minor modes]]
-  - [[#org-priorities][org-priorities]]
   - [[#org-export][org-export]]
   - [[#org-drill][org-drill]]
   - [[#deft][Deft]]
@@ -37,150 +42,164 @@
   - [[#haskell][Haskell]]
 
 * Preamble
+** Lexical Bindings
 #+BEGIN_SRC emacs-lisp
 ;;; -*- lexical-binding: t; -*-
 #+END_SRC
-** General
-https://github.com/noctuid/general.el
+** Personal Information
 #+BEGIN_SRC emacs-lisp
-(setq user-full-name "Ashkan Aleali"
-      user-mail-address "ashkan.aleali@gmail.com")
-(defalias 'gsetq #'general-setq)
+;; (setq! user-full-name "Ashkan Aleali"
+;;        user-mail-address "ashkan.aleali@gmail.com")
 #+END_SRC
-* OS
+
+* OS Specific Settings
 ** Mac OS
+*** Set ⌘ ⌥ ⌃ Keys
 #+BEGIN_SRC emacs-lisp
-(setq mac-option-modifier 'meta)
-(setq mac-command-modifier 'super)
+(setq! mac-option-modifier 'meta
+       mac-right-option-modifier 'meta
+       mac-command-modifier 'super
+       mac-right-command-modifier 'super)
 #+END_SRC
 * UI
-** Theme
-*** Main Theme
-- Set the theme, splash image, and mouse pointer color.
-  #+BEGIN_SRC emacs-lisp
-  (set-mouse-color "red")
-  (setq doom-theme 'doom-solarized-dark
+** Splash Image
+#+begin_src emacs-lisp
+(setq! fancy-splash-image (expand-file-name "splash/pipboy.png" doom-private-dir))
+#+end_src
+** Main Theme
+I'm obsessed with the dark solarized theme, but the it looks blue in my
+terminal. So I use zenburn if I'm in the terminal.
 
-        fancy-splash-image (expand-file-name "splash/pipboy.png" doom-private-dir)
-
-        ;; Set cursor colors
-        evil-default-cursor '("DodgerBlue1" box)
-        evil-normal-state-cursor  '("gray" box)
-        evil-emacs-state-cursor   '("orange" box)
-        evil-motion-state-cursor  '("SeaGreen1" box)
-        evil-insert-state-cursor  '("white" bar)
-        evil-visual-state-cursor  '("white" hbar)
-        evil-replace-state-cursor '("pink" hbar))
-  #+END_SRC
-  + [[https://github.com/hlissner/emacs-doom-themes/tree/screenshots][this link]] for a complete list of themes
-  + [[https://github.com/hlissner/emacs-doom-themes#install][this link]] for install and configuration guide
-
-*** Modeline
-- Configure doom-Modeline
-  #+BEGIN_SRC emacs-lisp
-  (setq doom-modeline-icon (display-graphic-p)
-        doom-modeline-major-mode-icon t
-        doom-modeline-lsp t
-        doom-modeline-buffer-file-name-style 'truncate-with-project
-        doom-modeline-buffer-encoding nil)
-  #+END_SRC
-- Show battery usage
-  #+BEGIN_SRC emacs-lisp
-  (display-battery-mode)
-  #+END_SRC
-- Disable buffer size
-  #+BEGIN_SRC emacs-lisp
-  (size-indication-mode nil)
-  #+END_SRC
-    
-*** Treemacs
-- Use the colorful treemacs theme and doom additions
+#+begin_src emacs-lisp
+;; (if (display-graphic-p)
+;;     (progn (setq! doom-theme 'doom-solarized-dark))
+;;   (setq! doom-theme 'doom-zenburn))
+(setq! doom-theme (if (display-graphic-p) 'doom-solarized-dark 'doom-zenburn))
+;; (if (display-graphic-p)
+;;     (setq! doom-theme 'doom-solarized-dark)
+;;   (setq! doom-theme 'doom-zenburn))
+#+end_src
+** Mouse Cursor Color
+#+begin_src emacs-lisp
+(set-mouse-color "red")
+#+end_src
+** Evil Cursor State Colors
+#+begin_src emacs-lisp
+(setq! evil-default-cursor '("DodgerBlue1" box)
+       evil-normal-state-cursor  '("gray" box)
+       evil-emacs-state-cursor   '("orange" box)
+       evil-motion-state-cursor  '("SeaGreen1" box)
+       evil-insert-state-cursor  '("white" bar)
+       evil-visual-state-cursor  '("white" hbar)
+       evil-replace-state-cursor '("pink" hbar))
+#+end_src
+** Modeline
+*** Configure doom-Modeline
+#+BEGIN_SRC emacs-lisp
+(setq doom-modeline-icon (display-graphic-p)
+      doom-modeline-major-mode-icon t
+      doom-modeline-lsp t
+      doom-modeline-buffer-file-name-style 'truncate-with-project
+      doom-modeline-buffer-encoding nil)
+#+END_SRC
+*** Show battery usage
+#+BEGIN_SRC emacs-lisp
+(display-battery-mode)
+#+END_SRC
+*** Disable buffer size
+#+BEGIN_SRC emacs-lisp
+(size-indication-mode nil)
+#+END_SRC
+** Treemacs
++ Use the colorful treemacs theme and doom additions
    #+BEGIN_SRC emacs-lisp
    (setq doom-themes-treemacs-theme "doom-colors")
    (doom-themes-treemacs-config)
    #+END_SRC
-- hide files ignored by Git from treemacs
++ hide files ignored by Git from treemacs
   #+BEGIN_SRC emacs-lisp
   (after! treemacs
     (add-to-list 'treemacs-pre-file-insert-predicates #'treemacs-is-file-git-ignored?))
   #+END_SRC
 ** Editor
-*** line numbers
-- Do not show line numbers. It slows down Emacs.
+*** Line Numbers
++ Do not show line numbers. It slows down Emacs.
   #+BEGIN_SRC emacs-lisp
-  (setq display-line-numbers-type nil)
+  (setq display-line-numbers-type t)
   #+END_SRC
-*** font
-- Set the font
+*** Font
++ Set the font
   #+BEGIN_SRC emacs-lisp
   (setq doom-font (font-spec :family "JetBrains Mono" :size 11))
   #+END_SRC
-
-- Enable ligatures -- works only on Emacs Mac port.
++ Enable ligatures -- works only on Emacs Mac port.
   #+BEGIN_SRC emacs-lisp
   (ignore-errors (mac-auto-operator-composition-mode))
   #+END_SRC
 * Terminal
 ** vterm
-- Set =fish= to be the default terminal.
++ Set =fish= to be the default shell.
   #+BEGIN_SRC emacs-lisp
   (setq vterm-shell "~/.nix-profile/bin/fish")
   #+END_SRC
 * Spell Checker
-- set personal dictionary
++ set personal ~ispell~ dictionary.
   #+begin_src emacs-lisp
   (setq ispell-personal-dictionary "/Users/ashkanaleali/Dropbox/stuff/ispell/english.pws")
   #+end_src
-* Dired
+* dired
++ Enable the DWIM (/Do What I Mean/) mode, which makes life much easier when moving stuff around in
+  the ~dired~ mode.
 #+BEGIN_SRC emacs-lisp
-(setq dired-dwim-target t)
+(setq! dired-dwim-target t)
 #+END_SRC
 * Projectile
-- Set project search path
++ Set projectile search path to add new projects.
   #+BEGIN_SRC emacs-lisp
-  (setq projectile-project-search-path '("~/w"))
+  (setq! projectile-project-search-path '("~/w" "~/Workspace" "~/Workspace/REPO"))
   #+END_SRC
 * data
 ** dash
-- Search Dash GUI from emacs. Pretty handy!
++ Search Dash GUI from Emacs. Pretty handy!
 #+BEGIN_SRC emacs-lisp
 (map! "\C-cd" 'dash-at-point)
 (map! "\C-ce" 'dash-at-point-with-docset)
 #+END_SRC
 * org mode
 ** org Directory Structure
-  #+BEGIN_SRC emacs-lisp
-(setq! leot/documents-directory "~/Documents" ;; Root Documents directory -- potentially in iCloud drive
-      leot/library-directory (expand-file-name "Library/")
-      leot/root-bib-directory (expand-file-name "Library/bib/" leot/documents-directory)
-      leot/dropbox-directory "~/Dropbox"
-
-      ;; bibtex files
-      leot/bibtex-files (directory-files leot/root-bib-directory 'full ".bib")
-      reftex-default-bibliography (expand-file-name "master.bib" leot/root-bib-directory)
-
-      ;; Root org files directory
-      org-files-directory (expand-file-name "org" leot/documents-directory)
-      org-pub-notes-directory (expand-file-name "pub" org-files-directory)
-      leot/bibnotes-file (expand-file-name "bibnotes.org" org-files-directory)
-
-      ;; Root org files for task management
-      org-gtd-files-directory (expand-file-name "beorg" leot/dropbox-directory)
-
-      ;; Special purpose files needed for org captures, agenda, etc.
-      org-inbox-file-name (expand-file-name "inbox.org" org-gtd-files-directory)
-      org-notes-file-name (expand-file-name "notes.org" org-gtd-files-directory)
-      org-meeting-file-name (expand-file-name "meeting.org" org-gtd-files-directory))
-  #+END_SRC
-*** org-refile directories
 #+BEGIN_SRC emacs-lisp
-(setq! org-refile-targets (quote (("next.org" :maxlevel . 1)
-                                 ("someday.org" :level . 2)
-                                 ("reading.org" :level . 2)
-                                 ("projects.org" :level . 2))))
-#+END_SRC
+(setq! leot/documents-directory "~/Documents" ;; Root Documents directory -- potentially in iCloud drive
+       leot/dropbox-directory "~/Dropbox"
+       leot/library-directory (expand-file-name "Library/")
+       leot/root-bib-directory (expand-file-name "Library/bib/" leot/documents-directory)
+       leot/bibtex-files (directory-files leot/root-bib-directory 'full ".bib")
 
-** org-super-agenda
+       reftex-default-bibliography (expand-file-name "master.bib" leot/root-bib-directory)
+       ;; Root org files directory
+       org-files-directory (expand-file-name "org" leot/documents-directory)
+       org-pub-notes-directory (expand-file-name "pub" org-files-directory)
+
+       ;; Root org files for task management
+       org-gtd-files-directory (expand-file-name "beorg" leot/dropbox-directory)
+
+       ;; Special purpose files needed for my GTD workflow
+       ;; used for the agenda, capture, refile, etc.
+       org-inbox-file-name (expand-file-name "inbox.org" org-gtd-files-directory)
+       org-tickler-file-name (expand-file-name "tickler.org" org-gtd-files-directory)
+       org-someday-file-name (expand-file-name "someday.org" org-gtd-files-directory)
+       org-gtd-file-name (expand-file-name "gtd.org" org-gtd-files-directory)
+
+       ;; The following files are not used right now
+       org-notes-file-name (expand-file-name "notes.org" org-gtd-files-directory)
+       org-meeting-file-name (expand-file-name "meeting.org" org-gtd-files-directory))
+#+END_SRC
+*** org Refile directories
+#+BEGIN_SRC emacs-lisp
+(setq! org-refile-targets '((org-gtd-file-name :maxlevel . 3)
+                            (org-someday-file-name :level . 1)
+                            (org-tickler-file-name :maxlevel . 2)))
+#+END_SRC
+** org Agenda
 #+BEGIN_SRC emacs-lisp
 (use-package! org-super-agenda
   :defer
@@ -262,24 +281,14 @@ https://github.com/noctuid/general.el
          ;; org-roam configuration
          org-roam-directory org-files-directory
 
-
          org-tags-exclude-from-inheritance '("Project")
          org-agenda-show-inherited-tags t
 
          ;; Set the TODO keywords GTD style
-         org-todo-keywords '((sequence "TODO(t)"
-                                       "NEXT(n)"
-                                       "WAIT(w)"
-                                       "SOMEDAY(h)"
-                                       "PROJECT(p)"
-                                       "|"
-                                       "DONE(d)"
-                                       "CANCELLED(c)")
-                             (sequence "[ ](T)"
-                                       "[?](W)"
-                                       "[-](N)"
-                                       "|"
-                                       "[X](x)"))
+         org-todo-keywords '((sequence "TODO(t)" "NEXT(n)" "WAITING(w)" "SOMEDAY(h)" "PROJECT(p)"
+                                       "|" "DONE(d)" "CANCELLED(c)")
+                             (sequence "[ ](T)" "[?](W)" "[-](N)"
+                                       "|" "[X](x)"))
 
          ;; Theme the TODO keywords
          org-todo-keyword-faces '(("NEXT" . (:foreground "magenta" :weight "bold"))
@@ -290,26 +299,21 @@ https://github.com/noctuid/general.el
                                   ("[?]" . +org-todo-onhold))
 
          ;; Define the org-mode capture buffer
-         org-capture-templates `(("i"
-                                  "Inbox"
-                                  entry
-                                  (file ,org-inbox-file-name)
-                                  "* TODO %?\n%U\n")
-                                 ("I"
-                                  "Inbox This Line"
-                                  entry
-                                  (file ,org-inbox-file-name)
-                                  "* TODO %?\n%U\n%a\n")
-                                 ("e"
-                                  "event"
-                                  entry
-                                  (file, org-meeting-file-name)
-                                  "* %? \n%^T\n%a\n")
-                                 ("n"
-                                  "notes"
-                                  entry
-                                  (file ,org-notes-file-name)
-                                  "* %?\n%U\n%a\n")
+         org-capture-templates `(("i" "Inbox" entry
+                                  (file+headline org-inbox-file-name "Tasks")
+                                  "* TODO %i%?\n%U")
+
+                                 ("I" "Inbox This Line" entry
+                                  (file+headline org-inbox-file-name "Tasks")
+                                  "* TODO %i%?\n%U\n%a")
+
+                                 ("t" "Tickler" entry
+                                  (file+headline org-tickler-file-name "Tickler")
+                                  "* %i%?\n%U")
+
+                                 ("T" "Tickler This Line" entry
+                                  (file+headline org-tickler-file-name "Tickler")
+                                  "* %i%?\n%U\n%a")
                                  ("p"
                                   "Protocol"
                                   entry
@@ -330,31 +334,42 @@ https://github.com/noctuid/general.el
          ;;    (org-agenda-refile nil nil t)))
 
 
-         ;; Define the tags
+         ;; Define the tags available everywhere
          org-tag-alist '((:startgroup . nil)
-                         ("Work" . ?w)
-                         ("Immigration" . ?m)
-                         ("University" . ?u)
+                         ("@work" . ?w)
+                         ("@home" . ?h)
+                         ("@business" . ?b)
+                         ("@university" . ?u)
+                         ("@travel" . ?t)
                          (:endgroup)
+
                          (:startgroup . nil)
-                         ("Errand" . ?e)
-                         ("Friends" . ?f)
+                         ("@errand". ?r)
+                         ("@phone" . ?p)
+                         ("@email" . ?e)
                          (:endgroup . nil)
+
                          (:startgroup . nil)
-                         ("Baz" . ?b)
-                         ("Tooling" . ?t)
-                         ("Read" . ?r)
+                         ("emacs")
+                         ("tools")
+                         ("server")
                          (:endgroup . nil)
-                         (:startgroup . "Meta")
-                         ("Project" . ?p)
+
+                         (:startgroup . nil)
+                         ("read")
+                         ("write")
+                         ("study")
+                         ("implement")
+                         ("research")
+                         (:endgroup . nil)
+
+                         (:startgroup . nil)
+                         ("TOC_1" . ?1)
+                         ("TOC_2" . ?2)
+                         ("TOC_3" . ?3)
+                         ("TOC_4" . ?4)
                          (:endgroup . nil))
 
-         ;; Configure refile behavior
-
-         ;; org-refile-targets (quote (("next.org" :maxlevel . 0)
-         ;;                            ("someday.org" :maxlevel . 1)
-         ;;                            ("reading.org" :maxlevel . 2)
-         ;;                            ("projects.org" :maxlevel . 2)))
          org-refile-allow-creating-parent-nodes 'confirm
 
          ;; log the time of doing each task
@@ -464,19 +479,10 @@ It allows users to access their bibliographical notes in org-roam-directory via
   (add-hook! 'org-mode-hook #'auto-fill-mode)
   #+end_src
 
-** org-priorities
-  #+BEGIN_SRC elisp
-  ;; (use-package! org-fancy-priorities
-  ;;   :hook
-  ;;   (org-mode . org-fancy-priorities-mode)
-  ;;   :config
-  ;;   (setq org-fancy-priorities-list '("⚡" "⬆" "⬇" "☕")))
-  #+END_SRC
-
 ** org-export
 *** LaTex
-- Enable bibtex compilation
-- Set log files to intermediate files generated by the exporter so org-export
++ Enable bibtex compilation
++ Set log files to intermediate files generated by the exporter so org-export
   delete these after exporting
 #+BEGIN_SRC emacs-lisp
 (setq org-latex-pdf-process
@@ -490,12 +496,12 @@ It allows users to access their bibliographical notes in org-roam-directory via
         "pygtex" "pygstyle"))
 #+END_SRC
 
-- [ ] Set LaTex export engine to be XeLaTex
++ [ ] Set LaTex export engine to be XeLaTex
 
 *** TODO Resume and CV
 **** org-CV
-***** LaTex backends
-- Define two backends to export resumes to latex.
+***** LaTex Backends
++ Define two backends to export resumes to latex.
 #+BEGIN_SRC emacs-lisp
 (use-package! ox-moderncv
   :defer
@@ -557,20 +563,20 @@ It allows users to access their bibliographical notes in org-roam-directory via
 #+END_SRC
 
 * LaTeX
-- Use xalatex by default
++ Use xalatex by default
   #+BEGIN_SRC emacs-lisp
    (setq-default TeX-engine 'xetex)
   #+END_SRC
-- Always Generate PDF for TeX files
++ Always Generate PDF for TeX files
   #+BEGIN_SRC emacs-lisp
   (setq-default TeX-PDF-mode t)
   #+END_SRC
-- Use luatex in latex-preview-pate
++ Use luatex in latex-preview-pate
   #+BEGIN_SRC emacs-lisp
   (setq pdf-latex-command "xetex")
   #+END_SRC
 * Flycheck
-- Check syntax automatically.
++ Check syntax automatically.
   #+BEGIN_SRC emacs-lisp
   (after! flycheck
     (setq flycheck-check-syntax-automatically '(mode-enabled save idle-change)))
@@ -579,33 +585,31 @@ It allows users to access their bibliographical notes in org-roam-directory via
 ** LSP
 *** Key Bindings
 #+BEGIN_SRC emacs-lisp
-(map! :leader
-      (:prefix-map ("l" . "lsp")
-        :desc "doc" "d" #'lsp-ui-doc-glance
-        :desc "find reference" "f" #'lsp-ui-peek-find-references))
+;; (map! :leader
+;;       (:prefix-map ("l" . "lsp")
+;;         :desc "doc" "d" #'lsp-ui-doc-glance
+;;         :desc "find reference" "f" #'lsp-ui-peek-find-references))
 #+END_SRC
 *** LSP Configurations
 #+BEGIN_SRC emacs-lisp
-;; (after! lsp
-;;   (setq company-minimum-prefix-length   1
-;;         company-idle-delay              0.0
-;;         company-tooltip-idle-delay      0.2
-;;         lsp-prefer-capf                 t
-;;         lsp-eldoc-render-all            nil
-;;         lsp-signature-auto-activate     t
-;;         lsp-lens-auto-enable            t))
+(after! lsp
+  (setq company-minimum-prefix-length   1
+        company-idle-delay              0.0
+        company-tooltip-idle-delay      0.5
+        lsp-eldoc-render-all            nil
+        lsp-lens-enable            t))
 #+END_SRC
 
 *** LSP UI Configurations
 #+BEGIN_SRC emacs-lisp
-(after! lsp-ui
-  (setq lsp-ui-sideline-enable         nil
-        lsp-ui-doc-include-signature   t
-        lsp-ui-doc-max-height          15
-        lsp-ui-doc-max-width           150
-        lsp-ui-doc-position            'at-point
-        lsp-ui-peek-always-show        t
-        lsp-ui-peek-fontify            'always))
+;; (after! lsp-ui
+;;   (setq lsp-ui-sideline-enable         nil
+;;         lsp-ui-doc-include-signature   t
+;;         lsp-ui-doc-max-height          15
+;;         lsp-ui-doc-max-width           150
+;;         lsp-ui-doc-position            'at-point
+;;         lsp-ui-peek-always-show        t
+;;         lsp-ui-peek-fontify            'always))
 #+END_SRC
 *** LSP Treemacs
 #+BEGIN_SRC emacs-lisp
@@ -616,9 +620,9 @@ It allows users to access their bibliographical notes in org-roam-directory via
 #+END_SRC
 
 ** Python
-- Set flycheck checkers.
-- Enable rainbow delimiters.
-- Configure REPLs.
++ Set flycheck checkers.
++ Enable rainbow delimiters.
++ Configure REPLs.
 #+BEGIN_SRC emacs-lisp
 (after! python
   (rainbow-delimiters-mode t))
@@ -627,8 +631,8 @@ It allows users to access their bibliographical notes in org-roam-directory via
 #+END_SRC
 
 *** Sphinx
-- Enable [[https://github.com/naiquevin/sphinx-doc.el][sphinx-doc]], which generate Python docstrings for function and methods.
-- It does not work with python type hints.
++ Enable [[https://github.com/naiquevin/sphinx-doc.el][sphinx-doc]], which generate Python docstrings for function and methods.
++ It does not work with python type hints.
 #+BEGIN_SRC emacs-lisp
 (use-package! sphinx-doc
   :defer
@@ -638,22 +642,22 @@ It allows users to access their bibliographical notes in org-roam-directory via
 
 #+END_SRC
 *** Pyls
-*This server is very slow and unreliable. Moving to Microsoft version.*
+*This server is slow and unreliable. Moving to Microsoft version.*
 
 Configure pyls. [[https://github.com/emacs-lsp/lsp-mode/blob/master/doc/src/lsp-pyls/lsp-pyls-vars.adoc][This link]] contains some useful variables that can be set.
 #+BEGIN_SRC emacs-lisp
-(after! lsp-pyls
-  (setq lsp-pyls-configuration-sources                          ["flake8"]
-        lsp-pyls-plugins-pydocstyle-enabled                     nil
-        lsp-pyls-plugins-yapf-enabled                           nil
-        lsp-pyls-plugins-jedi-definition-follow-imports         t
-        lsp-pyls-plugins-jedi-definition-follow-builtin-imports t
-        lsp-pyls-plugins-jedi-signature-help-enabled            t
-        lsp-pyls-plugins-jedi-symbols-enabled                   t
-        lsp-pyls-plugins-flake8-enabled                         nil
-        lsp-pyls-plugins-pylint-enabled                         t
-        lsp-pyls-plugins-pyflakes-enabled                       nil
-        lsp-pyls-plugins-pyls_mypy-live-mode                    nil))
+;; (after! lsp-pyls
+;;   (setq lsp-pyls-configuration-sources                          ["flake8"]
+;;         lsp-pyls-plugins-pydocstyle-enabled                     nil
+;;         lsp-pyls-plugins-yapf-enabled                           nil
+;;         lsp-pyls-plugins-jedi-definition-follow-imports         t
+;;         lsp-pyls-plugins-jedi-definition-follow-builtin-imports t
+;;         lsp-pyls-plugins-jedi-signature-help-enabled            t
+;;         lsp-pyls-plugins-jedi-symbols-enabled                   t
+;;         lsp-pyls-plugins-flake8-enabled                         nil
+;;         lsp-pyls-plugins-pylint-enabled                         t
+;;         lsp-pyls-plugins-pyflakes-enabled                       nil
+;;         lsp-pyls-plugins-pyls_mypy-live-mode                    nil))
 #+END_SRC
 
 *** Microsoft LSP
@@ -710,17 +714,16 @@ Configure pyls. [[https://github.com/emacs-lsp/lsp-mode/blob/master/doc/src/lsp-
 (setq backup-directory-alist `((".*" . ,temporary-file-directory))
       auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
 
-(after! scala-mode
-  (setq compile-command "bloop compile root"
-        compilation-directory ".")
-  ;; (add-hook 'before-save-hook 'lsp-format-buffer)
-  (map! "\C-c r" 'lsp-metals-build-import)
-  (map! "\C-c s" 'lsp-metals-sources-scan)
-  (map! "\C-c d" 'lsp-describe-thing-at-point)
-  (map! "\C-c s" 'lsp-metals-sources-scan))
+;; (after! scala-mode
+;;   (setq compile-command "bloop compile root"
+;;         compilation-directory ".")
+;;   ;; (add-hook 'before-save-hook 'lsp-format-buffer)
+;;   (map! "\C-c r" 'lsp-metals-build-import)
+;;   (map! "\C-c s" 'lsp-metals-sources-scan)
+;;   (map! "\C-c d" 'lsp-describe-thing-at-point)
+;;   (map! "\C-c s" 'lsp-metals-sources-scan))
 #+END_SRC
 ** Haskell
 #+BEGIN_SRC emacs-lisp
-(after! haskell-mode
- (setq lsp-document-sync-method 'full))
+;; (after! haskell-mode (setq lsp-document-sync-method 'full))
 #+END_SRC

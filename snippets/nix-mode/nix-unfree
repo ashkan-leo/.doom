@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: nix-unfree
+# uuid: nix-allow-unfree-export-var
+# key: nix-unfree-export
+# condition: t
+# --
+export NIXPKGS_ALLOW_UNFREE=1

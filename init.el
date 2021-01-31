@@ -2,11 +2,13 @@
 
 (doom! :completion
 
-       (company +childframe) ;; supports +childframe
+       (company
+        +childframe)
+
        (ivy
+        ;; +childframe ;; causes lags [in darwin] when the Emacs window is enlarged
         +prescient
-        +childframe
-        +icons) ;; supports +childframe
+        +icons)
 
        :ui
        minimap
@@ -69,11 +71,13 @@
        (syntax
         +childframe)
 
+
        :tools
        (lookup
         +docsets
         +dictionary)
-       (eval +overlay)
+       (eval
+        +overlay)
        (debugger
         +realgud)
        direnv
@@ -94,7 +98,8 @@
        json
        data
        emacs-lisp
-       (haskell +lsp)
+       (haskell
+        +lsp)
        (java +meghanada)
        javascript
        julia
@@ -103,7 +108,7 @@
         +cdlatex
         +fold)
        ledger
-       markdown
+       (markdown +grip)
        nix
        (org
         +present
@@ -120,17 +125,24 @@
        plantuml
        purescript
        (python
-        +lsp)
+        +lsp
+        +pyright
+        +poetry)
        racket
        rest
-       (scala +lsp)
-       (sh +fish)
+       (scala
+        +lsp)
+       (sh
+        +lsp
+        +powershell
+        +fish)
        web
 
        :app
        ;;(email +gmail)    ; emacs as an email client
        ;;irc               ; how neckbeards socialize
-       (rss +org)        ; emacs as an RSS reader
+       (rss
+        +org)        ; emacs as an RSS reader
        ;;twitter           ; twitter client https://twitter.com/vnought
 
        :collab
