@@ -586,14 +586,14 @@ It allows users to access their bibliographical notes in org-roam-directory via
 #+END_SRC
 *** LSP Configurations
 #+BEGIN_SRC emacs-lisp
-(after! lsp
-  (setq company-minimum-prefix-length   1
-        company-idle-delay              0.0
-        company-tooltip-idle-delay      0.2
-        lsp-prefer-capf                 t
-        lsp-eldoc-render-all            nil
-        lsp-signature-auto-activate     t
-        lsp-lens-auto-enable            t))
+;; (after! lsp
+;;   (setq company-minimum-prefix-length   1
+;;         company-idle-delay              0.0
+;;         company-tooltip-idle-delay      0.2
+;;         lsp-prefer-capf                 t
+;;         lsp-eldoc-render-all            nil
+;;         lsp-signature-auto-activate     t
+;;         lsp-lens-auto-enable            t))
 #+END_SRC
 
 *** LSP UI Configurations
@@ -662,29 +662,29 @@ Configure pyls. [[https://github.com/emacs-lsp/lsp-mode/blob/master/doc/src/lsp-
 - Enable =python-mypy= and =python-flake8= in flycheck.
 - Disable =python-pylint=. It's way slower than flake.
 #+BEGIN_SRC emacs-lisp
-(after! lsp-python-ms
-  (setq lsp-python-ms-errors   ["unknown-parameter-name"
-                                "no-self-argument"
-                                "undefined-variable"
-                                "parameter-missing"
-                                "positional-argument-after-keyword"
-                                "positional-only-named"
-                                "too-many-function-arguments"
-                                "unresolved-import"
-                                "parameter-missing"
-                                "typing-typevar-arguments"
-                                "typing-newtype-arguments"
-                                "typing-generic-arguments"]
-        lsp-python-ms-warnings ["variable-not-defined-nonlocal"
-                                "variable-not-defined-globally"
-                                "return-in-init"
-                                "parameter-already-specified"
-                                "no-method-argument"
-                                "no-cls-argument"
-                                "inherit-non-class"])
-  (setq-default flycheck-disabled-checkers '(python-pylint))
-  (flycheck-add-next-checker 'lsp '(warning . python-mypy))
-  (flycheck-add-next-checker 'lsp '(warning . python-flake8)))
+;; (after! lsp-python-ms
+;;   (setq lsp-python-ms-errors   ["unknown-parameter-name"
+;;                                 "no-self-argument"
+;;                                 "undefined-variable"
+;;                                 "parameter-missing"
+;;                                 "positional-argument-after-keyword"
+;;                                 "positional-only-named"
+;;                                 "too-many-function-arguments"
+;;                                 "unresolved-import"
+;;                                 "parameter-missing"
+;;                                 "typing-typevar-arguments"
+;;                                 "typing-newtype-arguments"
+;;                                 "typing-generic-arguments"]
+;;         lsp-python-ms-warnings ["variable-not-defined-nonlocal"
+;;                                 "variable-not-defined-globally"
+;;                                 "return-in-init"
+;;                                 "parameter-already-specified"
+;;                                 "no-method-argument"
+;;                                 "no-cls-argument"
+;;                                 "inherit-non-class"])
+;;   (setq-default flycheck-disabled-checkers '(python-pylint))
+;;   (flycheck-add-next-checker 'lsp '(warning . python-mypy))
+;;   (flycheck-add-next-checker 'lsp '(warning . python-flake8)))
 #+END_SRC
 #+BEGIN_SRC emacs-lisp
 ;; (after! lsp-python-ms
@@ -713,7 +713,7 @@ Configure pyls. [[https://github.com/emacs-lsp/lsp-mode/blob/master/doc/src/lsp-
 (after! scala-mode
   (setq compile-command "bloop compile root"
         compilation-directory ".")
-  (add-hook 'before-save-hook 'lsp-format-buffer)
+  ;; (add-hook 'before-save-hook 'lsp-format-buffer)
   (map! "\C-c r" 'lsp-metals-build-import)
   (map! "\C-c s" 'lsp-metals-sources-scan)
   (map! "\C-c d" 'lsp-describe-thing-at-point)

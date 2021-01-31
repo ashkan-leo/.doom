@@ -3,7 +3,7 @@
 ;; org extensions
 (package! org-drill)
 (package! org-super-agenda)
-(package! org-fancy-priorities)
+;; (package! org-fancy-priorities)
 (package! org-ref)
 (package! org-noter-pdftools)
 (package! org-roam-bibtex :recipe (:host github :repo "org-roam/org-roam-bibtex"))
@@ -20,6 +20,10 @@
 (package! counsel-dash)
 (package! dash-at-point)
 (package! helm-dash)
+
+;; prolog
+;; TODO how to install this?
+;; (package! prolog :recipe (:host github :ropo "jamesnvc/lsp_server"))
 
 ;; tools
 (package! real-auto-save)
