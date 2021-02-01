@@ -168,7 +168,7 @@ It's better to read this from the environment instead.
 #+end_src
 *** deft
 I use deft to search the notes I take using org roam.
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (setq! deft-directory org-roam-directory
        deft-recursive t)
 #+end_src
@@ -526,9 +526,7 @@ It allows users to access their bibliographical notes in org-roam-directory via
   (require 'org-drill))
 #+END_SRC
 ** Deft
-+ Set deft directory and search all the sub-directories.
 #+BEGIN_SRC emacs-lisp
-
 (defun my-deft/strip-quotes (str)
   (cond ((string-match "\"\\(.+\\)\"" str) (match-string 1 str))
         ((string-match "'\\(.+\\)'" str) (match-string 1 str))
