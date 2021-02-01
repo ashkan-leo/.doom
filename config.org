@@ -67,17 +67,11 @@
 (setq! fancy-splash-image (expand-file-name "splash/pipboy.png" doom-private-dir))
 #+end_src
 ** Main Theme
-I'm obsessed with the dark solarized theme, but the it looks blue in my
-terminal. So I use zenburn if I'm in the terminal.
+I'm obsessed with the dark solarized theme, but it looks blue in my terminal. So
+I use zenburn if I'm in the terminal.
 
 #+begin_src emacs-lisp
-;; (if (display-graphic-p)
-;;     (progn (setq! doom-theme 'doom-solarized-dark))
-;;   (setq! doom-theme 'doom-zenburn))
 (setq! doom-theme (if (display-graphic-p) 'doom-solarized-dark 'doom-zenburn))
-;; (if (display-graphic-p)
-;;     (setq! doom-theme 'doom-solarized-dark)
-;;   (setq! doom-theme 'doom-zenburn))
 #+end_src
 ** Mouse Cursor Color
 #+begin_src emacs-lisp
@@ -172,6 +166,12 @@ It's better to read this from the environment instead.
 #+begin_src emacs-lisp
 (setq! org-roam-directory "~/w/org-roam-files/")
 #+end_src
+*** deft
+I use deft to search the notes I take using org roam.
+#+begin_src emacs-lisp :tangle yes
+(setq! deft-directory org-files-directory
+       deft-recursive t)
+#+end_src
 *** legacy
 #+BEGIN_SRC emacs-lisp
 (setq! leot/documents-directory "~/Documents" ;; Root Documents directory -- potentially in iCloud drive
@@ -202,6 +202,7 @@ It's better to read this from the environment instead.
        org-meeting-file-name (expand-file-name "meeting.org" org-gtd-files-directory)) ;; TODO
 #+END_SRC
 *** org Refile directories
+I follow the GTD workflow.
 #+BEGIN_SRC emacs-lisp
 (setq! org-refile-targets '((org-gtd-file-name :maxlevel . 3)
                             (org-someday-file-name :level . 1)
@@ -405,7 +406,7 @@ It's better to read this from the environment instead.
     :defer
     :config
     (setq! org-ref-bibliography-files leot/bibtex-files
-           org-ref-bibliography-notes leot/bibnotes-file
+           org-ref-bibliography-notes "/tmp" ;; FIXME fix this.
 
            ;; org-ref-pdf-directory "~/Documents/org/pdfs"
            org-ref-notes-directory org-pub-notes-directory
@@ -527,8 +528,6 @@ It allows users to access their bibliographical notes in org-roam-directory via
 ** Deft
 + Set deft directory and search all the sub-directories.
 #+BEGIN_SRC emacs-lisp
-(setq! deft-directory org-files-directory
-       deft-recursive t)
 
 (defun my-deft/strip-quotes (str)
   (cond ((string-match "\"\\(.+\\)\"" str) (match-string 1 str))
