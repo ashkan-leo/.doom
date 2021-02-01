@@ -22,7 +22,7 @@
 - [[#data][data]]
   - [[#dash][dash]]
 - [[#org-mode][org mode]]
-  - [[#org-directory-structure][org Directory Structure]]
+  - [[#directory-structure][Directory Structure]]
   - [[#org-agenda][org Agenda]]
   - [[#configure-org][Configure org]]
   - [[#org-ref][org-ref]]
@@ -166,7 +166,13 @@ terminal. So I use zenburn if I'm in the terminal.
 (map! "\C-ce" 'dash-at-point-with-docset)
 #+END_SRC
 * org mode
-** org Directory Structure
+** Directory Structure
+*** org-roam
+It's better to read this from the environment instead.
+#+begin_src emacs-lisp
+(setq! org-roam-directory "~/w/org-roam-files/")
+#+end_src
+*** legacy
 #+BEGIN_SRC emacs-lisp
 (setq! leot/documents-directory "~/Documents" ;; Root Documents directory -- potentially in iCloud drive
        leot/dropbox-directory "~/Dropbox"
@@ -174,24 +180,26 @@ terminal. So I use zenburn if I'm in the terminal.
        leot/root-bib-directory (expand-file-name "Library/bib/" leot/documents-directory)
        leot/bibtex-files (directory-files leot/root-bib-directory 'full ".bib")
 
+       pipboy/org-roam-directory "~/w/org-roam-files"
+
        reftex-default-bibliography (expand-file-name "master.bib" leot/root-bib-directory)
        ;; Root org files directory
-       org-files-directory (expand-file-name "org" leot/documents-directory)
-       org-pub-notes-directory (expand-file-name "pub" org-files-directory)
+       org-files-directory (expand-file-name "org" leot/documents-directory) ;; TODO
+       org-pub-notes-directory (expand-file-name "pub" org-files-directory) ;; TODO
 
        ;; Root org files for task management
-       org-gtd-files-directory (expand-file-name "beorg" leot/dropbox-directory)
+       org-gtd-files-directory (expand-file-name "beorg" leot/dropbox-directory) ;; TODO
 
        ;; Special purpose files needed for my GTD workflow
        ;; used for the agenda, capture, refile, etc.
-       org-inbox-file-name (expand-file-name "inbox.org" org-gtd-files-directory)
-       org-tickler-file-name (expand-file-name "tickler.org" org-gtd-files-directory)
-       org-someday-file-name (expand-file-name "someday.org" org-gtd-files-directory)
-       org-gtd-file-name (expand-file-name "gtd.org" org-gtd-files-directory)
+       org-inbox-file-name (expand-file-name "inbox.org" org-gtd-files-directory) ;; TODO
+       org-tickler-file-name (expand-file-name "tickler.org" org-gtd-files-directory) ;; TODO
+       org-someday-file-name (expand-file-name "someday.org" org-gtd-files-directory) ;; TODO
+       org-gtd-file-name (expand-file-name "gtd.org" org-gtd-files-directory) ;; TODO
 
        ;; The following files are not used right now
-       org-notes-file-name (expand-file-name "notes.org" org-gtd-files-directory)
-       org-meeting-file-name (expand-file-name "meeting.org" org-gtd-files-directory))
+       org-notes-file-name (expand-file-name "notes.org" org-gtd-files-directory) ;; TODO
+       org-meeting-file-name (expand-file-name "meeting.org" org-gtd-files-directory)) ;; TODO
 #+END_SRC
 *** org Refile directories
 #+BEGIN_SRC emacs-lisp
@@ -278,8 +286,6 @@ terminal. So I use zenburn if I'm in the terminal.
          org-default-notes-file org-notes-file-name
          org-agenda-files (list org-gtd-files-directory)
 
-         ;; org-roam configuration
-         org-roam-directory org-files-directory
 
          org-tags-exclude-from-inheritance '("Project")
          org-agenda-show-inherited-tags t
