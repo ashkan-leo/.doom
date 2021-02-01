@@ -18,6 +18,7 @@
   - [[#vterm][vterm]]
 - [[#spell-checker][Spell Checker]]
 - [[#dired][dired]]
+  - [[#do-wat-i-mean][Do Wat I mean]]
 - [[#projectile][Projectile]]
 - [[#data][data]]
   - [[#dash][dash]]
@@ -63,6 +64,7 @@
 #+END_SRC
 * UI
 ** Splash Image
+Because it's a pip boy emacs
 #+begin_src emacs-lisp
 (setq! fancy-splash-image (expand-file-name "splash/pipboy.png" doom-private-dir))
 #+end_src
@@ -90,24 +92,27 @@ I use zenburn if I'm in the terminal.
 ** Modeline
 *** Configure doom-Modeline
 #+BEGIN_SRC emacs-lisp
-(setq doom-modeline-icon (display-graphic-p)
-      doom-modeline-major-mode-icon t
-      doom-modeline-lsp t
-      doom-modeline-buffer-file-name-style 'truncate-with-project
-      doom-modeline-buffer-encoding nil)
+(setq! doom-modeline-icon (display-graphic-p)
+       doom-modeline-major-mode-icon t
+       doom-modeline-lsp t
+       doom-modeline-buffer-file-name-style 'truncate-with-project
+       doom-modeline-buffer-encoding nil)
 #+END_SRC
 *** Show battery usage
++ Ignore any error here. If running on a PC or server there is no battery status
+  to show.
 #+BEGIN_SRC emacs-lisp
-(display-battery-mode)
+(ignore-errors (display-battery-mode))
 #+END_SRC
 *** Disable buffer size
+Who cares how many bytes this file has?
 #+BEGIN_SRC emacs-lisp
 (size-indication-mode nil)
 #+END_SRC
 ** Treemacs
 + Use the colorful treemacs theme and doom additions
    #+BEGIN_SRC emacs-lisp
-   (setq doom-themes-treemacs-theme "doom-colors")
+   (setq! doom-themes-treemacs-theme "doom-colors")
    (doom-themes-treemacs-config)
    #+END_SRC
 + hide files ignored by Git from treemacs
@@ -117,14 +122,13 @@ I use zenburn if I'm in the terminal.
   #+END_SRC
 ** Editor
 *** Line Numbers
-+ Do not show line numbers. It slows down Emacs.
   #+BEGIN_SRC emacs-lisp
-  (setq display-line-numbers-type t)
+  (setq! display-line-numbers-type 'visual)
   #+END_SRC
 *** Font
 + Set the font
   #+BEGIN_SRC emacs-lisp
-  (setq doom-font (font-spec :family "JetBrains Mono" :size 11))
+  (setq! doom-font (font-spec :family "JetBrains Mono" :size 12))
   #+END_SRC
 + Enable ligatures -- works only on Emacs Mac port.
   #+BEGIN_SRC emacs-lisp
@@ -134,14 +138,15 @@ I use zenburn if I'm in the terminal.
 ** vterm
 + Set =fish= to be the default shell.
   #+BEGIN_SRC emacs-lisp
-  (setq vterm-shell "~/.nix-profile/bin/fish")
+  (setq! vterm-shell "fish")
   #+END_SRC
 * Spell Checker
 + set personal ~ispell~ dictionary.
   #+begin_src emacs-lisp
-  (setq ispell-personal-dictionary "/Users/ashkanaleali/Dropbox/stuff/ispell/english.pws")
+  (setq! ispell-personal-dictionary "/Users/ashkanaleali/Dropbox/stuff/ispell/english.pws")
   #+end_src
 * dired
+** Do Wat I mean
 + Enable the DWIM (/Do What I Mean/) mode, which makes life much easier when moving stuff around in
   the ~dired~ mode.
 #+BEGIN_SRC emacs-lisp
