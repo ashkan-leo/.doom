@@ -169,7 +169,7 @@ It's better to read this from the environment instead.
 *** deft
 I use deft to search the notes I take using org roam.
 #+begin_src emacs-lisp :tangle yes
-(setq! deft-directory org-files-directory
+(setq! deft-directory org-roam-directory
        deft-recursive t)
 #+end_src
 *** legacy
