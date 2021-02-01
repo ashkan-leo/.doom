@@ -11,6 +11,7 @@
         +icons)
 
        :ui
+       tabs
        minimap
        workspaces
        hydra
