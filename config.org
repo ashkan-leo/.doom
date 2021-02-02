@@ -122,9 +122,11 @@ Who cares how many bytes this file has?
   #+END_SRC
 ** Editor
 *** Line Numbers
-  #+BEGIN_SRC emacs-lisp
-  (setq! display-line-numbers-type 'visual)
-  #+END_SRC
+Setting the line number will cause slowdown when the LSP is used, display is large,
+or anytime the buffer is busy.
+#+BEGIN_SRC emacs-lisp
+(setq! display-line-numbers-type nil)
+#+END_SRC
 *** Font
 + Set the font
   #+BEGIN_SRC emacs-lisp
