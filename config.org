@@ -262,10 +262,11 @@ I follow the GTD workflow.
                        (:name "Waiting" :todo "WAIT" :order 20)
                        (:discard (:anything t))))))))
         ("c" "Categories"
-         ((todo "" ((org-agenda-overriding-header "CATEGORIES")
+         ((todo "" ((org-agenda-overriding-header)
                     (org-agenda-remove-tags 1)
                     (org-super-agenda-groups
-                     '((:auto-category t)))))))
+                     '((:auto-parent t)))))))
+
 
 
         ("i" "Inbox"
