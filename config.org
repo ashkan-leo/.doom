@@ -24,8 +24,9 @@
   - [[#dash][dash]]
 - [[#org-mode][org mode]]
   - [[#directory-structure][Directory Structure]]
-  - [[#agenda][Agenda]]
-  - [[#configure-org][Configure org]]
+  - [[#org-agenda][Org Agenda]]
+  - [[#state-keywords-tododoneetc][State Keywords: TODO/DONE/etc.]]
+  - [[#legacy][legacy]]
   - [[#org-ref][org-ref]]
   - [[#helm-bibtex--ivy-bibtex][helm-bibtex & ivy-bibtex]]
   - [[#org-noter][org-noter]]
@@ -56,6 +57,8 @@
 * OS Specific Settings
 ** Mac OS
 *** Set ⌘ ⌥ ⌃ Keys
+Set command, option, and alt key for both the left and the right part of the
+keyboard.
 #+BEGIN_SRC emacs-lisp
 (setq! mac-option-modifier 'meta
        mac-right-option-modifier 'meta
@@ -215,7 +218,13 @@ I follow the GTD workflow.
                             (org-someday-file-name :level . 1)
                             (org-tickler-file-name :maxlevel . 2)))
 #+END_SRC
-** Agenda
+** Org Agenda
+*** Files
+#+BEGIN_SRC emacs-lisp
+(setq! org-agenda-files (list org-gtd-files-directory)
+       org-agenda-show-inherited-tags t)
+#+END_SRC
+*** ~org-super-agenda~
 #+BEGIN_SRC emacs-lisp
 (use-package! org-super-agenda
   :defer
@@ -223,7 +232,9 @@ I follow the GTD workflow.
 
 (after! org-agenda
   (org-super-agenda-mode))
-
+#+END_SRC
+*** Agenda View
+#+BEGIN_SRC emacs-lisp
 (setq org-agenda-skip-scheduled-if-done t
       org-agenda-skip-deadline-if-done t
       org-agenda-include-deadlines t
@@ -294,10 +305,28 @@ I follow the GTD workflow.
                         '((:name "Inbox" :category "inbox")
                           (:discard (:anything t))))))))))
 #+END_SRC
+** State Keywords: TODO/DONE/etc.
+Set both the keywords and the face of GTD workflow.
+#+BEGIN_SRC emacs-lisp
+(after! org
+  (setq! org-todo-keywords '((sequence "TODO(t)" "NOW(z)" "NEXT(n)" "WAIT(w)" "SOMEDAY(s) HOLD(h)" "PROJECT(p)"
+                                       "|" "DONE(d)" "CANCEL(c)")
+                             (sequence "[ ](T)" "[?](W)" "[-](N)"
+                                       "|" "[X](x)"))
 
+         org-todo-keyword-faces '(("NOW" . (:foreground "magenta" :reight "bold"))
+                                  ("NEXT" . (:foreground "violet" :weight "bold"))
+                                  ("WAIT" . +org-todo-onhold)
+                                  ("HOLD" . +org-todo-onhold)
+                                  ("SOMEDAY" . +org-todo-onhold)
+                                  ("PROJECT". +org-todo-project)
+                                  ("ABORT" . (+org-todo-inactive))
+                                  ("[-]" . +org-todo-active)
+                                  ("[?]" . +org-todo-onhold)))
 
-** Configure org
-+ Configure agenda
+  )
+#+END_SRC
+** legacy
 + Capture timestamp when a task is marked as done
 + Set some keybindings
 + Set directories based on variables defined above
@@ -311,25 +340,7 @@ I follow the GTD workflow.
          org-archive-location   (concat  (expand-file-name "archive.org" org-gtd-files-directory) "::")
          org-default-notes-file org-notes-file-name
          org-agenda-files (list org-gtd-files-directory)
-
-
-         org-tags-exclude-from-inheritance '("Project")
          org-agenda-show-inherited-tags t
-
-         ;; Set the TODO keywords GTD style
-         org-todo-keywords '((sequence "TODO(t)" "NEXT(n)" "WAITING(w)" "SOMEDAY(h)" "PROJECT(p)"
-                                       "|" "DONE(d)" "CANCELLED(c)")
-                             (sequence "[ ](T)" "[?](W)" "[-](N)"
-                                       "|" "[X](x)"))
-
-         ;; Theme the TODO keywords
-         org-todo-keyword-faces '(("NEXT" . (:foreground "magenta" :weight "bold"))
-                                  ("SOMEDAY" . +org-todo-onhold)
-                                  ("WAIT" . +org-todo-onhold)
-                                  ("PROJECT" . (:foreground "violet" :weight "bold"))
-                                  ("[-]" . +org-todo-active)
-                                  ("[?]" . +org-todo-onhold))
-
          ;; Define the org-mode capture buffer
          org-capture-templates `(("i" "Inbox" entry
                                   (file+headline org-inbox-file-name "Tasks")
@@ -657,8 +668,7 @@ It allows users to access their bibliographical notes in org-roam-directory via
 (setq +python-ipython-repl-args '("-i" "--simple-prompt" "--no-color-info"))
 (setq +python-jupyter-repl-args '("--simple-prompt"))
 #+END_SRC
-
-*** Sphinx
+*** ~sphinx-doc~
 + Enable [[https://github.com/naiquevin/sphinx-doc.el][sphinx-doc]], which generate Python docstrings for function and methods.
 + It does not work with python type hints.
 #+BEGIN_SRC emacs-lisp
