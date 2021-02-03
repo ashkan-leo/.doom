@@ -269,21 +269,24 @@ I follow the GTD workflow.
                     (org-super-agenda-groups
                      '((:auto-parent t :todo "TODO")))))))
 
-        ("h" "@home projects"
+        ("h" "@home Projects"
          ((todo "" ((org-agenda-overriding-header)
                     (org-agenda-remove-tags 1)
                     (org-super-agenda-groups
                      '((:discard (:not (:and (:todo "TODO" :tag ("@home")))))
                        (:auto-parent t :todo "TODO" :tag "@home")))))))
 
-        ("w" "@work projects"
+        ("w" "@work Projects"
          ((todo "" ((org-agenda-overriding-header)
                     (org-agenda-remove-tags 1)
                     (org-super-agenda-groups
                      '((:discard (:not (:and (:todo "TODO" :tag ("@work")))))
                        (:auto-parent t)))))))
 
-        ("")
+        ("r" "Errands"
+         ((alltodo "" ((org-agenda-overriding-header nil)
+                       (org-super-agenda-groups
+                        '((:discard (:not (:tag "@errand")))))))))
 
         ("i" "Inbox"
          ((alltodo "" ((org-agenda-overriding-header nil)
@@ -291,6 +294,7 @@ I follow the GTD workflow.
                         '((:name "Inbox" :category "inbox")
                           (:discard (:anything t))))))))))
 #+END_SRC
+
 
 ** Configure org
 + Configure agenda
