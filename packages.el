@@ -21,6 +21,7 @@
 (package! helm-dash)
 
 ;; prolog
+(package! ediprolog)
 ;; TODO how to install this?
 ;; (package! prolog :recipe (:host github :ropo "jamesnvc/lsp_server"))
 

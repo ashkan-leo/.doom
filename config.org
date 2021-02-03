@@ -40,6 +40,7 @@
 - [[#languages][Languages]]
   - [[#lsp][LSP]]
   - [[#python][Python]]
+  - [[#prolog][Prolog]]
   - [[#scala][Scala]]
   - [[#haskell][Haskell]]
 
@@ -678,6 +679,15 @@ It allows users to access their bibliographical notes in org-roam-directory via
   :config
   (sphinx-doc-mode t))
 
+#+END_SRC
+** Prolog
+*** ~ediprolog~
++ Set the Prolog interpreter to ~swipl~.
+#+BEGIN_SRC emacs-lisp
+(use-package! ediprolog
+  :defer
+  :custom
+  (ediprolog-system 'swi))
 #+END_SRC
 ** Scala
 - Register to projectile
