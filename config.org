@@ -264,32 +264,32 @@ I follow the GTD workflow.
                        (:name "Waiting" :todo "WAIT" :order 20)
                        (:discard (:anything t))))))))
         ("p" "Projects"
-         ((todo "" ((org-agenda-overriding-header)
+         ((todo "" ((org-agenda-overriding-header "All Projects")
                     (org-agenda-remove-tags 1)
                     (org-super-agenda-groups
                      '((:auto-parent t :todo "TODO")))))))
 
         ("h" "@home Projects"
-         ((todo "" ((org-agenda-overriding-header)
+         ((todo "" ((org-agenda-overriding-header "Personal Projects")
                     (org-agenda-remove-tags 1)
                     (org-super-agenda-groups
                      '((:discard (:not (:and (:todo "TODO" :tag ("@home")))))
                        (:auto-parent t :todo "TODO" :tag "@home")))))))
 
         ("w" "@work Projects"
-         ((todo "" ((org-agenda-overriding-header)
+         ((todo "" ((org-agenda-overriding-header "Work Projects")
                     (org-agenda-remove-tags 1)
                     (org-super-agenda-groups
                      '((:discard (:not (:and (:todo "TODO" :tag ("@work")))))
                        (:auto-parent t)))))))
 
         ("r" "Errands"
-         ((alltodo "" ((org-agenda-overriding-header nil)
+         ((alltodo "" ((org-agenda-overriding-header "Errands")
                        (org-super-agenda-groups
                         '((:discard (:not (:tag "@errand")))))))))
 
         ("i" "Inbox"
-         ((alltodo "" ((org-agenda-overriding-header nil)
+         ((alltodo "" ((org-agenda-overriding-header "Inbox")
                        (org-super-agenda-groups
                         '((:name "Inbox" :category "inbox")
                           (:discard (:anything t))))))))))
