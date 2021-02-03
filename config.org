@@ -24,7 +24,7 @@
   - [[#dash][dash]]
 - [[#org-mode][org mode]]
   - [[#directory-structure][Directory Structure]]
-  - [[#org-agenda][org Agenda]]
+  - [[#agenda][Agenda]]
   - [[#configure-org][Configure org]]
   - [[#org-ref][org-ref]]
   - [[#helm-bibtex--ivy-bibtex][helm-bibtex & ivy-bibtex]]
@@ -215,7 +215,7 @@ I follow the GTD workflow.
                             (org-someday-file-name :level . 1)
                             (org-tickler-file-name :maxlevel . 2)))
 #+END_SRC
-** org Agenda
+** Agenda
 #+BEGIN_SRC emacs-lisp
 (use-package! org-super-agenda
   :defer
@@ -263,20 +263,33 @@ I follow the GTD workflow.
                        (:name "Overdue" :deadline past :face error :order 7)
                        (:name "Waiting" :todo "WAIT" :order 20)
                        (:discard (:anything t))))))))
-        ("c" "Categories"
+        ("p" "Projects"
          ((todo "" ((org-agenda-overriding-header)
                     (org-agenda-remove-tags 1)
                     (org-super-agenda-groups
-                     '((:auto-parent t)))))))
+                     '((:auto-parent t :todo "TODO")))))))
 
+        ("h" "@home projects"
+         ((todo "" ((org-agenda-overriding-header)
+                    (org-agenda-remove-tags 1)
+                    (org-super-agenda-groups
+                     '((:discard (:not (:and (:todo "TODO" :tag ("@home")))))
+                       (:auto-parent t :todo "TODO" :tag "@home")))))))
 
+        ("w" "@work projects"
+         ((todo "" ((org-agenda-overriding-header)
+                    (org-agenda-remove-tags 1)
+                    (org-super-agenda-groups
+                     '((:discard (:not (:and (:todo "TODO" :tag ("@work")))))
+                       (:auto-parent t)))))))
+
+        ("")
 
         ("i" "Inbox"
          ((alltodo "" ((org-agenda-overriding-header nil)
                        (org-super-agenda-groups
                         '((:name "Inbox" :category "inbox")
                           (:discard (:anything t))))))))))
-
 #+END_SRC
 
 ** Configure org
