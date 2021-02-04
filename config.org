@@ -18,7 +18,6 @@
   - [[#vterm][vterm]]
 - [[#spell-checker][Spell Checker]]
 - [[#dired][dired]]
-  - [[#do-wat-i-mean][Do Wat I mean]]
 - [[#projectile][Projectile]]
 - [[#data][data]]
   - [[#dash][dash]]
@@ -152,7 +151,6 @@ or anytime the buffer is busy.
   (setq! ispell-personal-dictionary "/Users/ashkanaleali/Dropbox/stuff/ispell/english.pws")
   #+end_src
 * dired
-** Do Wat I mean
 + Enable the DWIM (/Do What I Mean/) mode, which makes life much easier when moving stuff around in
   the ~dired~ mode.
 #+BEGIN_SRC emacs-lisp
@@ -481,7 +479,6 @@ See examples in[[*helm-bibtex][ helm-bibtex]] section.
 #+BEGIN_SRC emacs-lisp
 (setq! org-noter-notes-search-path (list org-files-directory))
 #+END_SRC
-
 *** org-noter-pdftools
 #+BEGIN_SRC emacs-lisp
 (use-package! org-noter-pdftools
