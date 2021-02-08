@@ -12,6 +12,9 @@
 (package! ox-altacv   :recipe (:host gitlab :repo "Titan-C/org-cv"))
 (package! org-fs-tree :recipe (:host github :repo "ScriptDevil/org-fs-tree"))
 
+;; org babel
+(package! ob-prolog)
+
 ;; ui
 (package! nyan-mode)
 
