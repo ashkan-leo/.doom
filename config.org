@@ -493,7 +493,7 @@ See examples in[[*helm-bibtex][ helm-bibtex]] section.
 I use org-noter to take notes on PDF and EPUB documents.
 #+BEGIN_SRC emacs-lisp
 (setq! org-noter-notes-search-path (list pipboy/org-notes)
-       org-noter-notes-window-location 'other-frame)
+       org-noter-notes-window-location 'horizontal-split)
 #+END_SRC
 **** org-pdftools
 #+BEGIN_SRC emacs-lisp
