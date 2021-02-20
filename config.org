@@ -21,6 +21,8 @@
     - [[#line-numbers][Line Numbers]]
     - [[#font][Font]]
 - [[#terminal][Terminal]]
+  - [[#tmux][tmux]]
+    - [[#key-bindings][Key Bindings]]
   - [[#vterm][vterm]]
 - [[#spell-checker][Spell Checker]]
 - [[#dired][dired]]
@@ -57,7 +59,7 @@
 - [[#flycheck][Flycheck]]
 - [[#languages][Languages]]
   - [[#lsp][LSP]]
-    - [[#key-bindings][Key Bindings]]
+    - [[#key-bindings-1][Key Bindings]]
     - [[#lsp-configurations][LSP Configurations]]
     - [[#lsp-ui-configurations][LSP UI Configurations]]
     - [[#lsp-treemacs][LSP Treemacs]]
@@ -165,6 +167,19 @@ or anytime the buffer is busy.
   (ignore-errors (mac-auto-operator-composition-mode))
   #+END_SRC
 * Terminal
+** tmux
+*** Key Bindings
+#+BEGIN_SRC emacs-lisp
+(map! :leader
+      (:prefix-map ("a" . "applications")
+       (:prefix ("t" . "tmux")
+        :desc "cd to buffer dir in active tmux session" "c" #'+tmux/cd
+        :desc "cd to project dir in active tmux session" "p" #'+tmux/cd-to-project
+        :desc "cd to highlighted region in active tmux session" "C" #'+tmux:cd-here
+        :desc "run highlighted region as comand in active tmux session" "x" #'+tmux:run
+        :desc "run command in active tmux session" "t" #'+tmux/run
+        :desc "re-run the last command in active tmux session" "r" #'+tmux/rerun)))
+#+END_SRC
 ** vterm
 + Set =fish= to be the default shell.
   #+BEGIN_SRC emacs-lisp
