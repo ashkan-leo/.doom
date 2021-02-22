@@ -64,6 +64,7 @@
     - [[#lsp-ui-configurations][LSP UI Configurations]]
     - [[#lsp-treemacs][LSP Treemacs]]
   - [[#python][Python]]
+    - [[#poetry][Poetry]]
     - [[#sphinx-doc][~sphinx-doc~]]
   - [[#prolog-1][Prolog]]
     - [[#ediprolog][~ediprolog~]]
@@ -739,6 +740,19 @@ I use deft to search the notes I take using org roam.
   (rainbow-delimiters-mode t))
 (setq +python-ipython-repl-args '("-i" "--simple-prompt" "--no-color-info"))
 (setq +python-jupyter-repl-args '("--simple-prompt"))
+#+END_SRC
+*** Poetry
+**** Key Bindings
+#+BEGIN_SRC emacs-lisp
+(map! :leader
+      (:prefix-map ("a" . "applications")
+       (:prefix ("p" . "poetry")
+        :desc "add poetry dependency" "d" #'poetry-add
+        :desc "add poetry dev dependency" "D" #'poetry-add-dev-dep
+        :desc "poetry run" "r" #'poetry-run
+        :desc "poetry build" "b" #'poetry-build
+        :desc "poetry install" "i" #'poetry-install
+        :desc "poetry install-install" "I" #'poetry-install-install)))
 #+END_SRC
 *** ~sphinx-doc~
 + Enable [[https://github.com/naiquevin/sphinx-doc.el][sphinx-doc]], which generate Python docstrings for function and methods.
