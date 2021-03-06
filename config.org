@@ -377,7 +377,6 @@ These are the tags that I use with my task management workflow.
                              (:discard (:anything t)))))))))))
 #+END_SRC
 
-#+RESULTS:
 
 *** org-refile
 Set the refile targets to be my project, someday, and tickler files.
