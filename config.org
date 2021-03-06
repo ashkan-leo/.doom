@@ -1,28 +1,21 @@
 #+TITLE: Pip Boy Emacs Configurations
 
-* Table of Contents :TOC_3:
+* Table of Contents :TOC_2:
 - [[#preamble][Preamble]]
   - [[#lexical-bindings][Lexical Bindings]]
   - [[#personal-information][Personal Information]]
 - [[#os-specific-settings][OS Specific Settings]]
   - [[#mac-os][Mac OS]]
-    - [[#set----keys][Set ⌘ ⌥ ⌃ Keys]]
 - [[#ui][UI]]
   - [[#splash-image][Splash Image]]
   - [[#main-theme][Main Theme]]
   - [[#mouse-cursor-color][Mouse Cursor Color]]
   - [[#evil-cursor-state-colors][Evil Cursor State Colors]]
   - [[#modeline][Modeline]]
-    - [[#configure-doom-modeline][Configure doom-modeline]]
-    - [[#show-battery-usage][Show battery usage]]
-    - [[#disable-buffer-size][Disable buffer size]]
   - [[#treemacs][Treemacs]]
   - [[#editor][Editor]]
-    - [[#line-numbers][Line Numbers]]
-    - [[#font][Font]]
 - [[#terminal][Terminal]]
   - [[#tmux][tmux]]
-    - [[#key-bindings][Key Bindings]]
   - [[#vterm][vterm]]
 - [[#spell-checker][Spell Checker]]
 - [[#dired][dired]]
@@ -34,40 +27,17 @@
   - [[#key-maps][Key Maps]]
   - [[#directory-structure][Directory Structure]]
   - [[#get-things-done][Get Things Done]]
-    - [[#files][Files]]
-    - [[#state-keywords][State Keywords]]
-    - [[#tags][Tags]]
-    - [[#org-agenda][org-agenda]]
-    - [[#org-refile][org-refile]]
-    - [[#org-capture][org-capture]]
-    - [[#org-archive][org archive]]
   - [[#zettelkasten][Zettelkasten]]
-    - [[#org-roam][org-roam]]
-    - [[#org-ref][org-ref]]
-    - [[#helm-bibtex--ivy-bibtex][helm-bibtex & ivy-bibtex]]
-    - [[#org-noter][org-noter]]
-    - [[#org-roam-bibtex][org-roam-bibtex]]
-    - [[#deft][deft]]
   - [[#enable-minor-modes][Enable minor modes]]
   - [[#org-export][org-export]]
-    - [[#latex][LaTex]]
-    - [[#resume-and-cv][Resume and CV]]
   - [[#org-babel][org-babel]]
-    - [[#prolog][Prolog]]
   - [[#org-drill][org-drill]]
-- [[#latex-1][LaTeX]]
+- [[#latex][LaTeX]]
 - [[#flycheck][Flycheck]]
 - [[#languages][Languages]]
   - [[#lsp][LSP]]
-    - [[#key-bindings-1][Key Bindings]]
-    - [[#lsp-configurations][LSP Configurations]]
-    - [[#lsp-ui-configurations][LSP UI Configurations]]
-    - [[#lsp-treemacs][LSP Treemacs]]
   - [[#python][Python]]
-    - [[#poetry][Poetry]]
-    - [[#sphinx-doc][~sphinx-doc~]]
-  - [[#prolog-1][Prolog]]
-    - [[#ediprolog][~ediprolog~]]
+  - [[#prolog][Prolog]]
   - [[#scala][Scala]]
   - [[#haskell][Haskell]]
 
@@ -159,10 +129,11 @@ or anytime the buffer is busy.
 (setq! display-line-numbers-type nil)
 #+END_SRC
 *** Font
-+ Set the font
-  #+BEGIN_SRC emacs-lisp
-  (setq! doom-font (font-spec :family "JetBrains Mono" :size 12))
-  #+END_SRC
+I slightly prefer JetBrains Mono over FiraCode.
+#+BEGIN_SRC emacs-lisp
+;; (setq! doom-font (font-spec :family "FiraCode Nerd Font Mono" :size 12))
+(setq! doom-font (font-spec :family "JetBrains Mono" :size 12))
+#+END_SRC
 + Enable ligatures -- works only on Emacs Mac port.
   #+BEGIN_SRC emacs-lisp
   (ignore-errors (mac-auto-operator-composition-mode))
@@ -338,74 +309,76 @@ These are the tags that I use with my task management workflow.
 #+BEGIN_SRC emacs-lisp
 (after! org
   (setq! org-agenda-skip-scheduled-if-done t
-       org-agenda-skip-deadline-if-done t
-       org-agenda-include-deadlines t
-       org-agenda-block-separator nil
-       org-agenda-tags-column 100 ;; from testing this seems to be a good value
-       org-agenda-compact-blocks t)
+         org-agenda-skip-deadline-if-done t
+         org-agenda-include-deadlines t
+         org-agenda-block-separator nil
+         org-agenda-tags-column 100 ;; from testing this seems to be a good value
+         org-agenda-compact-blocks t)
 
   (setq! org-agenda-custom-commands
-       '(("o" "Overview"
-          ((agenda "" ((org-agenda-span 'day)
+         '(("o" "Overview"
+            ((agenda "" ((org-agenda-span 'day)
+                         (org-super-agenda-groups
+                          '((:name "Today" :time-grid t :date today :scheduled today :order 1)
+                            (:name "Due" :deadline today :order 2)))))
+             (todo "" ((org-agenda-overriding-header "")
                        (org-super-agenda-groups
-                        '((:name "Today" :time-grid t :date today :scheduled today :order 1)
-                          (:name "Due" :deadline today :order 2)))))
-           (todo "" ((org-agenda-overriding-header "")
-                     (org-super-agenda-groups
-                      '((:name "Next to do" :todo "NEXT" :order 1)
-                        (:name "Important" :priority "A" :order 6)
-                        (:name "Due Today" :deadline today :order 2)
-                        (:name "Due Soon" :deadline future :order 8)
-                        (:name "Overdue" :deadline past :face error :order 7)
-                        (:name "Inbox" :category "inbox" :order 10)
-                        (:name "Projects" :tag "Project" :order 14)
-                        (:name "To read" :tag "Read" :order 30)
-                        (:name "Waiting" :todo "WAIT" :order 20)
-                        (:name "University" :tag "University" :order 32)
-                        (:discard (:tag ("Chore" "Routine" "Daily")))))))))
+                        '((:name "Next" :todo "NEXT" :order 1)
+                          (:name "Important" :priority "A" :order 6)
+                          (:name "Due Today" :deadline today :order 2)
+                          (:name "Due Soon" :deadline future :order 8)
+                          (:name "Overdue" :deadline past :face error :order 7)
+                          (:name "Inbox" :category "inbox" :order 10)
+                          (:name "To read" :tag "Read" :order 30)
+                          (:name "Waiting" :todo "WAIT" :order 20)
+                          (:discard (:anything t))))))))
 
-         ("x" "experimental"
-          ((agenda "" ((org-agenda-span 'week)))
-           (todo "" ((org-agenda-overriding-header "")
-                     (org-agenda-remove-tags 1)
-                     (org-super-agenda-groups
-                      '((:name "Next" :todo "NEXT" :order 1)
-                        (:name "Due Today" :deadline today :order 2)
-                        (:name "Due Soon" :deadline future :order 3)
-                        (:name "Overdue" :deadline past :face error :order 7)
-                        (:name "Waiting" :todo "WAIT" :order 20)
-                        (:discard (:anything t))))))))
-         ("p" "Projects"
-          ((todo "" ((org-agenda-overriding-header "All Projects")
-                     (org-agenda-remove-tags 1)
-                     (org-super-agenda-groups
-                      '((:auto-parent t :todo "TODO")))))))
+           ("x" "experimental"
+            ((agenda "" ((org-agenda-span 'week)))
+             (todo "" ((org-agenda-overriding-header "")
+                       (org-super-agenda-groups
+                        '((:name "Next" :todo "NEXT" :order 1)
+                          (:name "Due Today" :deadline today :order 2)
+                          (:name "Due Soon" :deadline future :order 3)
+                          (:name "Overdue" :deadline past :face error :order 7)
+                          (:name "Errands" :tag "@errand" :order 8)
+                          (:name "Inbox"  :category "inbox" :order 10)
+                          (:name "Waiting" :todo "WAIT" :order 20)
+                          (:discard (:anything t))))))))
+           ("p" "Projects"
+            ((todo "" ((org-agenda-overriding-header "All Projects")
+                       (org-agenda-remove-tags 1)
+                       (org-super-agenda-groups
+                        '((:auto-parent t :todo "TODO")))))))
 
-         ("h" "@home Projects"
-          ((todo "" ((org-agenda-overriding-header "Personal Projects")
-                     (org-agenda-remove-tags 1)
-                     (org-super-agenda-groups
-                      '((:discard (:not (:and (:todo "TODO" :tag ("@home")))))
-                        (:auto-parent t :todo "TODO" :tag "@home")))))))
+           ("h" "@home Projects"
+            ((todo "" ((org-agenda-overriding-header "Personal Projects")
+                       (org-agenda-remove-tags 1)
+                       (org-super-agenda-groups
+                        '((:discard (:not (:and (:todo "TODO" :tag ("@home")))))
+                          (:auto-parent t :todo "TODO" :tag "@home")))))))
 
-         ("w" "@work Projects"
-          ((todo "" ((org-agenda-overriding-header "Work Projects")
-                     (org-agenda-remove-tags 1)
-                     (org-super-agenda-groups
-                      '((:discard (:not (:and (:todo "TODO" :tag ("@work")))))
-                        (:auto-parent t)))))))
+           ("w" "@work Projects"
+            ((todo "" ((org-agenda-overriding-header "Work Projects")
+                       (org-agenda-remove-tags 1)
+                       (org-super-agenda-groups
+                        '((:discard (:not (:and (:todo "TODO" :tag ("@work")))))
+                          (:auto-parent t)))))))
 
-         ("r" "Errands"
-          ((alltodo "" ((org-agenda-overriding-header "Errands")
-                        (org-super-agenda-groups
-                         '((:discard (:not (:tag "@errand")))))))))
+           ("r" "Errands"
+            ((alltodo "" ((org-agenda-overriding-header "Errands")
+                          (org-super-agenda-groups
+                           '((:discard (:not (:tag "@errand")))))))))
 
-         ("i" "Inbox"
-          ((alltodo "" ((org-agenda-overriding-header "Inbox")
-                        (org-super-agenda-groups
-                         '((:name "Inbox" :category "inbox")
-                           (:discard (:anything t)))))))))))
+           ("i" "Inbox"
+            ((alltodo "" ((org-agenda-overriding-header "Inbox")
+                          (org-super-agenda-groups
+                           '((:name "Inbox" :category "inbox")
+                             (:discard (:anything t)))))))))))
 #+END_SRC
+
+#+RESULTS:
+
 *** org-refile
 Set the refile targets to be my project, someday, and tickler files.
 #+BEGIN_SRC emacs-lisp
