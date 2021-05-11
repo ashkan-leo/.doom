@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: test_file
+# key: tf
+# group: testing
+# --
+
+from unittest import TestCase
+
+${1:from ${2:test_file} import *}
+
+class ${3:Foo}Tests(TestCase):
+    def test_{4:Bar}(self):
+        pass

@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: current-script-path
+# uuid: python-current-script-path
+# key: pwd
+# condition: t
+# --
+
+import os
+${0:THIS_SCRIPT_PATH} = os.path.dirname(os.path.realpath(__file__))

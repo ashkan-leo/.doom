@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: latex-aligned
+# uuid: latex-aligned
+# key: lal
+# condition: t
+# --
+
+\begin{aligned}
+$1 &${5:=}  $2
+$3 &${6:=} $4
+\end{aligned}
