@@ -3,7 +3,8 @@
 (doom! :completion
 
        (company
-        +childframe)
+        +childframe ;; may cause lag
+        )
 
        (ivy
         ;; +childframe ;; causes lags [in darwin] when the Emacs window is enlarged
@@ -11,6 +12,7 @@
         +icons)
 
        :ui
+       fill-column
        minimap
        workspaces
        hydra
@@ -22,12 +24,17 @@
        indent-guides
        modeline
        nav-flash
+       (emoji
+        +ascii
+        +github
+        +unicode)
        (treemacs)
        (popup
         +all
         +defaults
         +icons)
        (ligatures
+        +iosevka
         +extra)
        unicode
        vc-gutter
@@ -79,9 +86,11 @@
        (eval
         +overlay)
        (debugger
-        +realgud)
+        ;; +realgud
+        )
        direnv
        docker
+       terraform
        ;; ein
        gist
        (lsp +peek)
@@ -94,6 +103,7 @@
        biblio
 
        :lang
+       terra
        yaml
        json
        data

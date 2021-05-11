@@ -35,6 +35,7 @@
 - [[#latex][LaTeX]]
 - [[#flycheck][Flycheck]]
 - [[#languages][Languages]]
+  - [[#dap][DAP]]
   - [[#lsp][LSP]]
   - [[#python][Python]]
   - [[#prolog][Prolog]]
@@ -74,6 +75,10 @@ I'm obsessed with the dark solarized theme, but it looks blue in my terminal. So
 I use zenburn if I'm in the terminal.
 
 #+begin_src emacs-lisp
+;; (add-to-list 'default-frame-alist '(inhibit-double-buffering . t))
+;; (set-frame-parameter (selected-frame) 'alpha '(85 85))
+;; (add-to-list 'default-frame-alist '(alpha 85 85))
+
 (setq! doom-theme (if (display-graphic-p) 'doom-solarized-dark 'doom-zenburn))
 #+end_src
 ** Mouse Cursor Color
@@ -123,21 +128,27 @@ Who cares how many bytes this file has?
   #+END_SRC
 ** Editor
 *** Line Numbers
-Setting the line number will cause slowdown when the LSP is used, display is large,
-or anytime the buffer is busy.
+Setting the line number will cause slowdown when the LSP is used, display is
+large, or anytime the buffer is busy.
 #+BEGIN_SRC emacs-lisp
 (setq! display-line-numbers-type nil)
 #+END_SRC
 *** Font
-I slightly prefer JetBrains Mono over FiraCode.
+I slightly prefer JetBrains Mono over FiraCode. But FiraCode has nicer
+ligatures.
 #+BEGIN_SRC emacs-lisp
-;; (setq! doom-font (font-spec :family "FiraCode Nerd Font Mono" :size 12))
-(setq! doom-font (font-spec :family "JetBrains Mono" :size 12))
+(setq! doom-font (font-spec :family "Iosevka" :size 12))
+;; (setq! doom-font (font-spec :family "Fira Code" :size 12))
+;; (setq! doom-font (font-spec :family "JetBrains Mono" :size 12))
 #+END_SRC
-+ Enable ligatures -- works only on Emacs Mac port.
-  #+BEGIN_SRC emacs-lisp
-  (ignore-errors (mac-auto-operator-composition-mode))
-  #+END_SRC
+*** Changing ligatures
+The ligatures don't always render correctly. I change them to something I'm sure
+that works on my machine.
+*** fill-column
+Set column length to be 90 and enable fill-column indicator in the editors.
+#+begin_src emacs-lisp
+(global-display-fill-column-indicator-mode +1)
+#+end_src
 * Terminal
 ** tmux
 *** Key Bindings
@@ -199,7 +210,11 @@ Configure the aesthetics of the org-mode buffer.
   (map! :map org-mode-map
         :n "M-j" #'org-metadown
         :n "M-k" #'org-metaup
-        :n  ))
+        :n  )
+  (map! :leader
+        (:prefix-map ("a" . "applications")
+         (:prefix ("o" . "org-mode")
+          :desc "helm-bibtex" "h" #'helm-bibtex))))
 #+END_SRC
 ** Directory Structure
 These paths are usually synced through a cloud provided or a git service. These
@@ -317,10 +332,7 @@ These are the tags that I use with my task management workflow.
 
   (setq! org-agenda-custom-commands
          '(("o" "Overview"
-            ((agenda "" ((org-agenda-span 'day)
-                         (org-super-agenda-groups
-                          '((:name "Today" :time-grid t :date today :scheduled today :order 1)
-                            (:name "Due" :deadline today :order 2)))))
+            ((agenda "" ((org-agenda-span 'day)))
              (todo "" ((org-agenda-overriding-header "")
                        (org-super-agenda-groups
                         '((:name "Next" :todo "NEXT" :order 1)
@@ -335,7 +347,7 @@ These are the tags that I use with my task management workflow.
 
            ("x" "experimental"
             ((agenda "" ((org-agenda-span 'week)))
-             (todo "" ((org-agenda-overriding-header "")
+             (todo "" ((org-agenda-overriding-header "At a Glance")
                        (org-super-agenda-groups
                         '((:name "Next" :todo "NEXT" :order 1)
                           (:name "Due Today" :deadline today :order 2)
@@ -355,14 +367,14 @@ These are the tags that I use with my task management workflow.
             ((todo "" ((org-agenda-overriding-header "Personal Projects")
                        (org-agenda-remove-tags 1)
                        (org-super-agenda-groups
-                        '((:discard (:not (:and (:todo "TODO" :tag ("@home")))))
-                          (:auto-parent t :todo "TODO" :tag "@home")))))))
+                        '((:discard (:not (:tag ("@home"))))
+                          (:auto-parent t :tag "@home")))))))
 
            ("w" "@work Projects"
             ((todo "" ((org-agenda-overriding-header "Work Projects")
                        (org-agenda-remove-tags 1)
                        (org-super-agenda-groups
-                        '((:discard (:not (:and (:todo "TODO" :tag ("@work")))))
+                        '((:discard (:not (:tag ("@work"))))
                           (:auto-parent t)))))))
 
            ("r" "Errands"
@@ -666,7 +678,54 @@ I use deft to search the notes I take using org roam.
     (setq flycheck-check-syntax-automatically '(mode-enabled save idle-change)))
   #+END_SRC
 * Languages
+** DAP
+*** Python
+It's recommended to use =debugpy= over =ptvsd=.
+#+begin_src emacs-lisp
+(after! dap-mode
+  (setq dap-python-debugger 'debugpy))
+#+end_src
+*** Keybindings
+#+begin_src emacs-lisp
+(after! dap-mode
+  (map! :map dap-mode-map
+        :leader
+        :prefix ("d" . "dap")
+        ;; basics
+        :desc "dap next"          "n" #'dap-next
+        :desc "dap step in"       "i" #'dap-step-in
+        :desc "dap step out"      "o" #'dap-step-out
+        :desc "dap continue"      "c" #'dap-continue
+        :desc "dap hydra"         "h" #'dap-hydra
+        :desc "dap debug restart" "r" #'dap-debug-restart
+        :desc "dap debug"         "s" #'dap-debug
+
+        ;; debug
+        :prefix ("dd" . "Debug")
+        :desc "dap debug recent"  "r" #'dap-debug-recent
+        :desc "dap debug last"    "l" #'dap-debug-last
+
+        ;; eval
+        :prefix ("de" . "Eval")
+        :desc "eval"                "e" #'dap-eval
+        :desc "eval region"         "r" #'dap-eval-region
+        :desc "eval thing at point" "s" #'dap-eval-thing-at-point
+        :desc "add expression"      "a" #'dap-ui-expressions-add
+        :desc "remove expression"   "d" #'dap-ui-expressions-remove
+
+        :prefix ("db" . "Breakpoint")
+        :desc "dap breakpoint toggle"      "b" #'dap-breakpoint-toggle
+        :desc "dap breakpoint condition"   "c" #'dap-breakpoint-condition
+        :desc "dap breakpoint hit count"   "h" #'dap-breakpoint-hit-condition
+        :desc "dap breakpoint log message" "l" #'dap-breakpoint-log-message))
+#+end_src
 ** LSP
+*** Configuration
++ Set a ridiculous limit on number of file watch. This is needed for Python
+  virtual environments which reside inside the project worktree.
+#+begin_src emacs-lisp
+(setq! lsp-file-watch-threshold 100000)
+#+end_src
 *** Key Bindings
 #+BEGIN_SRC emacs-lisp
 ;; (map! :leader
@@ -674,12 +733,12 @@ I use deft to search the notes I take using org roam.
 ;;         :desc "doc" "d" #'lsp-ui-doc-glance
 ;;         :desc "find reference" "f" #'lsp-ui-peek-find-references))
 #+END_SRC
-*** LSP Configurations
+*** Autocompletion
 #+BEGIN_SRC emacs-lisp
 (after! lsp
   (setq company-minimum-prefix-length   1
         company-idle-delay              0.0
-        company-tooltip-idle-delay      0.5
+        company-tooltip-idle-delay      0.0
         lsp-eldoc-render-all            nil
         lsp-lens-enable            t))
 #+END_SRC
@@ -704,15 +763,19 @@ I use deft to search the notes I take using org roam.
 #+END_SRC
 
 ** Python
-+ Set flycheck checkers.
-+ Enable rainbow delimiters.
-+ Configure REPLs.
+*** Editor
++ Enable rainbow mode
 #+BEGIN_SRC emacs-lisp
 (after! python
   (rainbow-delimiters-mode t))
+#+END_SRC
+
+*** REPL
+#+begin_src emacs-lisp
 (setq +python-ipython-repl-args '("-i" "--simple-prompt" "--no-color-info"))
 (setq +python-jupyter-repl-args '("--simple-prompt"))
-#+END_SRC
+#+end_src
+
 *** Poetry
 **** Key Bindings
 #+BEGIN_SRC emacs-lisp
@@ -725,6 +788,11 @@ I use deft to search the notes I take using org roam.
         :desc "poetry build" "b" #'poetry-build
         :desc "poetry install" "i" #'poetry-install
         :desc "poetry install-install" "I" #'poetry-install-install)))
+#+END_SRC
+*** Pyright Language Server
+#+BEGIN_SRC emacs-lisp
+(after! python
+  (setq! lsp-pyright-venv-path (expand-file-name "~/.venv/")))
 #+END_SRC
 *** ~sphinx-doc~
 + Enable [[https://github.com/naiquevin/sphinx-doc.el][sphinx-doc]], which generate Python docstrings for function and methods.
