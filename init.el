@@ -80,6 +80,9 @@
 
 
        :tools
+       ansible
+       editorconfig
+       taskrunner
        (lookup
         +docsets
         +dictionary)

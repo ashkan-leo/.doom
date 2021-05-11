@@ -2,6 +2,7 @@
 
 * Table of Contents :TOC_2:
 - [[#preamble][Preamble]]
+  - [[#emacs-lisp-scripts][Emacs Lisp Scripts]]
   - [[#lexical-bindings][Lexical Bindings]]
   - [[#personal-information][Personal Information]]
 - [[#os-specific-settings][OS Specific Settings]]
@@ -43,6 +44,34 @@
   - [[#haskell][Haskell]]
 
 * Preamble
+** Emacs Lisp Scripts
+If you have file A, that calls load to load a file at B, and B calls load on
+file C using a relative path, then Emacs will complain about unable to find C.
+Because, emacs does not switch current directory with load.
+
+The following function solves this problem.
+#+begin_src emacs-lisp
+(defun leo-get-fullpath (@file-relative-path)
+  "Return the full path of *file-relative-path, relative to caller's file location.
+
+Example: If you have this line
+ (xah-get-fullpath \"../xyz.el\")
+in the file at
+ /home/joe/emacs/emacs_lib.el
+then the return value is
+ /home/joe/xyz.el
+Regardless how or where emacs_lib.el is called.
+
+This function solves 2 problems.
+
+① If you have file A, that calls the `load' on a file at B, and B calls `load' on file C using a relative path, then Emacs will complain about unable to find C. Because, emacs does not switch current directory with `load'.
+
+To solve this problem, when your code only knows the relative path of another file C, you can use the variable `load-file-name' to get the current file's full path, then use that with the relative path to get a full path of the file you are interested.
+
+② To know the current file's full path, emacs has 2 ways: `load-file-name' and `buffer-file-name'. If the file is loaded by `load', then `load-file-name' works but `buffer-file-name' doesn't. If the file is called by `eval-buffer', then `load-file-name' is nil. You want to be able to get the current file's full path regardless the file is run by `load' or interactively by `eval-buffer'."
+
+  (concat (file-name-directory (or load-file-name buffer-file-name)) @file-relative-path))
+#+end_src
 ** Lexical Bindings
 #+BEGIN_SRC emacs-lisp
 ;;; -*- lexical-binding: t; -*-
@@ -131,7 +160,7 @@ Who cares how many bytes this file has?
 Setting the line number will cause slowdown when the LSP is used, display is
 large, or anytime the buffer is busy.
 #+BEGIN_SRC emacs-lisp
-(setq! display-line-numbers-type nil)
+(setq! display-line-numbers-type 'relative)
 #+END_SRC
 *** Font
 I slightly prefer JetBrains Mono over FiraCode. But FiraCode has nicer
@@ -349,13 +378,14 @@ These are the tags that I use with my task management workflow.
             ((agenda "" ((org-agenda-span 'week)))
              (todo "" ((org-agenda-overriding-header "At a Glance")
                        (org-super-agenda-groups
-                        '((:name "Next" :todo "NEXT" :order 1)
-                          (:name "Due Today" :deadline today :order 2)
-                          (:name "Due Soon" :deadline future :order 3)
-                          (:name "Overdue" :deadline past :face error :order 7)
-                          (:name "Errands" :tag "@errand" :order 8)
-                          (:name "Inbox"  :category "inbox" :order 10)
-                          (:name "Waiting" :todo "WAIT" :order 20)
+                        '((:name "Now" :todo "NOW" :order 1)
+                          (:name "Next" :todo "NEXT" :order 10)
+                          (:name "Due Today" :deadline today :order 20)
+                          (:name "Due Soon" :deadline future :order 30)
+                          (:name "Overdue" :deadline past :face error :order 70)
+                          (:name "Inbox"  :category "inbox" :order 80)
+                          ;; (:name "Errands" :tag "@errand" :order 8)
+                          ;; (:name "Waiting" :todo "WAIT" :order 20)
                           (:discard (:anything t))))))))
            ("p" "Projects"
             ((todo "" ((org-agenda-overriding-header "All Projects")
@@ -679,6 +709,13 @@ I use deft to search the notes I take using org roam.
   #+END_SRC
 * Languages
 ** DAP
+*** UI
++ Enable Hydra when hitting a breakpoint
+#+begin_src emacs-lisp
+;; (after! dap-mode
+;;   (add-hook 'dap-stopped-hook
+;;             (lambda (arg) (call-interactively #'dap-hydra))))
+#+end_src
 *** Python
 It's recommended to use =debugpy= over =ptvsd=.
 #+begin_src emacs-lisp
@@ -769,6 +806,10 @@ It's recommended to use =debugpy= over =ptvsd=.
 (after! python
   (rainbow-delimiters-mode t))
 #+END_SRC
+*** Debugger
+#+begin_src emacs-lisp
+(after! python (require 'dap-python))
+#+end_src
 
 *** REPL
 #+begin_src emacs-lisp
