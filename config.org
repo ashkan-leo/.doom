@@ -157,10 +157,13 @@ Who cares how many bytes this file has?
   #+END_SRC
 ** Editor
 *** Line Numbers
-Setting the line number will cause slowdown when the LSP is used, display is
-large, or anytime the buffer is busy.
++ +Setting the line number will cause slowdown when the LSP is used, display is
+  large, or anytime the buffer is busy.+ The situation looks better using Emacs
+  with metals support.
++ The relative line number fucks up variable pitch fonts.
+
 #+BEGIN_SRC emacs-lisp
-(setq! display-line-numbers-type 'relative)
+(setq! display-line-numbers-type t)
 #+END_SRC
 *** Font
 + I slightly prefer JetBrains Mono over FiraCode. But both lack support of
@@ -171,12 +174,9 @@ large, or anytime the buffer is busy.
   + This font lack support of ligatures, etc. It is meant to be used by things
     like org mode, email writers, etc.
 #+BEGIN_SRC emacs-lisp
-(setq! doom-font (font-spec :family "Iosevka" :size 11)
+(setq! doom-font (font-spec :family "JetBrainsMono Nerd Font" :size 13)
        doom-variable-pitch-font (font-spec :family "Chalkboard" :size 13)
-       ivy-posframe-font (font-spec :family "Iosevka" :size 15))
-;; (setq! doom-font (font-spec :family "JetBrains" :size 12))
-;; (setq! doom-font (font-spec :family "Fira Code" :size 12))
-;; (setq! doom-font (font-spec :family "JetBrains Mono" :size 12))
+       ivy-posframe-font (font-spec :family "JetBrains Mono Nerd Font" :size 15))
 #+END_SRC
 *** Extra Ligatures
 The ligatures don't always render correctly. I change them to something I'm sure

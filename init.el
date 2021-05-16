@@ -34,8 +34,9 @@
         +defaults
         +icons)
        (ligatures
-        +iosevka
-        +extra)
+        ;;  +iosevka
+        ;;  +extra) FIXME the extra introduce unsupported characters to JetBrains Mono
+        )
        unicode
        vc-gutter
        vi-tilde-fringe
