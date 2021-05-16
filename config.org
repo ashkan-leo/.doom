@@ -95,7 +95,7 @@ keyboard.
 #+END_SRC
 * UI
 ** Splash Image
-Because it's a Pip Boy Emacs ;)
+Because it's a Pip Boy Emacs ;) 
 #+begin_src emacs-lisp
 (setq! fancy-splash-image (expand-file-name "splash/pipboy.png" doom-private-dir))
 #+end_src
@@ -163,16 +163,65 @@ large, or anytime the buffer is busy.
 (setq! display-line-numbers-type 'relative)
 #+END_SRC
 *** Font
-I slightly prefer JetBrains Mono over FiraCode. But FiraCode has nicer
-ligatures.
++ I slightly prefer JetBrains Mono over FiraCode. But both lack support of
+  certain characters that I depend on withy my ligature settings: 𝕊, 𝔽, 𝕋.
+  I use Iosevka as my main font while I figure out the issue with the ligatures,
+  or use a different ligature instead of those symbols.
++ I use =Chalkboard= as my new variable pitch font. It looks gorgeous.
+  + This font lack support of ligatures, etc. It is meant to be used by things
+    like org mode, email writers, etc.
 #+BEGIN_SRC emacs-lisp
-(setq! doom-font (font-spec :family "Iosevka" :size 12))
+(setq! doom-font (font-spec :family "Iosevka" :size 11)
+       doom-variable-pitch-font (font-spec :family "Chalkboard" :size 13)
+       ivy-posframe-font (font-spec :family "Iosevka" :size 15))
+;; (setq! doom-font (font-spec :family "JetBrains" :size 12))
 ;; (setq! doom-font (font-spec :family "Fira Code" :size 12))
 ;; (setq! doom-font (font-spec :family "JetBrains Mono" :size 12))
 #+END_SRC
-*** Changing ligatures
+*** Extra Ligatures
 The ligatures don't always render correctly. I change them to something I'm sure
 that works on my machine.
+#+begin_src emacs-lisp
+;; (plist-put! +ligatures-extra-symbols
+;;   ;; org
+;;   :name          "»"
+;;   :src_block     "»"
+;;   :src_block_end "«"
+;;   :quote         "“"
+;;   :quote_end     "”"
+;;   ;; Functional
+;;   :lambda        "λ"
+;;   :def           "ƒ"
+;;   :composition   "∘"
+;;   :map           "↦"
+;;   ;; Types
+;;   ;; :null          "∅"
+;;   ;; :true          "𝕋"
+;;   ;; :false         "𝔽"
+;;   ;; :int           "ℤ"
+;;   ;; :float         "ℝ"
+;;   ;; :str           "𝕊"
+;;   ;; :bool          "𝔹"
+;;   ;; :list          "𝕃"
+;;   ;; Flow
+;;   :not           "￢"
+;;   :in            "∈"
+;;   :not-in        "∉"
+;;   :and           "∧"
+;;   :or            "∨"
+;;   :for           "∀"
+;;   :some          "∃"
+;;   :return        "⟼"
+;;   :yield         "⟻"
+;;   ;; Other
+;;   :union         "⋃"
+;;   :intersect     "∩"
+;;   :diff          "∖"
+;;   :tuple         "⨂"
+;;   :pipe          "" ;; FIXME: find a non-private char
+;;   :dot           "•")  ;; you could also add your own if you want
+#+END_SRC
+#+end_src
 *** fill-column
 Set column length to be 90 and enable fill-column indicator in the editors.
 #+begin_src emacs-lisp
@@ -736,6 +785,7 @@ It's recommended to use =debugpy= over =ptvsd=.
         :desc "dap hydra"         "h" #'dap-hydra
         :desc "dap debug restart" "r" #'dap-debug-restart
         :desc "dap debug"         "s" #'dap-debug
+        :desc "dap ui repl"       "R" #'dap-ui-repl
 
         ;; debug
         :prefix ("dd" . "Debug")
@@ -756,6 +806,7 @@ It's recommended to use =debugpy= over =ptvsd=.
         :desc "dap breakpoint hit count"   "h" #'dap-breakpoint-hit-condition
         :desc "dap breakpoint log message" "l" #'dap-breakpoint-log-message))
 #+end_src
+
 ** LSP
 *** Configuration
 + Set a ridiculous limit on number of file watch. This is needed for Python
