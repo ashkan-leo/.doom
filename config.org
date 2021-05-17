@@ -174,9 +174,9 @@ Who cares how many bytes this file has?
   + This font lack support of ligatures, etc. It is meant to be used by things
     like org mode, email writers, etc.
 #+BEGIN_SRC emacs-lisp
-(setq! doom-font (font-spec :family "JetBrainsMono Nerd Font" :size 13)
-       doom-variable-pitch-font (font-spec :family "Chalkboard" :size 13)
-       ivy-posframe-font (font-spec :family "JetBrains Mono Nerd Font" :size 15))
+(setq! doom-font (font-spec :family "JetBrainsMono Nerd Font" :size 11)
+       doom-variable-pitch-font (font-spec :family "Chalkboard" :size 12)
+       ivy-posframe-font (font-spec :family "JetBrains Mono Nerd Font" :size 13))
 #+END_SRC
 *** Extra Ligatures
 The ligatures don't always render correctly. I change them to something I'm sure
