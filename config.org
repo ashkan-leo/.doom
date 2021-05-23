@@ -36,8 +36,8 @@
 - [[#latex][LaTeX]]
 - [[#flycheck][Flycheck]]
 - [[#languages][Languages]]
-  - [[#dap][DAP]]
   - [[#lsp][LSP]]
+  - [[#dap][DAP]]
   - [[#python][Python]]
   - [[#prolog][Prolog]]
   - [[#scala][Scala]]
@@ -157,13 +157,13 @@ Who cares how many bytes this file has?
   #+END_SRC
 ** Editor
 *** Line Numbers
-+ +Setting the line number will cause slowdown when the LSP is used, display is
-  large, or anytime the buffer is busy.+ The situation looks better using Emacs
-  with metals support.
++ Setting the line number will cause slowdown when the LSP is used, display is
+  large, or anytime the buffer is busy.
+   +The situation looks better using Emacs with metals support.+
 + The relative line number fucks up variable pitch fonts.
 
 #+BEGIN_SRC emacs-lisp
-(setq! display-line-numbers-type t)
+(setq! display-line-numbers-type nil)
 #+END_SRC
 *** Font
 + I slightly prefer JetBrains Mono over FiraCode. But both lack support of
@@ -757,6 +757,52 @@ I use deft to search the notes I take using org roam.
     (setq flycheck-check-syntax-automatically '(mode-enabled save idle-change)))
   #+END_SRC
 * Languages
+** LSP
+*** Configuration
++ Set a ridiculous limit on number of file watch. This is needed for Python
+  virtual environments which reside inside the project worktree.
+#+begin_src emacs-lisp
+(setq! lsp-file-watch-threshold 100000)
+#+end_src
+*** Key Bindings
+#+BEGIN_SRC emacs-lisp
+;; (map! :leader
+;;       (:prefix-map ("l" . "lsp")
+;;         :desc "doc" "d" #'lsp-ui-doc-glance
+;;         :desc "find reference" "f" #'lsp-ui-peek-find-references))
+#+END_SRC
+*** Autocompletion
+#+BEGIN_SRC emacs-lisp
+(after! lsp
+  (setq company-minimum-prefix-length   1
+        company-idle-delay              0.0
+        company-tooltip-idle-delay      0.0
+        lsp-eldoc-render-all            nil
+        lsp-lens-enable            t))
+#+END_SRC
+
+*** LSP UI Configurations
+#+BEGIN_SRC emacs-lisp
+(after! lsp
+  (setq! lsp-ui-doc-show-with-cursor nil
+         lsp-ui-sideline-enable t))
+;; (after! lsp-ui
+;;   (setq lsp-ui-sideline-enable         nil
+;;         lsp-ui-doc-include-signature   t
+;;         lsp-ui-doc-max-height          15
+;;         lsp-ui-doc-max-width           150
+;;         lsp-ui-doc-position            'at-point
+;;         lsp-ui-peek-always-show        t
+;;         lsp-ui-peek-fontify            'always))
+#+END_SRC
+*** LSP Treemacs
+#+BEGIN_SRC emacs-lisp
+;; (use-package! lsp-treemacs
+;;   :defer t
+;;   :config
+;;   (lsp-treemacs-sync-mode 1))
+#+END_SRC
+
 ** DAP
 *** UI
 + Enable Hydra when hitting a breakpoint
@@ -806,49 +852,6 @@ It's recommended to use =debugpy= over =ptvsd=.
         :desc "dap breakpoint hit count"   "h" #'dap-breakpoint-hit-condition
         :desc "dap breakpoint log message" "l" #'dap-breakpoint-log-message))
 #+end_src
-
-** LSP
-*** Configuration
-+ Set a ridiculous limit on number of file watch. This is needed for Python
-  virtual environments which reside inside the project worktree.
-#+begin_src emacs-lisp
-(setq! lsp-file-watch-threshold 100000)
-#+end_src
-*** Key Bindings
-#+BEGIN_SRC emacs-lisp
-;; (map! :leader
-;;       (:prefix-map ("l" . "lsp")
-;;         :desc "doc" "d" #'lsp-ui-doc-glance
-;;         :desc "find reference" "f" #'lsp-ui-peek-find-references))
-#+END_SRC
-*** Autocompletion
-#+BEGIN_SRC emacs-lisp
-(after! lsp
-  (setq company-minimum-prefix-length   1
-        company-idle-delay              0.0
-        company-tooltip-idle-delay      0.0
-        lsp-eldoc-render-all            nil
-        lsp-lens-enable            t))
-#+END_SRC
-
-*** LSP UI Configurations
-#+BEGIN_SRC emacs-lisp
-;; (after! lsp-ui
-;;   (setq lsp-ui-sideline-enable         nil
-;;         lsp-ui-doc-include-signature   t
-;;         lsp-ui-doc-max-height          15
-;;         lsp-ui-doc-max-width           150
-;;         lsp-ui-doc-position            'at-point
-;;         lsp-ui-peek-always-show        t
-;;         lsp-ui-peek-fontify            'always))
-#+END_SRC
-*** LSP Treemacs
-#+BEGIN_SRC emacs-lisp
-;; (use-package! lsp-treemacs
-;;   :defer t
-;;   :config
-;;   (lsp-treemacs-sync-mode 1))
-#+END_SRC
 
 ** Python
 *** Editor
