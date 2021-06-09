@@ -764,13 +764,6 @@ I use deft to search the notes I take using org roam.
 #+begin_src emacs-lisp
 (setq! lsp-file-watch-threshold 100000)
 #+end_src
-*** Key Bindings
-#+BEGIN_SRC emacs-lisp
-;; (map! :leader
-;;       (:prefix-map ("l" . "lsp")
-;;         :desc "doc" "d" #'lsp-ui-doc-glance
-;;         :desc "find reference" "f" #'lsp-ui-peek-find-references))
-#+END_SRC
 *** Autocompletion
 #+BEGIN_SRC emacs-lisp
 (after! lsp
@@ -778,29 +771,19 @@ I use deft to search the notes I take using org roam.
         company-idle-delay              0.0
         company-tooltip-idle-delay      0.0
         lsp-eldoc-render-all            nil
-        lsp-lens-enable            t))
+        lsp-lens-enable                 t))
 #+END_SRC
 
 *** LSP UI Configurations
 #+BEGIN_SRC emacs-lisp
-(after! lsp
+(after! lsp-ui
   (setq! lsp-ui-doc-show-with-cursor nil
-         lsp-ui-sideline-enable t))
-;; (after! lsp-ui
-;;   (setq lsp-ui-sideline-enable         nil
-;;         lsp-ui-doc-include-signature   t
-;;         lsp-ui-doc-max-height          15
-;;         lsp-ui-doc-max-width           150
-;;         lsp-ui-doc-position            'at-point
-;;         lsp-ui-peek-always-show        t
-;;         lsp-ui-peek-fontify            'always))
-#+END_SRC
-*** LSP Treemacs
-#+BEGIN_SRC emacs-lisp
-;; (use-package! lsp-treemacs
-;;   :defer t
-;;   :config
-;;   (lsp-treemacs-sync-mode 1))
+         lsp-ui-sideline-enable      t
+         lsp-ui-doc-max-height       15
+         lsp-ui-doc-max-width        100
+         lsp-ui-doc-position         'at-point
+         lsp-ui-peek-always-show     t
+         lsp-ui-peek-fontify         'always))
 #+END_SRC
 
 ** DAP

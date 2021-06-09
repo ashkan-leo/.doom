@@ -90,15 +90,17 @@
        (eval
         +overlay)
        (debugger
-        ;; +realgud
+        ;; +realgud FIXME upstream is broken (only on mac maybe?)
         )
        direnv
        docker
        terraform
        ;; ein
        gist
-       (lsp +peek)
-       (magit +forge)
+       (lsp
+        +peek)
+       (magit
+        +forge)
        make
        pass
        pdf
@@ -107,6 +109,7 @@
        biblio
 
        :lang
+       rst
        terra
        yaml
        json
@@ -114,12 +117,16 @@
        emacs-lisp
        (haskell
         +lsp)
-       (java +meghanada)
-       javascript
-       julia
+       (java
+        +lsp)
+       (javascript
+        +lsp)
+       (julia
+        +lsp)
        (latex
         +latexmk
         +cdlatex
+        +lsp
         +fold)
        ledger
        (markdown +grip)
@@ -137,11 +144,14 @@
         +brain
         +gnuplot)
        plantuml
-       purescript
+       (purescript
+        +lsp)
        (python
         +lsp
         +pyright
         +poetry)
+       (rust
+        +lsp)
        racket
        rest
        (scala
