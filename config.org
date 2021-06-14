@@ -108,7 +108,7 @@ I use zenburn if I'm in the terminal.
 ;; (set-frame-parameter (selected-frame) 'alpha '(85 85))
 ;; (add-to-list 'default-frame-alist '(alpha 85 85))
 
-(setq! doom-theme (if (display-graphic-p) 'doom-solarized-dark 'doom-zenburn))
+(setq! doom-theme (if (display-graphic-p) 'doom-solarized-dark-high-contrast 'doom-zenburn))
 #+end_src
 ** Mouse Cursor Color
 #+begin_src emacs-lisp
