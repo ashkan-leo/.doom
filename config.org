@@ -18,6 +18,7 @@
 - [[#terminal][Terminal]]
   - [[#tmux][tmux]]
   - [[#vterm][vterm]]
+- [[#tramps][Tramps]]
 - [[#spell-checker][Spell Checker]]
 - [[#dired][dired]]
 - [[#projectile][Projectile]]
@@ -25,6 +26,7 @@
   - [[#dash][dash]]
 - [[#org][Org]]
   - [[#aesthetics][Aesthetics]]
+  - [[#inline-latex-fragment][Inline Latex Fragment]]
   - [[#key-maps][Key Maps]]
   - [[#directory-structure][Directory Structure]]
   - [[#get-things-done][Get Things Done]]
@@ -246,6 +248,17 @@ Set column length to be 90 and enable fill-column indicator in the editors.
   #+BEGIN_SRC emacs-lisp
   (setq! vterm-shell "fish")
   #+END_SRC
+* Tramps
+From the [[https://www.gnu.org/software/emacs/manual/html_node/tramp/Frequently-Asked-Questions.html][tramp FAQ page]]:
+#+begin_src emacs-lisp
+(setq remote-file-name-inhibit-cache nil)
+(setq vc-ignore-dir-regexp
+      (format "%s\\|%s"
+                    vc-ignore-dir-regexp
+                    tramp-file-name-regexp))
+(setq tramp-verbose 1)
+
+#+end_src
 * Spell Checker
 + set personal ~ispell~ dictionary.
   #+begin_src emacs-lisp
@@ -282,6 +295,14 @@ Configure the aesthetics of the org-mode buffer.
        org-fontify-emphasized-text t
        org-fontify-quote-and-verse-blocks t)
 #+END_SRC
+** Inline Latex Fragment
+Use [[https://github.com/io12/org-fragtog][org-fragtog]] to enable auto preview of latex fragments.
+#+begin_src emacs-lisp
+(use-package! org-fragtog
+  :after org
+  :hook (org-mode . org-fragtog-mode)
+  )
+#+end_src
 ** Key Maps
 #+BEGIN_SRC emacs-lisp
 (after! org
@@ -423,9 +444,9 @@ These are the tags that I use with my task management workflow.
                           (:name "Waiting" :todo "WAIT" :order 20)
                           (:discard (:anything t))))))))
 
-           ("x" "experimental"
+           ("a" "dashboard"
             ((agenda "" ((org-agenda-span 'week)))
-             (todo "" ((org-agenda-overriding-header "At a Glance")
+             (todo "" ((org-agenda-overriding-header "")
                        (org-super-agenda-groups
                         '((:name "Now" :todo "NOW" :order 1)
                           (:name "Next" :todo "NEXT" :order 10)
@@ -433,8 +454,7 @@ These are the tags that I use with my task management workflow.
                           (:name "Due Soon" :deadline future :order 30)
                           (:name "Overdue" :deadline past :face error :order 70)
                           (:name "Inbox"  :category "inbox" :order 80)
-                          ;; (:name "Errands" :tag "@errand" :order 8)
-                          ;; (:name "Waiting" :todo "WAIT" :order 20)
+                          (:name "Errands" :tag ("@errand") :order 100)
                           (:discard (:anything t))))))))
            ("p" "Projects"
             ((todo "" ((org-agenda-overriding-header "All Projects")
@@ -783,7 +803,11 @@ I use deft to search the notes I take using org roam.
          lsp-ui-doc-max-width        100
          lsp-ui-doc-position         'at-point
          lsp-ui-peek-always-show     t
-         lsp-ui-peek-fontify         'always))
+         lsp-ui-peek-fontify         'always)
+
+  (set-face-attribute 'lsp-face-highlight-textual nil
+                      :background "#0F3337"
+                      :foreground "#BD3613"))
 #+END_SRC
 
 ** DAP

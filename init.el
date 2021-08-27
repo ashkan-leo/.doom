@@ -3,7 +3,7 @@
 (doom! :completion
 
        (company
-        +childframe ;; may cause lag
+        ;; +childframe ;; may cause lag
         )
 
        (ivy
@@ -134,7 +134,7 @@
        (org
         +present
         +pretty
-        +roam
+        +roam2
         +pomodoro
         +pandoc
         +noter

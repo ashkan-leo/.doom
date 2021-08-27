@@ -6,6 +6,7 @@
 (package! org-ref)
 (package! org-noter-pdftools)
 (package! org-roam-bibtex :recipe (:host github :repo "org-roam/org-roam-bibtex"))
+(package! org-fragtog)
 
 ;; org exporters
 (package! ox-moderncv :recipe (:host gitlab :repo "Titan-C/org-cv"))
