@@ -806,8 +806,9 @@ I use deft to search the notes I take using org roam.
          lsp-ui-peek-fontify         'always)
 
   (set-face-attribute 'lsp-face-highlight-textual nil
-                      :background "#0F3337"
-                      :foreground "#BD3613"))
+                      :weight 'bold
+                      :background "#0A2933"
+                      :foreground "#C61C6F"))
 #+END_SRC
 
 ** DAP
