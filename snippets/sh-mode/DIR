@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: DIR
+# uuid: script-dir
+# condition: t
+# --
+
+DIR="$(dirname "$(readlink -f "$0")")"
