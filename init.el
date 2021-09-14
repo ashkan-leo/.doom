@@ -6,10 +6,12 @@
         ;; +childframe ;; may cause lag
         )
 
-       (ivy
-        ;; +childframe ;; causes lags [in darwin] when the Emacs window is enlarged
-        +prescient
+       (vertico
         +icons)
+       ;; (ivy
+       ;;  ;; +childframe ;; causes lags [in darwin] when the Emacs window is enlarged
+       ;;  +prescient
+       ;;  +icons)
 
        :ui
        fill-column
@@ -28,7 +30,8 @@
         +ascii
         +github
         +unicode)
-       (treemacs)
+       (treemacs
+        +lsp)
        (popup
         +all
         +defaults
@@ -45,7 +48,8 @@
        zen
 
        :editor
-       (evil +everywhere)
+       (evil
+        +everywhere)
        word-wrap
        file-templates
        snippets
@@ -121,8 +125,6 @@
         +lsp)
        (javascript
         +lsp)
-       (julia
-        +lsp)
        (latex
         +latexmk
         +cdlatex
@@ -144,15 +146,12 @@
         +brain
         +gnuplot)
        plantuml
-       (purescript
-        +lsp)
        (python
         +lsp
         +pyright
         +poetry)
        (rust
         +lsp)
-       racket
        rest
        (scala
         +lsp)
@@ -163,11 +162,9 @@
        web
 
        :app
-       ;;(email +gmail)    ; emacs as an email client
-       ;;irc               ; how neckbeards socialize
        (rss
-        +org)        ; emacs as an RSS reader
-       ;;twitter           ; twitter client https://twitter.com/vnought
+        +org)
+       everywhere
 
        :collab
        ;;floobits          ; peer programming for a price
