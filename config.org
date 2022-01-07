@@ -103,7 +103,7 @@ I'm obsessed with the dark solarized theme, but it looks blue in my terminal. So
 I use zenburn if I'm in the terminal.
 
 #+begin_src emacs-lisp
-(setq! doom-theme (if (display-graphic-p) 'doom-solarized-dark-high-contrast 'doom-zenburn))
+(setq! doom-theme (if (display-graphic-p) 'doom-solarized-dark-high-contrast 'doom-monokai-ristretto))
 (custom-set-faces '(default ((t (:background nil)))))
 #+end_src
 ** Mouse Cursor Color
