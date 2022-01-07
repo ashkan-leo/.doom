@@ -3,7 +3,8 @@
 (doom!
 
  :completion
- (company)
+ (company
+  +childframe)
  (vertico
   +icons)
 
