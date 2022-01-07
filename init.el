@@ -1,189 +1,169 @@
 ;;; init.el -*- lexical-binding: t; -*-
 
-(doom! :completion
+(doom!
 
-       (company
-        ;; +childframe ;; may cause lag
-        )
+ :completion
+ (company)
+ (vertico
+  +icons)
 
-       (vertico
-        +icons)
-       ;; (ivy
-       ;;  ;; +childframe ;; causes lags [in darwin] when the Emacs window is enlarged
-       ;;  +prescient
-       ;;  +icons)
+ :ui
+ fill-column
+ minimap
+ workspaces
+ hydra
+ deft
+ doom
+ doom-dashboard
+ ophints
+ hl-todo
+ modeline
+ nav-flash
+ (emoji
+  +ascii
+  +github
+  +unicode)
+ (treemacs
+  +lsp)
+ (popup
+  +all
+  +defaults
+  +icons)
+ (ligatures)
 
-       :ui
-       fill-column
-       minimap
-       workspaces
-       hydra
-       deft
-       doom
-       doom-dashboard
-       ophints
-       hl-todo
-       indent-guides
-       modeline
-       nav-flash
-       (emoji
-        +ascii
-        +github
-        +unicode)
-       (treemacs
-        +lsp)
-       (popup
-        +all
-        +defaults
-        +icons)
-       (ligatures
-        ;;  +iosevka
-        ;;  +extra) FIXME the extra introduce unsupported characters to JetBrains Mono
-        )
-       unicode
-       vc-gutter
-       vi-tilde-fringe
-       (window-select
-        +numbers)
-       zen
+ unicode
+ vc-gutter
+ vi-tilde-fringe
+ (window-select
+  +numbers)
+ zen
 
-       :editor
-       (evil
-        +everywhere)
-       word-wrap
-       file-templates
-       snippets
-       fold
-       format
-       multiple-cursors
-       rotate-text
+ :editor
+ (evil
+  +everywhere)
+ word-wrap
+ file-templates
+ snippets
+ fold
+ format
+ multiple-cursors
+ parinfer
+ rotate-text
 
-       :emacs
-       (dired
-        +icons)
-       electric
-       ibuffer
-       undo
-       vc
+ :emacs
+ (dired
+  +icons)
+ electric
+ ibuffer
+ undo
+ vc
 
-       :term
-       eshell
-       vterm
+ :term
+ eshell
+ vterm
 
-       :os
-       macos
-       tty
+ :os
+ macos
+ tty
 
-       :checkers
-       (spell
-        +flyspell
-        +hunspell)
-       grammar
-       (syntax
-        +childframe)
+ :checkers
+ (spell
+  +flyspell
+  +hunspell)
+ grammar
+ (syntax
+  +childframe)
 
 
-       :tools
-       ansible
-       editorconfig
-       taskrunner
-       (lookup
-        +docsets
-        +dictionary)
-       (eval
-        +overlay)
-       (debugger
-        ;; +realgud FIXME upstream is broken (only on mac maybe?)
-        )
-       direnv
-       docker
-       terraform
-       ;; ein
-       gist
-       (lsp
-        +peek)
-       (magit
-        +forge)
-       make
-       pass
-       pdf
-       tmux
-       upload
-       biblio
+ :tools
+ ansible
+ editorconfig
+ taskrunner
+ (lookup
+  +docsets
+  +dictionary)
+ (eval
+  +overlay)
+ (debugger)
+ ;; +realgud FIXME upstream is broken (only on mac maybe?)
 
-       :lang
-       rst
-       terra
-       yaml
-       json
-       data
-       emacs-lisp
-       (haskell
-        +lsp)
-       (java
-        +lsp)
-       (javascript
-        +lsp)
-       (latex
-        +latexmk
-        +cdlatex
-        +lsp
-        +fold)
-       ledger
-       (markdown +grip)
-       nix
-       (org
-        +present
-        +pretty
-        +roam2
-        +pomodoro
-        +pandoc
-        +noter
-        +jupyter
-        +dragndrop
-        +hugo
-        +brain
-        +gnuplot)
-       plantuml
-       (python
-        +lsp
-        +pyright
-        +poetry)
-       (rust
-        +lsp)
-       rest
-       (scala
-        +lsp)
-       (sh
-        +lsp
-        +powershell
-        +fish)
-       web
+ direnv
+ docker
+ terraform
+ ;; ein
+ gist
+ (lsp
+  +peek)
+ (magit
+  +forge)
+ make
+ pass
+ pdf
+ tmux
+ upload
+ biblio
 
-       :app
-       (rss
-        +org)
-       everywhere
+ :lang
+ rst
+ terra
+ yaml
+ json
+ data
+ emacs-lisp
+ (haskell
+  +lsp)
+ (java
+  +lsp)
+ (javascript
+  +lsp)
+ (latex
+  +latexmk
+  +cdlatex
+  +lsp
+  +fold)
+ ledger
+ (markdown +grip)
+ nix
+ (org
+  +present
+  +pretty
+  +roam2
+  +pomodoro
+  +pandoc
+  +noter
+  +jupyter
+  +dragndrop
+  +hugo
+  +brain
+  +gnuplot)
+ plantuml
+ (python
+  +lsp
+  +pyright
+  +poetry)
+ (rust
+  +lsp)
+ rest
+ (scala
+  +lsp)
+ (sh
+  +lsp
+  +powershell
+  +fish)
+ web
 
-       :collab
-       ;;floobits          ; peer programming for a price
-       ;;impatient-mode    ; show off code over HTTP
+ :app
+ (rss
+  +org)
+ everywhere
 
-       :config
-       literate
+ :collab
+ ;;floobits          ; peer programming for a price
+ ;;impatient-mode    ; show off code over HTTP
 
-       (default
-         +bindings
-         +smartparens))
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(safe-local-variable-values (quote ((dante-methods stack)))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+ :config
+ literate
+
+ (default
+   +bindings
+   +smartparens))
