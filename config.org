@@ -3,9 +3,8 @@
 * Table of Contents :TOC_2:
 - [[#preamble][Preamble]]
   - [[#emacs-lisp-scripts][Emacs Lisp Scripts]]
-  - [[#lexical-bindings][Lexical Bindings]]
   - [[#personal-information][Personal Information]]
-- [[#os-specific-settings][OS Specific Settings]]
+- [[#os][OS]]
   - [[#mac-os][Mac OS]]
 - [[#ui][UI]]
   - [[#splash-image][Splash Image]]
@@ -15,15 +14,15 @@
   - [[#modeline][Modeline]]
   - [[#treemacs][Treemacs]]
   - [[#editor][Editor]]
+  - [[#font][Font]]
 - [[#terminal][Terminal]]
   - [[#tmux][tmux]]
   - [[#vterm][vterm]]
-- [[#tramps][Tramps]]
+- [[#tramp][Tramp]]
 - [[#spell-checker][Spell Checker]]
 - [[#dired][dired]]
 - [[#projectile][Projectile]]
-- [[#data][data]]
-  - [[#dash][dash]]
+- [[#dash-api-browser][Dash API Browser]]
 - [[#org][Org]]
   - [[#aesthetics][Aesthetics]]
   - [[#inline-latex-fragment][Inline Latex Fragment]]
@@ -43,7 +42,6 @@
   - [[#python][Python]]
   - [[#prolog][Prolog]]
   - [[#scala][Scala]]
-  - [[#haskell][Haskell]]
 
 * Preamble
 ** Emacs Lisp Scripts
@@ -53,6 +51,7 @@ Because, emacs does not switch current directory with load.
 
 The following function solves this problem.
 #+begin_src emacs-lisp
+;;; -*- lexical-binding: t; -*-
 (defun leo-get-fullpath (@file-relative-path)
   "Return the full path of *file-relative-path, relative to caller's file location.
 
@@ -74,22 +73,20 @@ To solve this problem, when your code only knows the relative path of another fi
 
   (concat (file-name-directory (or load-file-name buffer-file-name)) @file-relative-path))
 #+end_src
-** Lexical Bindings
-#+BEGIN_SRC emacs-lisp
-;;; -*- lexical-binding: t; -*-
-#+END_SRC
 ** Personal Information
-#+BEGIN_SRC emacs-lisp
-;; (setq! user-full-name "Ashkan Aleali"
-;;        user-mail-address "ashkan.aleali@gmail.com")
-#+END_SRC
++ Username comes from the environment.
++ Set the email address to my Gmail address.
+  #+begin_src emacs-lisp
+  (setq! user-mail-address "ashkan.aleali@gmail.com")
+  #+end_src
 
-* OS Specific Settings
+* OS
 ** Mac OS
 *** Set ⌘ ⌥ ⌃ Keys
 Set command, option, and alt key for both the left and the right part of the
 keyboard.
 #+BEGIN_SRC emacs-lisp
+(menu-bar-mode t)
 (setq! mac-option-modifier 'meta
        mac-right-option-modifier 'meta
        mac-command-modifier 'super
@@ -106,17 +103,15 @@ I'm obsessed with the dark solarized theme, but it looks blue in my terminal. So
 I use zenburn if I'm in the terminal.
 
 #+begin_src emacs-lisp
-;; (add-to-list 'default-frame-alist '(inhibit-double-buffering . t))
-;; (set-frame-parameter (selected-frame) 'alpha '(85 85))
-;; (add-to-list 'default-frame-alist '(alpha 85 85))
-
 (setq! doom-theme (if (display-graphic-p) 'doom-solarized-dark-high-contrast 'doom-zenburn))
+(custom-set-faces '(default ((t (:background nil)))))
 #+end_src
 ** Mouse Cursor Color
 #+begin_src emacs-lisp
 (set-mouse-color "red")
 #+end_src
 ** Evil Cursor State Colors
+Set the cursor colors in vi editing mode.
 #+begin_src emacs-lisp
 (setq! evil-default-cursor '("DodgerBlue1" box)
        evil-normal-state-cursor  '("gray" box)
@@ -131,20 +126,21 @@ I use zenburn if I'm in the terminal.
 #+BEGIN_SRC emacs-lisp
 (setq! doom-modeline-icon (display-graphic-p)
        doom-modeline-major-mode-icon t
+       doom-modeline-hud t
        doom-modeline-lsp t
        doom-modeline-buffer-file-name-style 'truncate-with-project
        doom-modeline-buffer-encoding nil)
 #+END_SRC
 *** Show battery usage
-+ Ignore any error here. If running on a PC or server there is no battery status
-  to show.
+Ignore any error here. If running on a PC or server there is no battery status
+to show.
 #+BEGIN_SRC emacs-lisp
 (ignore-errors (display-battery-mode))
 #+END_SRC
 *** Disable buffer size
 Who cares how many bytes this file has?
 #+BEGIN_SRC emacs-lisp
-(size-indication-mode nil)
+(setq! size-indication-mode nil)
 #+END_SRC
 ** Treemacs
 + Use the colorful treemacs theme and doom additions
@@ -165,70 +161,22 @@ Who cares how many bytes this file has?
 + The relative line number fucks up variable pitch fonts.
 
 #+BEGIN_SRC emacs-lisp
-(setq! display-line-numbers-type nil)
+(setq! display-line-numbers-type 'relative)
 #+END_SRC
-*** Font
-+ I slightly prefer JetBrains Mono over FiraCode. But both lack support of
-  certain characters that I depend on withy my ligature settings: 𝕊, 𝔽, 𝕋.
-  I use Iosevka as my main font while I figure out the issue with the ligatures,
-  or use a different ligature instead of those symbols.
-+ I use =Chalkboard= as my new variable pitch font. It looks gorgeous.
-  + This font lack support of ligatures, etc. It is meant to be used by things
-    like org mode, email writers, etc.
-#+BEGIN_SRC emacs-lisp
-(setq! doom-font (font-spec :family "JetBrainsMono Nerd Font" :size 11)
-       doom-variable-pitch-font (font-spec :family "Chalkboard" :size 12)
-       ivy-posframe-font (font-spec :family "JetBrains Mono Nerd Font" :size 13))
-#+END_SRC
-*** Extra Ligatures
-The ligatures don't always render correctly. I change them to something I'm sure
-that works on my machine.
-#+begin_src emacs-lisp
-;; (plist-put! +ligatures-extra-symbols
-;;   ;; org
-;;   :name          "»"
-;;   :src_block     "»"
-;;   :src_block_end "«"
-;;   :quote         "“"
-;;   :quote_end     "”"
-;;   ;; Functional
-;;   :lambda        "λ"
-;;   :def           "ƒ"
-;;   :composition   "∘"
-;;   :map           "↦"
-;;   ;; Types
-;;   ;; :null          "∅"
-;;   ;; :true          "𝕋"
-;;   ;; :false         "𝔽"
-;;   ;; :int           "ℤ"
-;;   ;; :float         "ℝ"
-;;   ;; :str           "𝕊"
-;;   ;; :bool          "𝔹"
-;;   ;; :list          "𝕃"
-;;   ;; Flow
-;;   :not           "￢"
-;;   :in            "∈"
-;;   :not-in        "∉"
-;;   :and           "∧"
-;;   :or            "∨"
-;;   :for           "∀"
-;;   :some          "∃"
-;;   :return        "⟼"
-;;   :yield         "⟻"
-;;   ;; Other
-;;   :union         "⋃"
-;;   :intersect     "∩"
-;;   :diff          "∖"
-;;   :tuple         "⨂"
-;;   :pipe          "" ;; FIXME: find a non-private char
-;;   :dot           "•")  ;; you could also add your own if you want
-#+END_SRC
-#+end_src
 *** fill-column
 Set column length to be 90 and enable fill-column indicator in the editors.
 #+begin_src emacs-lisp
 (global-display-fill-column-indicator-mode +1)
 #+end_src
+** Font
++ Use IntelliJ fonts everywhere. They look gorgeous
++ Use =Chalkboard= as variable pitch font. It looks gorgeous.
+#+BEGIN_SRC emacs-lisp
+(setq! doom-font (font-spec :family "JetBrainsMono Nerd Font" :size 12)
+       doom-unicode-font (font-spec :family "JetBrainsMono Nerd Font" :size 13)
+       doom-variable-pitch-font (font-spec :family "Chalkboard" :size 12)
+       ivy-posframe-font (font-spec :family "JetBrains Mono Nerd Font" :size 13))
+#+END_SRC
 * Terminal
 ** tmux
 *** Key Bindings
@@ -248,7 +196,7 @@ Set column length to be 90 and enable fill-column indicator in the editors.
   #+BEGIN_SRC emacs-lisp
   (setq! vterm-shell "fish")
   #+END_SRC
-* Tramps
+* Tramp
 From the [[https://www.gnu.org/software/emacs/manual/html_node/tramp/Frequently-Asked-Questions.html][tramp FAQ page]]:
 #+begin_src emacs-lisp
 (setq remote-file-name-inhibit-cache nil)
@@ -265,22 +213,25 @@ From the [[https://www.gnu.org/software/emacs/manual/html_node/tramp/Frequently-
   (setq! ispell-personal-dictionary "~/Dropbox/Apps/ispell/english.pws")
   #+end_src
 * dired
-+ Enable the DWIM (/Do What I Mean/) mode, which makes life much easier when moving stuff around in
-  the ~dired~ mode.
++ Enable the DWIM (/Do What I Mean/) mode, which makes life much easier when
+  moving stuff around in the ~dired~ mode.
+
 #+BEGIN_SRC emacs-lisp
 (setq! dired-dwim-target t)
 #+END_SRC
 * Projectile
 + Set projectile search path to add new projects.
   #+BEGIN_SRC emacs-lisp
-  (setq! projectile-project-search-path '("~/w" "~/Workspace" "~/Workspace/REPO"))
+  (setq! projectile-project-search-path '("~/w"))
   #+END_SRC
-* data
-** dash
-+ Search Dash GUI from Emacs. Pretty handy!
+* Dash API Browser
+Search Dash GUI from Emacs. Pretty handy! It only works in MacOS.
 #+BEGIN_SRC emacs-lisp
-(map! "\C-cd" 'dash-at-point)
-(map! "\C-ce" 'dash-at-point-with-docset)
+(map! :leader
+      (:prefix-map ("a" . "applications")
+       (:prefix ("d" . "dash")
+        :desc "dash at point" "d" #'dash-at-point
+        :desc "dash at point with docset" "a" #'+tmux/cd-to-project)))
 #+END_SRC
 * Org
 I use Org for GTD, Zettelkasten workflows, and as a replacement for markdown and
@@ -735,14 +686,14 @@ I use deft to search the notes I take using org roam.
 ***** LaTex Backends
 + Define two backends to export resumes to latex.
 #+BEGIN_SRC emacs-lisp
-(use-package! ox-moderncv
-  :defer
-  :load-path "~/w/org-cv/"
-  :init(require 'ox-moderncv))
-(use-package! ox-altacv
-  :defer
-  :load-path "~/w/org-cv/"
-  :init (require 'ox-altacv))
+;; (use-package! ox-moderncv
+;;   :defer
+;;   :load-path "~/w/org-cv/"
+;;   :init(require 'ox-moderncv))
+;; (use-package! ox-altacv
+;;   :defer
+;;   :load-path "~/w/org-cv/"
+;;   :init (require 'ox-altacv))
 #+END_SRC
 ** org-babel
 *** Prolog
@@ -918,32 +869,8 @@ It's recommended to use =debugpy= over =ptvsd=.
   (ediprolog-system 'swi))
 #+END_SRC
 ** Scala
-- Register to projectile
-  #+BEGIN_SRC emacs-lisp
-  ;; (after! projectile
-  ;;   (projectile-register-project-type 'sbt '("build.sbt")
-  ;;                                     :src-dir "src/main"
-  ;;                                     :test-dir "src/test"
-  ;;                                     :compilation-dir "."
-  ;;                                     :compile "bloop compile root"
-  ;;                                     :test "sbt test"
-  ;;                                     :test-suffix "Spec"))
-  #+END_SRC
 #+BEGIN_SRC emacs-lisp
 (setq create-lockfiles nil)
 (setq backup-directory-alist `((".*" . ,temporary-file-directory))
       auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
-
-;; (after! scala-mode
-;;   (setq compile-command "bloop compile root"
-;;         compilation-directory ".")
-;;   ;; (add-hook 'before-save-hook 'lsp-format-buffer)
-;;   (map! "\C-c r" 'lsp-metals-build-import)
-;;   (map! "\C-c s" 'lsp-metals-sources-scan)
-;;   (map! "\C-c d" 'lsp-describe-thing-at-point)
-;;   (map! "\C-c s" 'lsp-metals-sources-scan))
-#+END_SRC
-** Haskell
-#+BEGIN_SRC emacs-lisp
-;; (after! haskell-mode (setq lsp-document-sync-method 'full))
 #+END_SRC
