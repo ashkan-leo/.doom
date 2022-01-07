@@ -56,7 +56,6 @@
        fold
        format
        multiple-cursors
-       parinfer
        rotate-text
 
        :emacs

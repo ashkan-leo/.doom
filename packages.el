@@ -8,9 +8,9 @@
 (package! org-roam-bibtex :recipe (:host github :repo "org-roam/org-roam-bibtex"))
 (package! org-fragtog)
 
-;; org exporters
-(package! ox-moderncv :recipe (:host gitlab :repo "Titan-C/org-cv"))
-(package! ox-altacv   :recipe (:host gitlab :repo "Titan-C/org-cv"))
+;; org resume exporters
+;; (package! ox-moderncv :recipe (:host gitlab :repo "Titan-C/org-cv"))
+;; (package! ox-altacv   :recipe (:host gitlab :repo "Titan-C/org-cv"))
 (package! org-fs-tree :recipe (:host github :repo "ScriptDevil/org-fs-tree"))
 
 ;; org babel

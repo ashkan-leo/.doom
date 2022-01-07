@@ -681,20 +681,6 @@ I use deft to search the notes I take using org roam.
 
 + [ ] Set LaTex export engine to be XeLaTex
 
-*** TODO Resume and CV
-**** org-CV
-***** LaTex Backends
-+ Define two backends to export resumes to latex.
-#+BEGIN_SRC emacs-lisp
-;; (use-package! ox-moderncv
-;;   :defer
-;;   :load-path "~/w/org-cv/"
-;;   :init(require 'ox-moderncv))
-;; (use-package! ox-altacv
-;;   :defer
-;;   :load-path "~/w/org-cv/"
-;;   :init (require 'ox-altacv))
-#+END_SRC
 ** org-babel
 *** Prolog
 #+BEGIN_SRC emacs-lisp
