@@ -11,6 +11,7 @@
   - [[#main-theme][Main Theme]]
   - [[#mouse-cursor-color][Mouse Cursor Color]]
   - [[#evil-cursor-state-colors][Evil Cursor State Colors]]
+  - [[#menue-bar][Menue Bar]]
   - [[#modeline][Modeline]]
   - [[#treemacs][Treemacs]]
   - [[#editor][Editor]]
@@ -86,7 +87,6 @@ To solve this problem, when your code only knows the relative path of another fi
 Set command, option, and alt key for both the left and the right part of the
 keyboard.
 #+BEGIN_SRC emacs-lisp
-(menu-bar-mode t)
 (setq! mac-option-modifier 'meta
        mac-right-option-modifier 'meta
        mac-command-modifier 'super
@@ -120,6 +120,10 @@ Set the cursor colors in vi editing mode.
        evil-insert-state-cursor  '("white" bar)
        evil-visual-state-cursor  '("white" hbar)
        evil-replace-state-cursor '("pink" hbar))
+#+end_src
+** Menue Bar
+#+begin_src emacs-lisp
+(menu-bar-mode nil)
 #+end_src
 ** Modeline
 *** Configure doom-modeline
