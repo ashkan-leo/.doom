@@ -1,0 +1,7 @@
+# key: ssh-deploy
+# name: ssh-deploy-basic
+# condition: t
+# --
+((nil . ((ssh-deploy-root-local . "$1")
+         (ssh-deploy-root-remote . "/ssh:$2@$3:$4")
+         (ssh-deploy-on-explicit-save . t))))
