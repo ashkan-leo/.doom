@@ -9,8 +9,7 @@
 (package! org-fragtog)
 
 ;; org resume exporters
-;; (package! ox-moderncv :recipe (:host gitlab :repo "Titan-C/org-cv"))
-;; (package! ox-altacv   :recipe (:host gitlab :repo "Titan-C/org-cv"))
+(package! ox-moderncv :recipe (:host gitlab :repo "Titan-C/org-cv"))
 (package! org-fs-tree :recipe (:host github :repo "ScriptDevil/org-fs-tree"))
 
 ;; org babel
@@ -35,3 +34,6 @@
 
 (unpin! org-roam company-org-roam)
 (unpin! bibtex-completion helm-bibtex ivy-bibtex)
+
+(package! gptel
+  :recipe (:host github :repo "karthink/gptel"))

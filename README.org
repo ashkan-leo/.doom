@@ -26,7 +26,7 @@ branch.
 
    In fish, you can write the following and forget about it.
    #+BEGIN_SRC fish
-   set -U fish_user_paths ~/.emacs.d/bin $fish_user_paths
+   fish_add_path ~/.config/emacs/bin
    #+END_SRC
    Otherwise, add it to your bash profile.
 4. Make sure you run =doom sync= every time the configurations changed. You can
@@ -37,14 +37,7 @@ branch.
 This is a work-in-progress installation script.
 #+BEGIN_SRC bash
 # Install Doom Emacs by hlissner
-git clone https://github.com/hlissner/doom-emacs ~/.emacs.d
-
-# Install the package manager stuff
-# If your ISP or proxy doesn't allow you to install from
-# raw.githubusercontent.com, then you'll have to install straight (our package
-# manager) manually:
-mkdir -p ~/.emacs.d/.local/straight/repos
-git clone -b develop https://github.com/raxod502/straight.el ~/.emacs.d/.local/straight/repos/straight.el
+git clone https://github.com/hlissner/doom-emacs ~/.config/emacs
 
 # Install these configurations
 git clone https://github.com/ashkan-leo/.doom.git ~/.config/doom/
