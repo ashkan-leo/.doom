@@ -10,30 +10,29 @@
 
 ;; org resume exporters
 (package! ox-moderncv :recipe (:host gitlab :repo "Titan-C/org-cv"))
-(package! org-fs-tree :recipe (:host github :repo "ScriptDevil/org-fs-tree"))
 
 ;; org babel
 (package! ob-prolog)
 
-;; ui
-(package! nyan-mode)
-
 ;; dash at point
-(package! counsel-dash)
 (package! dash-at-point)
-(package! helm-dash)
 
 ;; prolog
 (package! ediprolog)
 ;; TODO how to install this?
 ;; (package! prolog :recipe (:host github :ropo "jamesnvc/lsp_server"))
 
-;; tools
-(package! real-auto-save)
+;; justfile support
+(package! just-mode)
+(package! justl)
 (package! sphinx-doc)
 
-(unpin! org-roam company-org-roam)
+(unpin! org-roam)
 (unpin! bibtex-completion helm-bibtex ivy-bibtex)
 
-(package! gptel
-  :recipe (:host github :repo "karthink/gptel"))
+;; claude code ide - agentic Claude Code CLI integration
+(package! claude-code-ide
+  :recipe (:host github :repo "manzaltu/claude-code-ide.el"))
+
+(package! copilot
+  :recipe (:host github :repo "zerolfx/copilot.el" :files ("*.el" "dist")))

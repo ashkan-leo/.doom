@@ -1,0 +1,185 @@
+#!/usr/bin/env bash
+# doom-check: Static analysis + ERT functional tests + byte-compile for Doom config
+# Lives at: ~/.config/doom/bin/doom-check
+# Usage: doom-check [--static-only] [--byte-compile-only]
+
+set -euo pipefail
+
+# Resolve DOOM_DIR relative to this script's location (bin/../)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOOM_DIR="${DOOMDIR:-$(dirname "$SCRIPT_DIR")}"
+EMACS_BIN="/Applications/Emacs.app/Contents/MacOS/Emacs"
+CONFIG_ORG="$DOOM_DIR/config.org"
+CONFIG_EL="$DOOM_DIR/config.el"
+PACKAGES_EL="$DOOM_DIR/packages.el"
+
+STATIC_ONLY=false
+BYTE_COMPILE_ONLY=false
+for arg in "$@"; do
+  [[ "$arg" == "--static-only" ]] && STATIC_ONLY=true
+  [[ "$arg" == "--byte-compile-only" ]] && BYTE_COMPILE_ONLY=true
+done
+
+RED='\033[0;31m'; YELLOW='\033[1;33m'; GREEN='\033[0;32m'; BOLD='\033[1m'; NC='\033[0m'
+ERRORS=0; WARNINGS=0
+
+fail()    { echo -e "${RED}✗ FAIL${NC}  $1"; ((ERRORS++));   }
+warn()    { echo -e "${YELLOW}⚠ WARN${NC}  $1"; ((WARNINGS++)); }
+ok()      { echo -e "${GREEN}✓ OK${NC}    $1"; }
+section() { echo -e "\n${BOLD}=== $1 ===${NC}"; }
+
+# ── Static Analysis ──────────────────────────────────────────────────────────
+if ! $BYTE_COMPILE_ONLY; then
+  section "Static Analysis: config.org"
+
+  # Deprecated macros
+  count=$(grep -c '\bsetq!' "$CONFIG_ORG" 2>/dev/null || true)
+  [[ $count -gt 0 ]] && fail "setq! used $count time(s) — use setopt (deprecated since Doom 3.0)" \
+                       || ok "No setq! usage"
+
+  # Deprecated cl library
+  count=$(grep -c "(require 'cl)" "$CONFIG_ORG" 2>/dev/null || true)
+  [[ $count -gt 0 ]] && fail "(require 'cl) found $count time(s) — use cl-lib" \
+                       || ok "No deprecated (require 'cl)"
+
+  # :background nil face attribute
+  count=$(grep -c ":background nil" "$CONFIG_ORG" 2>/dev/null || true)
+  [[ $count -gt 0 ]] && fail ":background nil found $count time(s) — use 'unspecified'" \
+                       || ok "No :background nil"
+
+  # Minor mode called with t argument (e.g. (some-mode t) instead of hook or +1)
+  # Matches (word-mode t) but not (setq x t) or (when t)
+  matches=$(grep -n '([a-z][a-z-]*-mode t)' "$CONFIG_ORG" 2>/dev/null || true)
+  if [[ -n "$matches" ]]; then
+    while IFS= read -r line; do
+      warn "Minor mode called with 't' arg (use +1 or hook): $line"
+    done <<< "$matches"
+  else
+    ok "No minor-mode-with-t calls"
+  fi
+
+  # defun inside after! (not byte-compiled)
+  if grep -qP '^\(after!.*\n.*\(defun ' "$CONFIG_ORG" 2>/dev/null || \
+     grep -A5 '(after!' "$CONFIG_ORG" | grep -q '(defun '; then
+    warn "Possible defun inside after! block — move defun to top level"
+  else
+    ok "No defun inside after! (grep heuristic)"
+  fi
+
+  # :ensure t usage (wrong for Doom — uses straight.el)
+  count=$(grep -c ':ensure t' "$CONFIG_ORG" 2>/dev/null || true)
+  [[ $count -gt 0 ]] && fail ":ensure t found $count time(s) — Doom uses straight.el, not package.el" \
+                       || ok "No :ensure t"
+
+  # dap-mode references in tangled code (obsolete — Doom uses dape now)
+  # Check config.el (tangled output) not config.org, to avoid flagging comments/prose
+  count=$(grep -c 'dap-mode\|dap-python\|require.*dap' "$CONFIG_EL" 2>/dev/null || true)
+  [[ $count -gt 0 ]] && warn "dap-mode references found $count time(s) in config.el — Doom debugger now uses dape" \
+                       || ok "No obsolete dap-mode references"
+
+  section "Static Analysis: packages.el"
+
+  # :ensure t in packages.el
+  count=$(grep -c ':ensure t' "$PACKAGES_EL" 2>/dev/null || true)
+  [[ $count -gt 0 ]] && fail ":ensure t in packages.el" || ok "No :ensure t in packages.el"
+
+  # package! with :pin that's just placeholder
+  count=$(grep -c ':pin "SHA"' "$PACKAGES_EL" 2>/dev/null || true)
+  [[ $count -gt 0 ]] && warn "Placeholder :pin \"SHA\" found — replace with real commit hash" \
+                       || ok "No placeholder :pin"
+
+  section "Static Analysis: config.el (tangled output)"
+
+  # config.el exists and is recent relative to config.org
+  if [[ ! -f "$CONFIG_EL" ]]; then
+    fail "config.el does not exist — run doom sync to tangle"
+  else
+    org_time=$(stat -c %Y "$CONFIG_ORG")
+    el_time=$(stat -c %Y "$CONFIG_EL")
+    if [[ $org_time -gt $((el_time + 5)) ]]; then
+      warn "config.org is newer than config.el — consider running doom sync"
+    else
+      ok "config.el is up-to-date with config.org"
+    fi
+  fi
+
+  # Same checks on the tangled output (catches tangle issues)
+  count=$(grep -c '\bsetq!' "$CONFIG_EL" 2>/dev/null || true)
+  [[ $count -gt 0 ]] && fail "setq! in config.el (tangle may have old content)" || ok "No setq! in config.el"
+
+  count=$(grep -c ':background nil' "$CONFIG_EL" 2>/dev/null || true)
+  [[ $count -gt 0 ]] && fail ":background nil in config.el" || ok "No :background nil in config.el"
+
+  count=$(grep -c 'dap-python\|after!.*dap-mode' "$CONFIG_EL" 2>/dev/null || true)
+  [[ $count -gt 0 ]] && fail "dap-mode code in config.el — remove it" || ok "No obsolete dap-mode in config.el"
+fi
+
+# ── ERT Functional Tests ─────────────────────────────────────────────────────
+if ! $BYTE_COMPILE_ONLY; then
+  section "ERT Functional Tests"
+  TESTS_EL="$DOOM_DIR/tests/config-tests.el"
+
+  if [[ ! -f "$TESTS_EL" ]]; then
+    warn "Test file not found: $TESTS_EL"
+  elif [[ ! -f "$EMACS_BIN" ]]; then
+    warn "Emacs not found at $EMACS_BIN — skipping ERT tests"
+  else
+    output=$("$EMACS_BIN" --batch -Q \
+      --load "$TESTS_EL" \
+      --eval "(ert-run-tests-batch-and-exit)" 2>&1)
+
+    total=$(echo "$output" | grep "^Ran " | awk '{print $2}' || echo "?")
+    failed=$(echo "$output" | grep "unexpected results" | awk '{print $1}' || echo "0")
+    passed=$(echo "$output" | grep -c "^   passed" || true)
+
+    if [[ "$failed" != "0" && -n "$failed" ]]; then
+      fail "ERT: $failed/$total test(s) failed"
+      echo "$output" | grep -E "FAILED|condition:" | head -20
+    else
+      ok "ERT: $passed/$total tests passed"
+    fi
+  fi
+fi
+
+# ── Byte-compile Check ───────────────────────────────────────────────────────
+if ! $STATIC_ONLY; then
+  section "Byte-compile Check (config.el)"
+
+  if [[ ! -f "$EMACS_BIN" ]]; then
+    warn "Emacs not found at $EMACS_BIN — skipping byte-compile check"
+  else
+    # Run byte-compile in batch mode with Doom's load path
+    output=$("$EMACS_BIN" --batch -Q \
+      --eval "(add-to-list 'load-path (expand-file-name \"lisp\" \"$HOME/.config/emacs\"))" \
+      --eval "(load (expand-file-name \"doom-start\" \"$HOME/.config/emacs/lisp\") nil t)" \
+      --eval "(setq doom-user-dir \"$DOOM_DIR\")" \
+      -f batch-byte-compile \
+      "$CONFIG_EL" 2>&1 || true)
+
+    bc_errors=$(echo "$output" | grep -c "^.*:.*Error\|error:" 2>/dev/null || true)
+    bc_warns=$(echo "$output" | grep -c "^.*:.*Warning\|warning:" 2>/dev/null || true)
+
+    if [[ $bc_errors -gt 0 ]]; then
+      fail "Byte-compile: $bc_errors error(s)"
+      echo "$output" | grep -E "Error|error:" | head -20
+    elif [[ $bc_warns -gt 0 ]]; then
+      warn "Byte-compile: $bc_warns warning(s)"
+      echo "$output" | grep -E "Warning|warning:" | head -20
+    else
+      ok "Byte-compile: clean"
+    fi
+  fi
+fi
+
+# ── Summary ──────────────────────────────────────────────────────────────────
+echo ""
+if [[ $ERRORS -gt 0 ]]; then
+  echo -e "${RED}${BOLD}Result: $ERRORS error(s), $WARNINGS warning(s)${NC}"
+  exit 1
+elif [[ $WARNINGS -gt 0 ]]; then
+  echo -e "${YELLOW}${BOLD}Result: 0 errors, $WARNINGS warning(s)${NC}"
+  exit 0
+else
+  echo -e "${GREEN}${BOLD}Result: all checks passed${NC}"
+  exit 0
+fi

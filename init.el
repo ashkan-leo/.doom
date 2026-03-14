@@ -71,7 +71,7 @@
  (spell
   +flyspell
   +hunspell)
- grammar
+ ;; grammar
  (syntax
   +childframe)
 
@@ -97,6 +97,7 @@
   +peek)
  (magit
   +forge)
+ llm
  make
  pass
  pdf
@@ -105,6 +106,8 @@
  biblio
 
  :lang
+ erlang
+ (elixir +lsp + tree-sitter)
  rst
  terra
  yaml

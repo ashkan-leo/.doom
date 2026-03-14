@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:docs.anthropic.com)",
+      "Bash(git:*)",
+      "WebSearch",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:willschenk.com)",
+      "Skill(doom-sync)",
+      "Skill(doom-debug)",
+      "Bash(grep:*)",
+      "Bash(~/.config/emacs/bin/doom sync:*)",
+      "Bash(bash:*)",
+      "Bash(/Applications/Emacs.app/Contents/MacOS/Emacs:*)",
+      "Bash(ls:*)",
+      "Bash(~/.config/emacs/bin/doom help:*)",
+      "Bash(~/.config/emacs/bin/doom emacs:*)",
+      "Bash(~/.config/doom/bin/doom-check:*)",
+      "WebFetch(domain:docs.doomemacs.org)",
+      "WebFetch(domain:just.systems)"
+    ]
+  }
+}

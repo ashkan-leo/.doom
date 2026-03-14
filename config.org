@@ -83,6 +83,9 @@
     - [[#ediprolog][~ediprolog~]]
   - [[#scala][Scala]]
 - [[#ai--assistant][AI & Assistant]]
+  - [[#llm][LLM]]
+  - [[#claude-code-ide][Claude Code IDE]]
+  - [[#copilot][Copilot]]
 
 * Preamble
 ** Emacs Lisp Scripts
@@ -118,8 +121,16 @@ To solve this problem, when your code only knows the relative path of another fi
 + Username comes from the environment.
 + Set the email address to my Gmail address.
   #+begin_src emacs-lisp
-  (setq! user-mail-address "ashkan.aleali@gmail.com")
+  (setopt user-mail-address "ashkan.aleali@gmail.com")
   #+end_src
+** Files
+Disable lockfiles (causes noise in version-controlled dirs) and redirect backups
+and auto-saves to the system temp directory.
+#+begin_src emacs-lisp
+(setq create-lockfiles nil)
+(setq backup-directory-alist `((".*" . ,temporary-file-directory))
+      auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
+#+end_src
 
 * OS
 ** Mac OS
@@ -127,7 +138,7 @@ To solve this problem, when your code only knows the relative path of another fi
 Set command, option, and alt key for both the left and the right part of the
 keyboard.
 #+BEGIN_SRC emacs-lisp
-(setq! mac-option-modifier 'meta
+(setopt mac-option-modifier 'meta
        mac-right-option-modifier 'meta
        mac-command-modifier 'super
        mac-right-command-modifier 'super)
@@ -136,15 +147,15 @@ keyboard.
 ** Splash Image
 Because it's a Pip Boy Emacs ;) 
 #+begin_src emacs-lisp
-(setq! fancy-splash-image (expand-file-name "splash/pipboy.png" doom-private-dir))
+(setopt fancy-splash-image (expand-file-name "splash/pipboy.png" doom-private-dir))
 #+end_src
 ** Main Theme
 I'm obsessed with the dark solarized theme, but it looks blue in my terminal. So
 I use zenburn if I'm in the terminal.
 
 #+begin_src emacs-lisp
-(setq! doom-theme (if (display-graphic-p) 'doom-solarized-dark-high-contrast 'doom-monokai-ristretto))
-(custom-set-faces '(default ((t (:background nil)))))
+(setopt doom-theme (if (display-graphic-p) 'doom-solarized-dark-high-contrast 'doom-monokai-ristretto))
+(custom-set-faces '(default ((t (:background unspecified)))))
 #+end_src
 ** Mouse Cursor Color
 #+begin_src emacs-lisp
@@ -153,7 +164,7 @@ I use zenburn if I'm in the terminal.
 ** Evil Cursor State Colors
 Set the cursor colors in vi editing mode.
 #+begin_src emacs-lisp
-(setq! evil-default-cursor '("DodgerBlue1" box)
+(setopt evil-default-cursor '("DodgerBlue1" box)
        evil-normal-state-cursor  '("gray" box)
        evil-emacs-state-cursor   '("orange" box)
        evil-motion-state-cursor  '("SeaGreen1" box)
@@ -168,7 +179,7 @@ Set the cursor colors in vi editing mode.
 ** Modeline
 *** Configure doom-modeline
 #+BEGIN_SRC emacs-lisp
-(setq! doom-modeline-icon (display-graphic-p)
+(setopt doom-modeline-icon (display-graphic-p)
        doom-modeline-major-mode-icon t
        doom-modeline-hud t
        doom-modeline-lsp t
@@ -184,13 +195,13 @@ to show.
 *** Disable buffer size
 Who cares how many bytes this file has?
 #+BEGIN_SRC emacs-lisp
-(setq! size-indication-mode nil)
+(setopt size-indication-mode nil)
 #+END_SRC
 ** Treemacs
 + Use the colorful treemacs theme and doom additions
    #+BEGIN_SRC emacs-lisp
-   (setq! doom-themes-treemacs-theme "doom-colors")
-   (doom-themes-treemacs-config)
+   (setopt doom-themes-treemacs-theme "doom-colors")
+   (after! doom-themes (doom-themes-treemacs-config))
    #+END_SRC
 + hide files ignored by Git from treemacs
   #+BEGIN_SRC emacs-lisp
@@ -205,7 +216,7 @@ Who cares how many bytes this file has?
 + The relative line number fucks up variable pitch fonts.
 
 #+BEGIN_SRC emacs-lisp
-(setq! display-line-numbers-type 'relative)
+(setopt display-line-numbers-type 'relative)
 #+END_SRC
 *** fill-column
 Set column length to be 90 and enable fill-column indicator in the editors.
@@ -216,7 +227,7 @@ Set column length to be 90 and enable fill-column indicator in the editors.
 + Use IntelliJ fonts everywhere. They look gorgeous
 + Use =Chalkboard= as variable pitch font. It looks gorgeous.
 #+BEGIN_SRC emacs-lisp
-(setq! doom-font (font-spec :family "JetBrainsMono Nerd Font" :size 12)
+(setopt doom-font (font-spec :family "JetBrainsMono Nerd Font" :size 12)
        doom-unicode-font (font-spec :family "JetBrainsMono Nerd Font" :size 13)
        doom-variable-pitch-font (font-spec :family "Chalkboard" :size 12)
        ivy-posframe-font (font-spec :family "JetBrains Mono Nerd Font" :size 13))
@@ -238,7 +249,7 @@ Set column length to be 90 and enable fill-column indicator in the editors.
 ** vterm
 + Set =fish= to be the default shell.
   #+BEGIN_SRC emacs-lisp
-  (setq! vterm-shell "fish")
+  (setopt vterm-shell "fish")
   #+END_SRC
 * Tramp
 From the [[https://www.gnu.org/software/emacs/manual/html_node/tramp/Frequently-Asked-Questions.html][tramp FAQ page]]:
@@ -254,19 +265,19 @@ From the [[https://www.gnu.org/software/emacs/manual/html_node/tramp/Frequently-
 * Spell Checker
 + set personal ~ispell~ dictionary.
   #+begin_src emacs-lisp
-  (setq! ispell-personal-dictionary "~/Dropbox/Apps/ispell/english.pws")
+  (setopt ispell-personal-dictionary "~/Dropbox/Apps/ispell/english.pws")
   #+end_src
 * dired
 + Enable the DWIM (/Do What I Mean/) mode, which makes life much easier when
   moving stuff around in the ~dired~ mode.
 
 #+BEGIN_SRC emacs-lisp
-(setq! dired-dwim-target t)
+(setopt dired-dwim-target t)
 #+END_SRC
 * Projectile
 + Set projectile search path to add new projects.
   #+BEGIN_SRC emacs-lisp
-  (setq! projectile-project-search-path '("~/w"))
+  (setopt projectile-project-search-path '("~/w"))
   #+END_SRC
 * Dash API Browser
 Search Dash GUI from Emacs. Pretty handy! It only works in MacOS.
@@ -275,7 +286,7 @@ Search Dash GUI from Emacs. Pretty handy! It only works in MacOS.
       (:prefix-map ("a" . "applications")
        (:prefix ("d" . "dash")
         :desc "dash at point" "d" #'dash-at-point
-        :desc "dash at point with docset" "a" #'+tmux/cd-to-project)))
+        :desc "dash at point with docset" "a" #'dash-at-point-with-docset)))
 #+END_SRC
 * Org
 I use Org for GTD, Zettelkasten workflows, and as a replacement for markdown and
@@ -283,7 +294,7 @@ LaTeX whenever possible.
 ** Aesthetics
 Configure the aesthetics of the org-mode buffer.
 #+BEGIN_SRC emacs-lisp
-(setq! org-hide-emphasis-markers t
+(setopt org-hide-emphasis-markers t
        org-fontify-done-headline t
        org-fontify-whole-heading-line t
        org-fontify-todo-headline t
@@ -317,7 +328,7 @@ paths include the followings:
 + Bibliography files generated by Zotero.
 + GTD workflow files.
 #+BEGIN_SRC emacs-lisp
-(setq! pipboy/org-notes (expand-file-name "~/w/roam/")
+(setopt pipboy/org-notes (expand-file-name "~/w/roam/")
        pipboy/bibtex-files (directory-files "~/Dropbox/Apps/bibliography/bib/" 'full ".bib")
        pipboy/pdf-directory (expand-file-name "~/Dropbox/Apps/bibliography/pdf/")
        pipboy/gtd-directory (expand-file-name "~/w//beorg"))
@@ -331,7 +342,7 @@ functionalities of the org-mode. I follow the GTD workflow.
 3) I use someday to backlog the tasks I don't wish to complete in the short
    term.
 #+BEGIN_SRC emacs-lisp
-(setq! org-inbox-file-name (expand-file-name "inbox.org" pipboy/gtd-directory) ;; TODO
+(setopt org-inbox-file-name (expand-file-name "inbox.org" pipboy/gtd-directory) ;; TODO
        org-tickler-file-name (expand-file-name "tickler.org" pipboy/gtd-directory) ;; TODO
        org-someday-file-name (expand-file-name "someday.org" pipboy/gtd-directory) ;; TODO
        org-gtd-file-name (expand-file-name "gtd.org" pipboy/gtd-directory) ;; TODO
@@ -342,12 +353,12 @@ functionalities of the org-mode. I follow the GTD workflow.
 Set both the keywords and the face of GTD workflow.
 #+BEGIN_SRC emacs-lisp
 (after! org
-  (setq! org-todo-keywords '((sequence "TODO(t)" "NOW(z)" "NEXT(n)" "WAIT(w)" "SOMEDAY(s) HOLD(h)" "PROJECT(p)"
+  (setopt org-todo-keywords '((sequence "TODO(t)" "NOW(z)" "NEXT(n)" "WAIT(w)" "SOMEDAY(s) HOLD(h)" "PROJECT(p)"
                                        "|" "DONE(d)" "CANCEL(c)")
                              (sequence "[ ](T)" "[?](W)" "[-](N)"
                                        "|" "[X](x)"))
 
-         org-todo-keyword-faces '(("NOW" . (:foreground "magenta" :reight "bold"))
+         org-todo-keyword-faces '(("NOW" . (:foreground "magenta" :weight "bold"))
                                   ("NEXT" . (:foreground "violet" :weight "bold"))
                                   ("WAIT" . +org-todo-onhold)
                                   ("HOLD" . +org-todo-onhold)
@@ -361,7 +372,7 @@ Set both the keywords and the face of GTD workflow.
 These are the tags that I use with my task management workflow.
 #+BEGIN_SRC emacs-lisp
 (after! org
-  (setq! org-tag-alist '((:startgroup . nil)
+  (setopt org-tag-alist '((:startgroup . nil)
                          ("@work" . ?w)
                          ("@home" . ?h)
                          ("@business" . ?b)
@@ -400,7 +411,7 @@ These are the tags that I use with my task management workflow.
 **** Files
 #+BEGIN_SRC emacs-lisp
 (after! org
-  (setq! org-agenda-files (list pipboy/gtd-directory)
+  (setopt org-agenda-files (list pipboy/gtd-directory)
          org-agenda-show-inherited-tags t
          org-default-notes-file org-inbox-file-name))
 #+END_SRC
@@ -417,14 +428,14 @@ These are the tags that I use with my task management workflow.
 **** Agenda View
 #+BEGIN_SRC emacs-lisp
 (after! org
-  (setq! org-agenda-skip-scheduled-if-done t
+  (setopt org-agenda-skip-scheduled-if-done t
          org-agenda-skip-deadline-if-done t
          org-agenda-include-deadlines t
          org-agenda-block-separator nil
          org-agenda-tags-column 100 ;; from testing this seems to be a good value
          org-agenda-compact-blocks t)
 
-  (setq! org-agenda-custom-commands
+  (setopt org-agenda-custom-commands
          '(("o" "Overview"
             ((agenda "" ((org-agenda-span 'day)))
              (todo "" ((org-agenda-overriding-header "")
@@ -488,7 +499,7 @@ These are the tags that I use with my task management workflow.
 Set the refile targets to be my project, someday, and tickler files.
 #+BEGIN_SRC emacs-lisp
 (after! org
-  (setq! org-refile-targets '((org-gtd-file-name :maxlevel . 3)
+  (setopt org-refile-targets '((org-gtd-file-name :maxlevel . 3)
                               (org-someday-file-name :level . 1)
                               (org-tickler-file-name :maxlevel . 2))
          org-refile-allow-creating-parent-nodes 'confirm))
@@ -496,7 +507,7 @@ Set the refile targets to be my project, someday, and tickler files.
 *** org-capture
 #+BEGIN_SRC emacs-lisp
 (after! org
-  (setq!
+  (setopt
    org-capture-templates `(("i" "Inbox" entry
                             (file+headline org-inbox-file-name "Tasks")
                             "* TODO %i%?\n%U")
@@ -526,7 +537,7 @@ Set the refile targets to be my project, someday, and tickler files.
 *** org archive
 #+BEGIN_SRC emacs-lisp
 (after! org
-  (setq! org-archive-location (concat (expand-file-name "archive.org" pipboy/gtd-directory) "::")))
+  (setopt org-archive-location (concat (expand-file-name "archive.org" pipboy/gtd-directory) "::")))
 #+END_SRC
 ** Zettelkasten
 This section contains the configurations enabling me to take notes using
@@ -538,7 +549,7 @@ It's better to read this from the environment instead.
 I am moving to a pure org-roam workflow; set org-directory to be the org-roam
 files also.
 #+begin_src emacs-lisp
-(setq! org-roam-directory pipboy/org-notes
+(setopt org-roam-directory pipboy/org-notes
        org-directory pipboy/org-notes)
 #+end_src
 *** org-ref
@@ -548,7 +559,7 @@ Most of these configurations are inspired by [[https://www.ianjones.us/org-roam-
   :defer
   :after org-mode
   :config
-  (setq! org-ref-bibliography-notes (concat pipboy/org-notes "/bibnotes.org") ;; TODO make this more explicit
+  (setopt org-ref-bibliography-notes (concat pipboy/org-notes "/bibnotes.org") ;; TODO make this more explicit
          org-ref-notes-directory pipboy/org-notes
          org-ref-bibliography-files pipboy/bibtex-files
          reftex-default-bibliography pipboy/bibtex-files
@@ -564,7 +575,7 @@ Most of these configurations are inspired by [[https://www.ianjones.us/org-roam-
 See examples in[[*helm-bibtex][ helm-bibtex]] section.
 *** helm-bibtex & ivy-bibtex
 #+BEGIN_SRC emacs-lisp
-(setq! bibtex-completion-notes-path pipboy/org-notes
+(setopt bibtex-completion-notes-path pipboy/org-notes
        bibtex-completion-bibliography pipboy/bibtex-files
        bibtex-completion-pdf-field "file"
        bibtex-completion-notes-template-multiple-files (concat
@@ -586,7 +597,7 @@ See examples in[[*helm-bibtex][ helm-bibtex]] section.
 *** org-noter
 I use org-noter to take notes on PDF and EPUB documents.
 #+BEGIN_SRC emacs-lisp
-(setq! org-noter-notes-search-path (list pipboy/org-notes)
+(setopt org-noter-notes-search-path (list pipboy/org-notes)
        org-noter-notes-window-location 'horizontal-split)
 #+END_SRC
 **** org-pdftools
@@ -630,7 +641,7 @@ With a prefix ARG, remove start location."
               (org-entry-delete nil org-noter-property-note-location)
             (org-entry-put nil org-noter-property-note-location
                            (org-noter--pretty-print-location location))))))))
-  (with-eval-after-load 'pdf-annot
+  (after! pdf-annot
     (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note)))
 #+END_SRC
 *** org-roam-bibtex
@@ -699,7 +710,7 @@ With a prefix ARG, remove start location."
 **** deft directory
 I use deft to search the notes I take using org roam.
 #+begin_src emacs-lisp
-(setq! deft-directory pipboy/org-notes
+(setopt deft-directory pipboy/org-notes
        deft-recursive t)
 #+end_src
 ** Enable minor modes
@@ -800,7 +811,6 @@ I use deft to search the notes I take using org roam.
 ** org-drill
 #+BEGIN_SRC emacs-lisp
 (after! org
-  (require 'cl)
   (require 'org-drill))
 #+END_SRC
 * LaTeX
@@ -828,7 +838,7 @@ I use deft to search the notes I take using org roam.
 + Set a ridiculous limit on number of file watch. This is needed for Python
   virtual environments which reside inside the project worktree.
 #+begin_src emacs-lisp
-(setq! lsp-file-watch-threshold 100000)
+(setopt lsp-file-watch-threshold 100000)
 #+end_src
 *** Autocompletion
 #+BEGIN_SRC emacs-lisp
@@ -843,7 +853,7 @@ I use deft to search the notes I take using org roam.
 *** LSP UI Configurations
 #+BEGIN_SRC emacs-lisp
 (after! lsp-ui
-  (setq! lsp-ui-doc-show-with-cursor nil
+  (setopt lsp-ui-doc-show-with-cursor nil
          lsp-ui-sideline-enable      t
          lsp-ui-doc-max-height       15
          lsp-ui-doc-max-width        100
@@ -858,67 +868,11 @@ I use deft to search the notes I take using org roam.
 #+END_SRC
 
 ** DAP
-*** UI
-+ Enable Hydra when hitting a breakpoint
-#+begin_src emacs-lisp
-;; (after! dap-mode
-;;   (add-hook 'dap-stopped-hook
-;;             (lambda (arg) (call-interactively #'dap-hydra))))
-#+end_src
-*** Python
-It's recommended to use =debugpy= over =ptvsd=.
-#+begin_src emacs-lisp
-(after! dap-mode
-  (setq dap-python-debugger 'debugpy))
-#+end_src
-*** Keybindings
-#+begin_src emacs-lisp
-(after! dap-mode
-  (map! :map dap-mode-map
-        :leader
-        :prefix ("d" . "dap")
-        ;; basics
-        :desc "dap next"          "n" #'dap-next
-        :desc "dap step in"       "i" #'dap-step-in
-        :desc "dap step out"      "o" #'dap-step-out
-        :desc "dap continue"      "c" #'dap-continue
-        :desc "dap hydra"         "h" #'dap-hydra
-        :desc "dap debug restart" "r" #'dap-debug-restart
-        :desc "dap debug"         "s" #'dap-debug
-        :desc "dap ui repl"       "R" #'dap-ui-repl
-
-        ;; debug
-        :prefix ("dd" . "Debug")
-        :desc "dap debug recent"  "r" #'dap-debug-recent
-        :desc "dap debug last"    "l" #'dap-debug-last
-
-        ;; eval
-        :prefix ("de" . "Eval")
-        :desc "eval"                "e" #'dap-eval
-        :desc "eval region"         "r" #'dap-eval-region
-        :desc "eval thing at point" "s" #'dap-eval-thing-at-point
-        :desc "add expression"      "a" #'dap-ui-expressions-add
-        :desc "remove expression"   "d" #'dap-ui-expressions-remove
-
-        :prefix ("db" . "Breakpoint")
-        :desc "dap breakpoint toggle"      "b" #'dap-breakpoint-toggle
-        :desc "dap breakpoint condition"   "c" #'dap-breakpoint-condition
-        :desc "dap breakpoint hit count"   "h" #'dap-breakpoint-hit-condition
-        :desc "dap breakpoint log message" "l" #'dap-breakpoint-log-message))
-#+end_src
+Doom's =tools/debugger= module now uses [[https://github.com/svaante/dape][dape]] instead of =dap-mode=. All
+debugger keybindings are provided under =SPC d= by the module. No user
+configuration is needed here.
 
 ** Python
-*** Editor
-+ Enable rainbow mode
-#+BEGIN_SRC emacs-lisp
-(after! python
-  (rainbow-delimiters-mode t))
-#+END_SRC
-*** Debugger
-#+begin_src emacs-lisp
-(after! python (require 'dap-python))
-#+end_src
-
 *** REPL
 #+begin_src emacs-lisp
 (setq +python-ipython-repl-args '("-i" "--simple-prompt" "--no-color-info"))
@@ -941,17 +895,14 @@ It's recommended to use =debugpy= over =ptvsd=.
 *** Pyright Language Server
 #+BEGIN_SRC emacs-lisp
 (after! python
-  (setq! lsp-pyright-venv-path (expand-file-name "~/.venv/")))
+  (setopt lsp-pyright-venv-path (expand-file-name "~/.venv/")))
 #+END_SRC
 *** ~sphinx-doc~
 + Enable [[https://github.com/naiquevin/sphinx-doc.el][sphinx-doc]], which generate Python docstrings for function and methods.
 + It does not work with python type hints.
 #+BEGIN_SRC emacs-lisp
 (use-package! sphinx-doc
-  :defer
-  :after python
-  :config
-  (sphinx-doc-mode t))
+  :hook (python-mode . sphinx-doc-mode))
 
 #+END_SRC
 ** Prolog
@@ -964,12 +915,247 @@ It's recommended to use =debugpy= over =ptvsd=.
   (ediprolog-system 'swi))
 #+END_SRC
 ** Scala
-#+BEGIN_SRC emacs-lisp
-(setq create-lockfiles nil)
-(setq backup-directory-alist `((".*" . ,temporary-file-directory))
-      auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
-#+END_SRC
-* AI & Assistant
+* Just
+[[https://github.com/leon-barrett/just-mode.el][just-mode]] — syntax highlighting and indentation for justfiles.
+[[https://github.com/psibi/justl.el][justl]] — transient UI to list and run just recipes interactively.
+
+| Key       | Action                                      |
+|-----------+---------------------------------------------|
+| =SPC m j= | Open justl buffer (e = exec, w = with args) |
+| =SPC m r= | Transient popup: one key per recipe → run   |
+
 #+begin_src emacs-lisp
-(use-package! gptel)
+(defun pipboy/just--assign-keys (recipes)
+  "Assign unique single-char keys to RECIPES, preferring first char of name."
+  (let ((used '()))
+    (mapcar (lambda (r)
+              (let* ((name (justl--recipe-name r))
+                     (preferred (substring name 0 1))
+                     (key (if (not (member preferred used))
+                              preferred
+                            (cl-find-if (lambda (c) (not (member c used)))
+                                        (mapcar #'char-to-string
+                                                (number-sequence ?a ?z))))))
+                (push key used)
+                (cons key r)))
+            recipes)))
+
+(defun pipboy/just-recipe-transient ()
+  "Transient popup of just recipes for the current project."
+  (interactive)
+  (require 'justl)
+  (let* ((justfile (justl--find-justfile default-directory)))
+    (unless justfile (user-error "No justfile found in %s" default-directory))
+    (let* ((recipes  (justl--get-recipes justfile))
+           (keyed    (pipboy/just--assign-keys recipes))
+           (suffixes (mapcar
+                      (lambda (pair)
+                        (let* ((key    (car pair))
+                               (recipe (cdr pair))
+                               (name   (justl--recipe-name recipe))
+                               (desc   (or (justl--recipe-desc recipe) name)))
+                          `(,key ,desc
+                                 (lambda ()
+                                   (interactive)
+                                   (justl--exec
+                                    justl-executable ,name
+                                    (append (transient-args 'justl-help-popup)
+                                            (list ,name)))))))
+                      keyed)))
+      (eval `(transient-define-prefix pipboy/just-recipes-menu ()
+               "Run just recipe"
+               [["Recipes" ,@suffixes]])
+            t)
+      (pipboy/just-recipes-menu))))
+
+(use-package! just-mode
+  :defer t
+  :config
+  (map! :map just-mode-map
+        :localleader
+        "j" #'justl
+        "r" #'pipboy/just-recipe-transient))
+
+(use-package! justl
+  :defer t
+  :config
+  (setq justl-executable "just")
+  (evil-set-initial-state 'justl-mode 'emacs))
+#+end_src
+
+* AI & Assistant
+Three layers of AI tooling, each serving a different purpose:
+
+| Tool            | Purpose                                  | Entry point          |
+|-----------------+------------------------------------------+----------------------|
+| gptel (LLM)     | Chat, explain, rewrite — multi-backend   | =SPC o l=            |
+| Claude Code IDE | Agentic CLI: edits files, runs commands  | =SPC o c=            |
+| Copilot         | Inline code completion as you type       | =TAB= in prog-mode   |
+
+** LLM (gptel)
+[[https://github.com/karthink/gptel][gptel]] is the engine behind Doom's =tools/llm= module. It supports multiple
+backends simultaneously — the default is used by the standard doom keybinds,
+while one-shot keys send to a specific backend without changing the default.
+
+*** Backends & API keys
+Each backend reads its key from an environment variable at request time (lazy,
+so a missing key only errors when you actually use that backend):
+
+| Backend   | Env var             | Free tier? | Notes                     |
+|-----------+---------------------+------------+---------------------------|
+| Claude    | =ANTHROPIC_API_KEY= | No         | Default. console.anthropic.com |
+| Groq      | =GROQ_API_KEY=      | Yes        | Fast inference. console.groq.com |
+| Gemini    | =GEMINI_API_KEY=    | Yes        | aistudio.google.com       |
+| OpenAI    | =OPENAI_API_KEY=    | No         | platform.openai.com       |
+
+*** Keybindings (=SPC o l=)
+Doom module bindings (built-in, always present):
+
+| Key       | Action                                      |
+|-----------+---------------------------------------------|
+| =SPC o l l= | Open gptel chat buffer                    |
+| =SPC o l s= | Send prompt/selection to *default* backend |
+| =SPC o l r= | Rewrite selected region                   |
+| =SPC o l e= | Explain selection (gptel-quick)           |
+| =SPC o l a= | Add text/region to context                |
+| =SPC o l f= | Add file to context                       |
+| =SPC o l m= | gptel-menu transient (full control)       |
+
+Custom bindings added here:
+
+| Key       | Action                                         |
+|-----------+------------------------------------------------|
+| =SPC o l b= | Change *default* backend+model interactively |
+| =SPC o l c= | Send one-shot → Claude (Sonnet)              |
+| =SPC o l g= | Send one-shot → Groq (Llama 3.3 70B)        |
+| =SPC o l n= | Send one-shot → Gemini (2.0 Flash)           |
+| =SPC o l p= | Send one-shot → OpenAI (GPT-4o)              |
+
+#+begin_src emacs-lisp
+;; ── One-shot send helpers ──────────────────────────────────────────────────
+;; Defined at top level so they are byte-compiled. They use dynamic binding
+;; to override backend/model for a single request without touching the global default.
+(defun pipboy/gptel-send-with (backend-name model)
+  "Send prompt/selection to BACKEND-NAME with MODEL without changing the default."
+  (let ((gptel-backend (gptel-get-backend backend-name))
+        (gptel-model   model))
+    (call-interactively #'gptel-send)))
+
+(defun pipboy/gptel-send-claude ()
+  "Send to Claude Sonnet (one-shot, preserves default backend)."
+  (interactive) (pipboy/gptel-send-with "Claude" 'claude-sonnet-4-6))
+
+(defun pipboy/gptel-send-groq ()
+  "Send to Groq Llama 3.3 70B (one-shot)."
+  (interactive) (pipboy/gptel-send-with "Groq" 'llama-3.3-70b-versatile))
+
+(defun pipboy/gptel-send-gemini ()
+  "Send to Gemini 2.0 Flash (one-shot)."
+  (interactive) (pipboy/gptel-send-with "Gemini" 'gemini-2.0-flash))
+
+(defun pipboy/gptel-send-openai ()
+  "Send to OpenAI GPT-4o (one-shot)."
+  (interactive) (pipboy/gptel-send-with "OpenAI" 'gpt-4o))
+
+(defun pipboy/gptel-set-default-backend ()
+  "Interactively pick a backend and model to use as the gptel default."
+  (interactive)
+  (let* ((backend-name (completing-read "Default backend: "
+                                        (mapcar #'car gptel--backends) nil t))
+         (backend (gptel-get-backend backend-name))
+         (models  (cl-mapcar #'symbol-name (gptel-backend-models backend)))
+         (model   (intern (completing-read
+                           (format "Model [%s]: " backend-name) models nil t))))
+    (setq gptel-backend backend
+          gptel-model   model)
+    (message "gptel default → %s / %s" backend-name model)))
+
+(after! gptel
+  ;; ── Backends ──────────────────────────────────────────────────────────
+  ;; Keys are read lazily at request time via getenv, so missing keys
+  ;; only error when that backend is actually used.
+  (gptel-make-anthropic "Claude"
+    :stream t
+    :key (lambda () (getenv "ANTHROPIC_API_KEY")))
+
+  ;; Groq is OpenAI-compatible; free tier with fast llama/mixtral inference
+  (gptel-make-openai "Groq"
+    :host "api.groq.com"
+    :endpoint "/openai/v1/chat/completions"
+    :stream t
+    :key (lambda () (getenv "GROQ_API_KEY"))
+    :models '(llama-3.3-70b-versatile
+              llama-3.1-8b-instant
+              mixtral-8x7b-32768
+              gemma2-9b-it))
+
+  (gptel-make-gemini "Gemini"
+    :stream t
+    :key (lambda () (getenv "GEMINI_API_KEY")))
+
+  (gptel-make-openai "OpenAI"
+    :stream t
+    :key (lambda () (getenv "OPENAI_API_KEY")))
+
+  ;; ── Default backend ───────────────────────────────────────────────────
+  ;; Used by SPC o l s and the chat buffer. Change at runtime with SPC o l b.
+  (setq gptel-model   'claude-sonnet-4-6
+        gptel-backend (gptel-get-backend "Claude"))
+
+  ;; ── Keybindings ───────────────────────────────────────────────────────
+  (map! :leader
+        :prefix "o l"
+        :desc "Set default backend"  "b" #'pipboy/gptel-set-default-backend
+        :desc "Send → Claude"        "c" #'pipboy/gptel-send-claude
+        :desc "Send → Groq"          "g" #'pipboy/gptel-send-groq
+        :desc "Send → Gemini"        "n" #'pipboy/gptel-send-gemini
+        :desc "Send → OpenAI"        "p" #'pipboy/gptel-send-openai))
+#+end_src
+
+** Claude Code IDE
+[[https://github.com/manzaltu/claude-code-ide.el][claude-code-ide.el]] wraps the =claude= CLI with a bidirectional MCP bridge,
+giving Claude access to Emacs internals (LSP, xref, imenu, diagnostics).
+This is fundamentally different from gptel — it's agentic: Claude can read
+and write files, run shell commands, and make multi-step changes autonomously.
+
+Requires the =claude= CLI in PATH (installed via =npm i -g @anthropic-ai/claude-code=)
+and uses your existing Claude subscription — *no separate API key needed*.
+
+| Key       | Action                  |
+|-----------+-------------------------|
+| =SPC o c c= | Open Claude Code menu |
+| =SPC o c s= | Start session (project) |
+
+#+begin_src emacs-lisp
+(use-package! claude-code-ide
+  :defer t
+  :config
+  ;; Use vterm as the terminal backend (already installed)
+  (setq claude-code-ide-terminal-backend 'vterm
+        ;; Side window on the right, wide enough for comfortable reading
+        claude-code-ide-window-side       'right
+        claude-code-ide-window-width      90
+        ;; Review Claude's file edits in ediff before applying
+        claude-code-ide-use-ide-diff      t)
+  ;; Expose Emacs tools (LSP, xref, diagnostics) to Claude via MCP
+  (claude-code-ide-emacs-tools-setup)
+  (map! :leader
+        :prefix ("o c" . "claude")
+        :desc "Claude Code IDE menu" "c" #'claude-code-ide-menu
+        :desc "Start Claude session" "s" #'claude-code-ide))
+#+end_src
+
+** Copilot
+GitHub Copilot for inline completions. Activates automatically in
+=prog-mode=. Tab accepts the full suggestion; =C-TAB= accepts word-by-word.
+Requires =M-x copilot-login= on first use.
+
+#+begin_src emacs-lisp
+(use-package! copilot
+  :hook (prog-mode . copilot-mode)
+  :bind (:map copilot-completion-map
+              ("<tab>"   . copilot-accept-completion)
+              ("TAB"     . copilot-accept-completion)
+              ("C-TAB"   . copilot-accept-completion-by-word)
+              ("C-<tab>" . copilot-accept-completion-by-word)))
 #+end_src
