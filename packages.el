@@ -31,6 +31,9 @@
 (unpin! bibtex-completion helm-bibtex ivy-bibtex)
 
 ;; claude code ide - agentic Claude Code CLI integration
+(package! eat)
+(package! web-server
+  :recipe (:host github :repo "eschulte/emacs-web-server"))
 (package! claude-code-ide
   :recipe (:host github :repo "manzaltu/claude-code-ide.el"))
 

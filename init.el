@@ -9,7 +9,7 @@
   +icons)
 
  :ui
- fill-column
+ ;;fill-column
  minimap
  workspaces
  hydra
@@ -34,7 +34,7 @@
 
  unicode
  vc-gutter
- vi-tilde-fringe
+ ;;vi-tilde-fringe
  (window-select
   +numbers)
  zen

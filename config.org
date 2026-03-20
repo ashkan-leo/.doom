@@ -210,19 +210,11 @@ Who cares how many bytes this file has?
   #+END_SRC
 ** Editor
 *** Line Numbers
-+ Setting the line number will cause slowdown when the LSP is used, display is
-  large, or anytime the buffer is busy.
-   +The situation looks better using Emacs with metals support.+
-+ The relative line number fucks up variable pitch fonts.
+Disabled globally — line numbers cause slowdown with LSP and break variable-pitch fonts.
 
 #+BEGIN_SRC emacs-lisp
-(setopt display-line-numbers-type 'relative)
+(setq display-line-numbers-type nil)
 #+END_SRC
-*** fill-column
-Set column length to be 90 and enable fill-column indicator in the editors.
-#+begin_src emacs-lisp
-(global-display-fill-column-indicator-mode +1)
-#+end_src
 ** Font
 + Use IntelliJ fonts everywhere. They look gorgeous
 + Use =Chalkboard= as variable pitch font. It looks gorgeous.
@@ -832,6 +824,15 @@ I use deft to search the notes I take using org roam.
   (after! flycheck
     (setq flycheck-check-syntax-automatically '(mode-enabled save idle-change)))
   #+END_SRC
++ Disable flycheck in non-file-visiting buffers (e.g., claude-code-ide diff
+  review buffers) where linting is noisy and irrelevant.
+  #+BEGIN_SRC emacs-lisp
+  (add-hook 'flycheck-mode-hook
+            (lambda ()
+              (when (and (not buffer-file-name)
+                         (string-prefix-p "*" (buffer-name)))
+                (flycheck-mode -1))))
+  #+END_SRC
 * Languages
 ** LSP
 *** Configuration
@@ -921,8 +922,10 @@ configuration is needed here.
 
 | Key       | Action                                      |
 |-----------+---------------------------------------------|
-| =SPC m j= | Open justl buffer (e = exec, w = with args) |
-| =SPC m r= | Transient popup: one key per recipe → run   |
+| =SPC j j= | Open justl buffer (e = exec, w = with args) |
+| =SPC j r= | Transient popup: one key per recipe → run   |
+| =SPC m j= | Open justl buffer (just-mode only)           |
+| =SPC m r= | Transient popup (just-mode only)             |
 
 #+begin_src emacs-lisp
 (defun pipboy/just--assign-keys (recipes)
@@ -967,6 +970,11 @@ configuration is needed here.
                [["Recipes" ,@suffixes]])
             t)
       (pipboy/just-recipes-menu))))
+
+(map! :leader
+      :desc "just" "j" nil
+      :desc "justl"    "j j" #'justl
+      :desc "recipes"  "j r" #'pipboy/just-recipe-transient)
 
 (use-package! just-mode
   :defer t
@@ -1121,28 +1129,81 @@ and write files, run shell commands, and make multi-step changes autonomously.
 Requires the =claude= CLI in PATH (installed via =npm i -g @anthropic-ai/claude-code=)
 and uses your existing Claude subscription — *no separate API key needed*.
 
-| Key       | Action                  |
-|-----------+-------------------------|
-| =SPC o c c= | Open Claude Code menu |
-| =SPC o c s= | Start session (project) |
+| Key         | Action                                  |
+|-------------+-----------------------------------------|
+| =SPC o c c= | Open/start Claude (primary action)      |
+| =SPC o c t= | Toggle window (no focus steal)          |
+| =SPC o c r= | Resume previous session (=-r=)          |
+| =SPC o c k= | Continue recent conversation (=-c=)     |
+| =SPC o c q= | Kill session                            |
+| =SPC o c l= | List/switch sessions                    |
+| =SPC o c p= | Send prompt from minibuffer             |
+| =SPC o c i= | Insert selection into Claude prompt     |
+| =SPC o c m= | Full transient menu                     |
+| =SPC o c == | Widen Claude window by 15 cols          |
+| =SPC o c -= | Narrow Claude window by 15 cols         |
 
 #+begin_src emacs-lisp
 (use-package! claude-code-ide
   :defer t
   :config
-  ;; Use vterm as the terminal backend (already installed)
   (setq claude-code-ide-terminal-backend 'vterm
-        ;; Side window on the right, wide enough for comfortable reading
+        claude-code-ide-vterm-render-delay 0.08
         claude-code-ide-window-side       'right
-        claude-code-ide-window-width      90
-        ;; Review Claude's file edits in ediff before applying
+        claude-code-ide-window-width      100
+        claude-code-ide-focus-on-open     t
         claude-code-ide-use-ide-diff      t)
-  ;; Expose Emacs tools (LSP, xref, diagnostics) to Claude via MCP
+
   (claude-code-ide-emacs-tools-setup)
-  (map! :leader
-        :prefix ("o c" . "claude")
-        :desc "Claude Code IDE menu" "c" #'claude-code-ide-menu
-        :desc "Start Claude session" "s" #'claude-code-ide))
+
+  ;; Strip CLAUDECODE env var so the CLI doesn't think it's a nested session.
+  ;; Belt-and-suspenders: clear from process-environment AND override via
+  ;; vterm-environment (vterm's C fork may bypass the Lisp variable).
+  (defadvice! pipboy/claude-unset-claudecode (fn buffer-name working-dir port continue resume session-id)
+    :around #'claude-code-ide--create-terminal-session
+    (let ((process-environment
+           (cl-remove-if (lambda (s) (string-prefix-p "CLAUDECODE=" s))
+                         process-environment))
+          (vterm-environment
+           (cons "CLAUDECODE="
+                 (if (boundp 'vterm-environment) vterm-environment nil))))
+      (funcall fn buffer-name working-dir port continue resume session-id)))
+
+  ;; Guard against race condition: if Claude exits during the stabilization
+  ;; delay, vterm kills the buffer before display code runs.
+  (defadvice! pipboy/claude-guard-dead-buffer (fn buffer)
+    :around #'claude-code-ide--display-buffer-in-side-window
+    (if (buffer-live-p buffer)
+        (funcall fn buffer)
+      (message "Claude session buffer was killed before display — check *Messages* for exit details")))
+  (defun pipboy/claude-wider ()
+    "Widen the Claude side window by 15 columns."
+    (interactive)
+    (cl-incf claude-code-ide-window-width 15)
+    (when-let (win (get-buffer-window (claude-code-ide--get-buffer-name)))
+      (window-resize win 15 t)))
+
+  (defun pipboy/claude-narrower ()
+    "Narrow the Claude side window by 15 columns."
+    (interactive)
+    (cl-incf claude-code-ide-window-width -15)
+    (when-let (win (get-buffer-window (claude-code-ide--get-buffer-name)))
+      (window-resize win -15 t))))
+
+;; Keybindings outside :config so they are registered at startup, not on first load
+(map! :leader
+      :prefix ("o c" . "claude")
+      :desc "Open/start Claude"      "c" #'claude-code-ide
+      :desc "Toggle window"          "t" #'claude-code-ide-toggle
+      :desc "Resume session"         "r" #'claude-code-ide-resume
+      :desc "Continue conversation"  "k" #'claude-code-ide-continue
+      :desc "Stop session"           "q" #'claude-code-ide-stop
+      :desc "List sessions"          "l" #'claude-code-ide-list-sessions
+      :desc "Send prompt"            "p" #'claude-code-ide-send-prompt
+      :desc "Insert selection"       "i" #'claude-code-ide-insert-at-mentioned
+      :desc "Menu"                   "m" #'claude-code-ide-menu
+      :desc "Widen window"           "=" #'pipboy/claude-wider
+      :desc "Narrow window"          "-" #'pipboy/claude-narrower)
 #+end_src
 
 ** Copilot
@@ -1151,11 +1212,11 @@ GitHub Copilot for inline completions. Activates automatically in
 Requires =M-x copilot-login= on first use.
 
 #+begin_src emacs-lisp
-(use-package! copilot
-  :hook (prog-mode . copilot-mode)
-  :bind (:map copilot-completion-map
-              ("<tab>"   . copilot-accept-completion)
-              ("TAB"     . copilot-accept-completion)
-              ("C-TAB"   . copilot-accept-completion-by-word)
-              ("C-<tab>" . copilot-accept-completion-by-word)))
+;; (use-package! copilot
+;;   :hook (prog-mode . copilot-mode)
+;;   :bind (:map copilot-completion-map
+;;               ("<tab>"   . copilot-accept-completion)
+;;               ("TAB"     . copilot-accept-completion)
+;;               ("C-TAB"   . copilot-accept-completion-by-word)
+;;               ("C-<tab>" . copilot-accept-completion-by-word)))
 #+end_src
