@@ -1,23 +1,41 @@
 {
   "permissions": {
     "allow": [
-      "WebFetch(domain:docs.anthropic.com)",
       "Bash(git:*)",
+      "Bash(ls:*)",
+      "Bash(bash:*)",
+      "Bash(doom:*)",
+      "Bash(~/.config/emacs/bin/doom:*)",
+      "Bash(~/.config/doom/bin/doom-check:*)",
+      "Bash(/Applications/Emacs.app/Contents/MacOS/Emacs:*)",
+      "Bash(emacs:*)",
+      "Bash(which:*)",
+      "Bash(rebar3:*)",
+      "Bash(fish:*)",
+      "Bash(/run/current-system/sw/bin/fish:*)",
       "WebSearch",
+      "WebFetch(domain:docs.anthropic.com)",
+      "WebFetch(domain:docs.doomemacs.org)",
       "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:codeberg.org)",
       "WebFetch(domain:willschenk.com)",
+      "WebFetch(domain:just.systems)",
       "Skill(doom-sync)",
       "Skill(doom-debug)",
-      "Bash(grep:*)",
-      "Bash(~/.config/emacs/bin/doom sync:*)",
-      "Bash(bash:*)",
-      "Bash(/Applications/Emacs.app/Contents/MacOS/Emacs:*)",
-      "Bash(ls:*)",
-      "Bash(~/.config/emacs/bin/doom help:*)",
-      "Bash(~/.config/emacs/bin/doom emacs:*)",
-      "Bash(~/.config/doom/bin/doom-check:*)",
-      "WebFetch(domain:docs.doomemacs.org)",
-      "WebFetch(domain:just.systems)"
+      "Skill(doom-check)",
+      "Skill(doom-update)",
+      "Skill(doom-module)",
+      "Skill(add-package)",
+      "Skill(emacs-expert)",
+      "Skill(find-config)",
+      "mcp__ide__getDiagnostics",
+      "mcp__emacs-tools__claude-code-ide-mcp-imenu-list-symbols",
+      "mcp__emacs-tools__claude-code-ide-mcp-project-info",
+      "mcp__emacs-tools__claude-code-ide-mcp-treesit-info",
+      "mcp__emacs-tools__claude-code-ide-mcp-xref-find-apropos",
+      "mcp__emacs-tools__claude-code-ide-mcp-xref-find-references"
     ]
-  }
+  },
+  "prefersReducedMotion": true
 }
