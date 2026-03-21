@@ -3,17 +3,18 @@
 (doom!
 
  :completion
- (company
-  +childframe)
+ (corfu
+  +icons
+  +orderless)
  (vertico
   +icons)
 
  :ui
  ;;fill-column
- minimap
+ ;;minimap
  workspaces
- hydra
- deft
+ ;;hydra
+ ;;deft
  doom
  doom-dashboard
  ophints
@@ -46,7 +47,8 @@
  file-templates
  snippets
  fold
- format
+ (format
+  +onsave)
  multiple-cursors
  parinfer
  rotate-text
@@ -56,7 +58,7 @@
   +icons)
  electric
  ibuffer
- undo
+ (undo +tree)
  vc
 
  :term
@@ -86,6 +88,7 @@
  (eval
   +overlay)
  (debugger)
+ tree-sitter
  ;; +realgud FIXME upstream is broken (only on mac maybe?)
 
  direnv
@@ -102,24 +105,27 @@
  pass
  pdf
  tmux
- upload
+ ;;upload
  biblio
 
  :lang
  erlang
- (elixir +lsp + tree-sitter)
- rst
- terra
- yaml
- json
+ (elixir +lsp +tree-sitter)
+ ;;rst
+ ;;terra
+ (yaml +tree-sitter)
+ (json +tree-sitter)
  data
  emacs-lisp
  (haskell
-  +lsp)
+  +lsp
+  +tree-sitter)
  (java
-  +lsp)
+  +lsp
+  +tree-sitter)
  (javascript
-  +lsp)
+  +lsp
+  +tree-sitter)
  (latex
   +latexmk
   +cdlatex
@@ -127,39 +133,43 @@
   +fold)
  ledger
  (markdown +grip)
- nix
+ (nix
+  +lsp
+  +tree-sitter)
  (org
   +present
-  +pretty
-  +roam2
+  +roam
   +pomodoro
   +pandoc
   +noter
   +jupyter
   +dragndrop
   +hugo
-  +brain
   +gnuplot)
  plantuml
  (python
   +lsp
   +pyright
-  +poetry)
+  +poetry
+  +tree-sitter
+  +uv)
  (rust
-  +lsp)
+  +lsp
+  +tree-sitter)
  rest
  (scala
-  +lsp)
+  +lsp
+  +tree-sitter)
  (sh
   +lsp
-  +powershell
-  +fish)
+  +fish
+  +tree-sitter)
  web
 
  :app
  (rss
   +org)
- everywhere
+ ;;everywhere
 
  :collab
  ;;floobits          ; peer programming for a price
@@ -169,5 +179,5 @@
  literate
 
  (default
-   +bindings
-   +smartparens))
+  +bindings
+  +smartparens))
