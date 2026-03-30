@@ -4,6 +4,7 @@
 - [[#preamble][Preamble]]
   - [[#emacs-lisp-scripts][Emacs Lisp Scripts]]
   - [[#personal-information][Personal Information]]
+  - [[#files][Files]]
 - [[#os][OS]]
   - [[#mac-os][Mac OS]]
     - [[#set----keys][Set ⌘ ⌥ ⌃ Keys]]
@@ -20,12 +21,11 @@
   - [[#treemacs][Treemacs]]
   - [[#editor][Editor]]
     - [[#line-numbers][Line Numbers]]
-    - [[#fill-column][fill-column]]
   - [[#font][Font]]
 - [[#terminal][Terminal]]
   - [[#tmux][tmux]]
     - [[#key-bindings][Key Bindings]]
-  - [[#vterm][vterm]]
+  - [[#posix-shell-for-emacs-internals][POSIX Shell for Emacs Internals]]
 - [[#tramp][Tramp]]
 - [[#spell-checker][Spell Checker]]
 - [[#dired][dired]]
@@ -33,11 +33,12 @@
 - [[#dash-api-browser][Dash API Browser]]
 - [[#org][Org]]
   - [[#aesthetics][Aesthetics]]
+  - [[#auto-align-tables-on-save][Auto-align Tables on Save]]
   - [[#inline-latex-fragment][Inline Latex Fragment]]
   - [[#key-maps][Key Maps]]
   - [[#directory-structure][Directory Structure]]
   - [[#get-things-done][Get Things Done]]
-    - [[#files][Files]]
+    - [[#files-1][Files]]
     - [[#state-keywords][State Keywords]]
     - [[#tags][Tags]]
     - [[#org-agenda][org-agenda]]
@@ -63,18 +64,15 @@
   - [[#org-drill][org-drill]]
 - [[#latex-1][LaTeX]]
 - [[#flycheck][Flycheck]]
+- [[#tree-sitter][Tree-sitter]]
+- [[#markdown][Markdown]]
 - [[#languages][Languages]]
   - [[#lsp][LSP]]
     - [[#configuration][Configuration]]
     - [[#autocompletion][Autocompletion]]
     - [[#lsp-ui-configurations][LSP UI Configurations]]
   - [[#dap][DAP]]
-    - [[#ui-1][UI]]
-    - [[#python][Python]]
-    - [[#keybindings-1][Keybindings]]
-  - [[#python-1][Python]]
-    - [[#editor-1][Editor]]
-    - [[#debugger][Debugger]]
+  - [[#python][Python]]
     - [[#repl][REPL]]
     - [[#poetry][Poetry]]
     - [[#pyright-language-server][Pyright Language Server]]
@@ -82,8 +80,15 @@
   - [[#prolog-1][Prolog]]
     - [[#ediprolog][~ediprolog~]]
   - [[#scala][Scala]]
+- [[#just][Just]]
+- [[#version-control][Version Control]]
+  - [[#syntax-highlighted-diffs][Syntax-Highlighted Diffs]]
+    - [[#magit-delta-default][magit-delta (default)]]
+    - [[#difftastic-on-demand][difftastic (on-demand)]]
 - [[#ai--assistant][AI & Assistant]]
-  - [[#llm][LLM]]
+  - [[#llm-gptel][LLM (gptel)]]
+    - [[#backends--api-keys][Backends & API keys]]
+    - [[#keybindings-spc-o-l][Keybindings (=SPC o l=)]]
   - [[#claude-code-ide][Claude Code IDE]]
   - [[#copilot][Copilot]]
 
@@ -208,6 +213,21 @@ Who cares how many bytes this file has?
   (after! treemacs
     (add-to-list 'treemacs-pre-file-insert-predicates #'treemacs-is-file-git-ignored?))
   #+END_SRC
++ Wider sidebar and clean truncation for symbol names
+  #+BEGIN_SRC emacs-lisp
+  (after! treemacs
+    (setopt treemacs-width 45))
+  #+END_SRC
+  #+BEGIN_SRC emacs-lisp
+  (after! lsp-treemacs
+    (add-hook 'lsp-treemacs-symbols-mode-hook
+              (lambda ()
+                (setq-local truncate-lines t
+                            truncate-partial-width-windows nil)
+                (let ((dt (make-display-table)))
+                  (set-display-table-slot dt 'truncation ?…)
+                  (setq-local buffer-display-table dt)))))
+  #+END_SRC
 ** Editor
 *** Line Numbers
 Disabled globally — line numbers cause slowdown with LSP and break variable-pitch fonts.
@@ -222,7 +242,8 @@ Disabled globally — line numbers cause slowdown with LSP and break variable-pi
 (setopt doom-font (font-spec :family "JetBrainsMono Nerd Font" :size 12)
        doom-unicode-font (font-spec :family "JetBrainsMono Nerd Font" :size 13)
        doom-variable-pitch-font (font-spec :family "Chalkboard" :size 12)
-       ivy-posframe-font (font-spec :family "JetBrains Mono Nerd Font" :size 13))
+       ivy-posframe-font (font-spec :family "JetBrains Mono Nerd Font" :size 13)
+       doom-font-increment 1)
 #+END_SRC
 * Terminal
 ** tmux
@@ -274,6 +295,14 @@ From the [[https://www.gnu.org/software/emacs/manual/html_node/tramp/Frequently-
 + Set projectile search path to add new projects.
   #+BEGIN_SRC emacs-lisp
   (setopt projectile-project-search-path '("~/w"))
+  #+END_SRC
+
++ Ignore Claude Code worktree directories so projectile doesn't scan them,
+  preventing file descriptor exhaustion. These won't appear in =SPC p f= results.
+  #+BEGIN_SRC emacs-lisp
+  (after! projectile
+    (dolist (dir '(".claude/worktrees" ".claude/todos"))
+      (add-to-list 'projectile-globally-ignored-directories dir)))
   #+END_SRC
 * Dash API Browser
 Search Dash GUI from Emacs. Pretty handy! It only works in MacOS.
@@ -825,6 +854,15 @@ I use deft to search the notes I take using org roam.
     ;;                                                            ("convert -density %D -trim -antialias %f -quality 100 %O")))
   #+end_src
 ** org-babel
+*** Graphviz (dot)
+Load =ob-dot= so =#+begin_src dot= blocks work, and auto-display resulting images inline.
+
+#+BEGIN_SRC emacs-lisp
+(after! org
+  (add-to-list 'org-babel-load-languages '(dot . t) t)
+  (org-babel-do-load-languages 'org-babel-load-languages org-babel-load-languages)
+  (add-hook 'org-babel-after-execute-hook #'org-redisplay-inline-images))
+#+END_SRC
 *** Prolog
 #+BEGIN_SRC emacs-lisp
 (use-package! ob-prolog
@@ -855,6 +893,13 @@ I use deft to search the notes I take using org roam.
   (after! flycheck
     (setq flycheck-check-syntax-automatically '(mode-enabled save idle-change)))
   #+END_SRC
++ Disable noisy mdl rules in markdown: MD013 (line length), MD022
+  (blanks around headings), MD029 (ordered list prefix style), and MD032
+  (blanks around lists).
+  #+BEGIN_SRC emacs-lisp
+  (after! flycheck
+    (setq flycheck-markdown-mdl-rules '("~MD013" "~MD022" "~MD029" "~MD032")))
+  #+END_SRC
 + Disable flycheck in non-file-visiting buffers (e.g., claude-code-ide diff
   review buffers) where linting is noisy and irrelevant.
   #+BEGIN_SRC emacs-lisp
@@ -865,6 +910,31 @@ I use deft to search the notes I take using org roam.
                          (string-prefix-p "*" (buffer-name)))
                 (flycheck-mode -1))))
   #+END_SRC
+* Tree-sitter
+Auto-install missing grammars without prompting. The =tree-sitter= Doom module
+defaults to ='ask=, which blocks file opens with a y/n prompt.
+
+#+begin_src emacs-lisp
+(setq treesit-auto-install-grammar 'always)
+#+end_src
+
+* Markdown
+Use pandoc as the rendering backend so =C-c C-c p= (and =markdown-preview=)
+produce HTML with syntax-highlighted code blocks. The =--standalone= flag
+includes a full HTML document with styles, and =--highlight-style= picks the
+colour theme for fenced code.
+
+#+begin_src emacs-lisp
+(after! markdown-mode
+  (setq markdown-command "pandoc -f markdown -t html5 --standalone --highlight-style=pygments"
+        markdown-live-preview-window-function #'xwidget-webkit-browse-url))
+#+end_src
+
+| Key       | Action                                                |
+|-----------+-------------------------------------------------------|
+| =C-c C-c l= | Toggle live preview (xwidget-webkit, updates on save) |
+| =C-c C-c p= | One-shot preview in browser                           |
+
 * Languages
 ** LSP
 *** Configuration
@@ -873,6 +943,60 @@ I use deft to search the notes I take using org roam.
 #+begin_src emacs-lisp
 (setopt lsp-file-watch-threshold 100000)
 #+end_src
+
++ Exclude Claude Code agent worktrees and other generated directories from LSP file
+  watching. These can contain thousands of directory entries that consume file
+  descriptors and push Emacs past the =select()= FD ceiling (1024). Trade-off:
+  LSP won't auto-start for files opened directly inside these dirs — open them
+  manually if you need to debug a worktree's state.
+#+begin_src emacs-lisp
+(after! lsp-mode
+  (dolist (pattern '("[/\\\\]\\.claude/worktrees\\'"
+                    "[/\\\\]\\.claude/todos\\'"
+                    "[/\\\\]node_modules\\'"
+                    "[/\\\\]\\.direnv\\'"))
+    (add-to-list 'lsp-file-watch-ignored-directories pattern)))
+#+end_src
+*** Monorepo Project Root Detection
+
+In a monorepo, LSP often picks the outermost =.git= as the project root instead
+of the subproject you're actually editing. This walks up from the current file
+and stops at the *first* build-system marker it finds.
+
+=.projectile= is a fallback for subprojects without a standard marker file.
+
+#+begin_src emacs-lisp
+(defun pipboy/lsp-monorepo-root (path)
+  "Find nearest subproject root in a monorepo by build-system markers."
+  (cl-some (lambda (marker) (locate-dominating-file path marker))
+           '(;; Python
+             "pyproject.toml" "setup.py" "setup.cfg"
+             ;; Rust
+             "Cargo.toml"
+             ;; Elixir
+             "mix.exs"
+             ;; Java / Scala
+             "build.sbt" "pom.xml" "build.gradle" "build.gradle.kts"
+             ;; JavaScript / TypeScript
+             "package.json" "deno.json"
+             ;; Haskell
+             "stack.yaml" "cabal.project" "*.cabal"
+             ;; Go
+             "go.mod"
+             ;; Nix (last — often wraps the whole repo)
+             "flake.nix"
+             ;; Generic fallback
+             ".projectile")))
+
+(defadvice! pipboy/lsp-suggest-monorepo-root-a (&rest _)
+  "Use build-system markers to find the nearest subproject root."
+  :before-until #'lsp--suggest-project-root
+  (pipboy/lsp-monorepo-root default-directory))
+
+(after! lsp-mode
+  (setq lsp-auto-guess-root t))
+#+end_src
+
 *** Autocompletion
 #+BEGIN_SRC emacs-lisp
 (after! lsp
@@ -952,12 +1076,12 @@ configuration is needed here.
 [[https://github.com/leon-barrett/just-mode.el][just-mode]] — syntax highlighting and indentation for justfiles.
 [[https://github.com/psibi/justl.el][justl]] — transient UI to list and run just recipes interactively.
 
-| Key       | Action                                      |
-|-----------+---------------------------------------------|
+| Key     | Action                                      |
+|---------+---------------------------------------------|
 | =SPC j j= | Open justl buffer (e = exec, w = with args) |
 | =SPC j r= | Transient popup: one key per recipe → run   |
-| =SPC m j= | Open justl buffer (just-mode only)           |
-| =SPC m r= | Transient popup (just-mode only)             |
+| =SPC m j= | Open justl buffer (just-mode only)          |
+| =SPC m r= | Transient popup (just-mode only)            |
 
 #+begin_src emacs-lisp
 (defun pipboy/just--assign-keys (recipes)
@@ -1023,14 +1147,78 @@ configuration is needed here.
   (evil-set-initial-state 'justl-mode 'emacs))
 #+end_src
 
+* Version Control
+** Syntax-Highlighted Diffs
+Two packages for syntax-aware diff rendering in magit. Both require external CLI tools.
+
+*** magit-delta (default)
+[[https://github.com/dandavison/magit-delta][magit-delta]] — pipes magit diffs through [[https://github.com/dandavison/delta][delta]] for syntax highlighting via =syntect=.
+Enabled by default on all magit diff buffers.
+
+Requirements: =brew install git-delta=
+
+#+begin_src emacs-lisp
+(use-package! magit-delta
+  :hook (magit-mode . magit-delta-mode))
+#+end_src
+
+*** difftastic (on-demand)
+[[https://github.com/pkryger/difftastic.el][difftastic]] — structural, AST-aware diffs with syntax highlighting via [[https://github.com/Wilfred/difftastic][difftastic]].
+Disabled by default; toggle or invoke on-demand.
+
+Requirements: =brew install difftastic=
+
+| Key       | Action                                    |
+|-----------+-------------------------------------------|
+| =SPC g d d= | Difftastic diff for file (dwim)           |
+| =SPC g d r= | Difftastic diff range (prompted)          |
+| =SPC g d t= | Toggle difftastic in current magit buffer |
+
+#+begin_src emacs-lisp
+(use-package! difftastic
+  :commands (difftastic-magit-diff difftastic-magit-show)
+  :config
+  (setq difftastic-requested-window-width-function
+        #'difftastic-requested-window-width-from-magit))
+
+(defvar pipboy/difftastic-mode nil
+  "Whether difftastic is active in magit buffers.")
+
+(defun pipboy/difftastic-toggle ()
+  "Toggle difftastic integration in magit.
+When enabled, magit-delta is disabled and difftastic key dispatchers
+are injected into magit-diff and magit-show. When disabled, magit-delta
+is restored."
+  (interactive)
+  (setq pipboy/difftastic-mode (not pipboy/difftastic-mode))
+  (if pipboy/difftastic-mode
+      (progn
+        (magit-delta-mode -1)
+        (transient-suffix-put 'magit-diff   "d" :command #'difftastic-magit-diff)
+        (transient-suffix-put 'magit-diff   "s" :command #'difftastic-magit-show)
+        (message "Difftastic enabled, magit-delta disabled"))
+    (magit-delta-mode +1)
+    (transient-suffix-put 'magit-diff   "d" :command #'magit-diff-dwim)
+    (transient-suffix-put 'magit-diff   "s" :command #'magit-show-commit)
+    (message "Difftastic disabled, magit-delta restored")))
+
+(after! magit
+  (map! :leader
+        :prefix ("g d" . "diff tools")
+        :desc "difftastic dwim"   "d" #'difftastic-magit-diff
+        :desc "difftastic range"  "r" (cmd! (let ((range (magit-read-range "Diff range")))
+                                              (difftastic-magit-diff range)))
+        :desc "toggle difftastic" "t" #'pipboy/difftastic-toggle))
+#+end_src
+
 * AI & Assistant
 Three layers of AI tooling, each serving a different purpose:
 
-| Tool            | Purpose                                  | Entry point          |
-|-----------------+------------------------------------------+----------------------|
-| gptel (LLM)     | Chat, explain, rewrite — multi-backend   | =SPC o l=            |
-| Claude Code IDE | Agentic CLI: edits files, runs commands  | =SPC o c=            |
-| Copilot         | Inline code completion as you type       | =TAB= in prog-mode   |
+| Tool            | Purpose                                 | Entry point      |
+|-----------------+-----------------------------------------+------------------|
+| gptel (LLM)     | Chat, explain, rewrite — multi-backend  | =SPC o l=          |
+| Claude Code IDE | Agentic CLI: edits files, runs commands | =SPC o c=          |
+| Copilot         | Inline code completion as you type      | =TAB= in prog-mode |
 
 ** LLM (gptel)
 [[https://github.com/karthink/gptel][gptel]] is the engine behind Doom's =tools/llm= module. It supports multiple
@@ -1041,35 +1229,35 @@ while one-shot keys send to a specific backend without changing the default.
 Each backend reads its key from an environment variable at request time (lazy,
 so a missing key only errors when you actually use that backend):
 
-| Backend   | Env var             | Free tier? | Notes                     |
-|-----------+---------------------+------------+---------------------------|
-| Claude    | =ANTHROPIC_API_KEY= | No         | Default. console.anthropic.com |
-| Groq      | =GROQ_API_KEY=      | Yes        | Fast inference. console.groq.com |
-| Gemini    | =GEMINI_API_KEY=    | Yes        | aistudio.google.com       |
-| OpenAI    | =OPENAI_API_KEY=    | No         | platform.openai.com       |
+| Backend | Env var           | Free tier? | Notes                            |
+|---------+-------------------+------------+----------------------------------|
+| Claude  | =ANTHROPIC_API_KEY= | No         | Default. console.anthropic.com   |
+| Groq    | =GROQ_API_KEY=      | Yes        | Fast inference. console.groq.com |
+| Gemini  | =GEMINI_API_KEY=    | Yes        | aistudio.google.com              |
+| OpenAI  | =OPENAI_API_KEY=    | No         | platform.openai.com              |
 
 *** Keybindings (=SPC o l=)
 Doom module bindings (built-in, always present):
 
-| Key       | Action                                      |
-|-----------+---------------------------------------------|
-| =SPC o l l= | Open gptel chat buffer                    |
+| Key       | Action                                   |
+|-----------+------------------------------------------|
+| =SPC o l l= | Open gptel chat buffer                   |
 | =SPC o l s= | Send prompt/selection to *default* backend |
-| =SPC o l r= | Rewrite selected region                   |
-| =SPC o l e= | Explain selection (gptel-quick)           |
-| =SPC o l a= | Add text/region to context                |
-| =SPC o l f= | Add file to context                       |
-| =SPC o l m= | gptel-menu transient (full control)       |
+| =SPC o l r= | Rewrite selected region                  |
+| =SPC o l e= | Explain selection (gptel-quick)          |
+| =SPC o l a= | Add text/region to context               |
+| =SPC o l f= | Add file to context                      |
+| =SPC o l m= | gptel-menu transient (full control)      |
 
 Custom bindings added here:
 
-| Key       | Action                                         |
-|-----------+------------------------------------------------|
+| Key       | Action                                     |
+|-----------+--------------------------------------------|
 | =SPC o l b= | Change *default* backend+model interactively |
-| =SPC o l c= | Send one-shot → Claude (Sonnet)              |
-| =SPC o l g= | Send one-shot → Groq (Llama 3.3 70B)        |
-| =SPC o l n= | Send one-shot → Gemini (2.0 Flash)           |
-| =SPC o l p= | Send one-shot → OpenAI (GPT-4o)              |
+| =SPC o l c= | Send one-shot → Claude (Sonnet)            |
+| =SPC o l g= | Send one-shot → Groq (Llama 3.3 70B)       |
+| =SPC o l n= | Send one-shot → Gemini (2.0 Flash)         |
+| =SPC o l p= | Send one-shot → OpenAI (GPT-4o)            |
 
 #+begin_src emacs-lisp
 ;; ── One-shot send helpers ──────────────────────────────────────────────────
@@ -1161,24 +1349,47 @@ and write files, run shell commands, and make multi-step changes autonomously.
 Requires the =claude= CLI in PATH (installed via =npm i -g @anthropic-ai/claude-code=)
 and uses your existing Claude subscription — *no separate API key needed*.
 
-| Key         | Action                                  |
-|-------------+-----------------------------------------|
-| =SPC o c c= | Open/start Claude (primary action)      |
-| =SPC o c t= | Toggle window (no focus steal)          |
-| =SPC o c r= | Resume previous session (=-r=)          |
-| =SPC o c k= | Continue recent conversation (=-c=)     |
-| =SPC o c q= | Kill session                            |
-| =SPC o c l= | List/switch sessions                    |
-| =SPC o c p= | Send prompt from minibuffer             |
-| =SPC o c i= | Insert selection into Claude prompt     |
-| =SPC o c m= | Full transient menu                     |
-| =SPC o c == | Widen Claude window by 15 cols          |
-| =SPC o c -= | Narrow Claude window by 15 cols         |
+| Key       | Action                              |
+|-----------+-------------------------------------|
+| =SPC o c c= | Open/start Claude (primary action)  |
+| =SPC o c t= | Toggle window (no focus steal)      |
+| =SPC o c r= | Resume previous session (=-r=)        |
+| =SPC o c k= | Continue recent conversation (=-c=)   |
+| =SPC o c q= | Kill session                        |
+| =SPC o c l= | List/switch sessions                |
+| =SPC o c p= | Send prompt from minibuffer         |
+| =SPC o c i= | Insert selection into Claude prompt |
+| =SPC o c m= | Full transient menu                 |
+| =SPC o c == | Widen Claude window by 15 cols      |
+| =SPC o c -= | Narrow Claude window by 15 cols     |
 
 #+begin_src emacs-lisp
 (use-package! claude-code-ide
   :defer t
   :config
+  ;; Using eat instead of vterm. Both backends suffer from a flicker/jump glitch
+  ;; caused by Claude Code's spinner and bullet Unicode characters (✢✳∗✻✽ ⏺)
+  ;; having ambiguous East Asian width — Emacs miscalculates their display width,
+  ;; causing text to "dance". The char-width-table fix below resolves most of it.
+  ;; See: https://github.com/manzaltu/claude-code-ide.el/issues/131
+  ;; An anti-flicker branch exists (PR #158) but is not yet merged.
+  (dolist (range '((#x23FA . #x23FA)   ; ⏺ bullet
+                   (#x2700 . #x27BF)   ; Dingbats (spinner chars ✢✳✻✽)
+                   (#x2200 . #x22FF))) ; Math operators (∗)
+    (set-char-table-range char-width-table range 1))
+
+  ;; Replace ⏺ (U+23FA) with ● (U+25CF) at the raw byte level before vterm
+  ;; renders. U+23FA has broken descent metrics in fallback fonts (STIX Two Math),
+  ;; causing vertical misalignment. U+25CF renders natively in most monospace fonts.
+  ;; Must use unibyte strings because vterm--filter receives raw UTF-8 bytes.
+  (with-eval-after-load 'vterm
+    (defadvice! pipboy/vterm-replace-bullet (fn process input)
+      :around #'vterm--filter
+      (funcall fn process
+               (string-replace (unibyte-string #xe2 #x8f #xba)
+                               (unibyte-string #xe2 #x97 #x8f)
+                               input))))
+
   (setq claude-code-ide-terminal-backend 'vterm
         claude-code-ide-vterm-render-delay 0.08
         claude-code-ide-window-side       'right
@@ -1208,6 +1419,12 @@ and uses your existing Claude subscription — *no separate API key needed*.
     (if (buffer-live-p buffer)
         (funcall fn buffer)
       (message "Claude session buffer was killed before display — check *Messages* for exit details")))
+  (defadvice! pipboy/claude-focus-after-mention-a (&rest _)
+    "Jump to the Claude window after sending selection."
+    :after #'claude-code-ide-insert-at-mentioned
+    (when-let (win (get-buffer-window (claude-code-ide--get-buffer-name)))
+      (select-window win)))
+
   (defun pipboy/claude-wider ()
     "Widen the Claude side window by 15 columns."
     (interactive)

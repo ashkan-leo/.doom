@@ -21,10 +21,6 @@
  hl-todo
  modeline
  nav-flash
- (emoji
-  +ascii
-  +github
-  +unicode)
  (treemacs
   +lsp)
  (popup
@@ -48,7 +44,8 @@
  snippets
  fold
  (format
-  +onsave)
+  +onsave
+  +lsp)
  multiple-cursors
  parinfer
  rotate-text
@@ -132,7 +129,9 @@
   +lsp
   +fold)
  ledger
- (markdown +grip)
+ (markdown
+  +grip
+  +tree-sitter)
  (nix
   +lsp
   +tree-sitter)

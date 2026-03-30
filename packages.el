@@ -39,3 +39,7 @@
 
 (package! copilot
   :recipe (:host github :repo "zerolfx/copilot.el" :files ("*.el" "dist")))
+
+;; version control — syntax-highlighted diffs
+(package! magit-delta)
+(package! difftastic)
