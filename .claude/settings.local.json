@@ -34,7 +34,12 @@
       "mcp__emacs-tools__claude-code-ide-mcp-project-info",
       "mcp__emacs-tools__claude-code-ide-mcp-treesit-info",
       "mcp__emacs-tools__claude-code-ide-mcp-xref-find-apropos",
-      "mcp__emacs-tools__claude-code-ide-mcp-xref-find-references"
+      "mcp__emacs-tools__claude-code-ide-mcp-xref-find-references",
+      "Skill(update-config)",
+      "mcp__ide__executeCode"
+    ],
+    "additionalDirectories": [
+      "~/.config/emacs"
     ]
   },
   "prefersReducedMotion": true

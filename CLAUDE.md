@@ -40,6 +40,31 @@ This is a personal [[https://github.com/doomemacs/doomemacs][Doom Emacs]] config
 - **AI:** `gptel`, `copilot`, `chatgpt-shell`
 - **Org:** `org-roam`, `org-ref`, `org-super-agenda`, `org-noter`, `org-drill`
 
+## Consulting Doom Documentation
+
+**Before recommending or configuring any module, package, flag, or keybinding, consult the Doom source:**
+
+- **Module READMEs:** `~/.config/emacs/modules/:category/module-name/README.org` — authoritative docs for flags, config variables, keybindings, and dependencies.
+- **Module source:** `~/.config/emacs/modules/:category/module-name/config.el` (and `autoload/`, `packages.el`) — check what the module already provides before adding custom config that duplicates or conflicts.
+- **Doom core:** `~/.config/emacs/lisp/` — for macros like `map!`, `after!`, `use-package!`, `package!` and core APIs.
+- **Categories:** `:app`, `:checkers`, `:completion`, `:config`, `:editor`, `:emacs`, `:email`, `:input`, `:lang`, `:os`, `:term`, `:tools`, `:ui`
+
+**Rules:**
+- Never recommend a flag without verifying it exists in the module's source.
+- Never assume a package needs manual installation if a Doom module already provides it.
+- Check module README before suggesting config — the module may already expose a variable or flag for the behavior.
+- When debugging, read the module's `config.el` to understand load order and `after!` wrapping.
+
+## Opening Files for the User
+
+When you reference a file the user may want to look at (to review a change, inspect a location, etc.), **open it in Emacs for them** via the `mcp__ide__executeCode` tool instead of just printing the path.
+
+- Default: `(find-file "/absolute/path")` — opens in the current window.
+- To jump to a specific line: `(progn (find-file "/abs/path") (goto-char (point-min)) (forward-line (1- LINE)))`.
+- To avoid stealing focus from the Claude buffer, use `(find-file-other-window "/abs/path")`.
+- Always pass absolute paths.
+- Skip this for transient mentions (e.g. "I ran `git status`") — only open files the user would plausibly want to view.
+
 ## Making Changes
 
 1. Edit `config.org` — find the relevant heading/section.
