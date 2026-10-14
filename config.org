@@ -18,6 +18,7 @@
     - [[#configure-doom-modeline][Configure doom-modeline]]
     - [[#show-battery-usage][Show battery usage]]
     - [[#disable-buffer-size][Disable buffer size]]
+  - [[#vertico--directories-first][Vertico — Directories First]]
   - [[#treemacs][Treemacs]]
   - [[#editor][Editor]]
     - [[#line-numbers][Line Numbers]]
@@ -245,6 +246,15 @@ Who cares how many bytes this file has?
 #+BEGIN_SRC emacs-lisp
 (setopt size-indication-mode nil)
 #+END_SRC
+** Vertico — Directories First
+Show directories above files in file completion (=SPC SPC=, =SPC .=, etc.)
+so navigating into subdirectories is always a short reach.
+
+#+begin_src emacs-lisp
+(after! vertico-multiform
+  (add-to-list 'vertico-multiform-categories
+               '(file (vertico-sort-function . vertico-sort-directories-first))))
+#+end_src
 ** Treemacs
 + Use the colorful treemacs theme and doom additions
    #+BEGIN_SRC emacs-lisp
