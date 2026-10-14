@@ -86,6 +86,8 @@
   - [[#prolog-1][Prolog]]
     - [[#ediprolog][~ediprolog~]]
   - [[#scala][Scala]]
+  - [[#unison][Unison]]
+  - [[#protocol-buffers][Protocol Buffers]]
 - [[#just][Just]]
 - [[#version-control][Version Control]]
   - [[#syntax-highlighted-diffs][Syntax-Highlighted Diffs]]
@@ -1245,6 +1247,53 @@ configuration is needed here.
   (ediprolog-system 'swi))
 #+END_SRC
 ** Scala
+** Unison
+[[https://github.com/fmguerreiro/unison-ts-mode][unison-ts-mode]] — tree-sitter major mode for the [[https://www.unison-lang.org/][Unison]] programming language
+(=.u= / =.unison= files). Provides syntax highlighting (4 levels), indentation,
+imenu navigation, and LSP integration via =lsp-mode=.
+
+Requires UCM (Unison Codebase Manager) in =PATH= for LSP support. The
+tree-sitter grammar is auto-installed on first use.
+
+| Key     | Action                           |
+|---------+----------------------------------|
+| =SPC m r= | Open UCM REPL                    |
+| =SPC m a= | Add definitions from file        |
+| =SPC m u= | Update existing definitions      |
+| =SPC m t= | Run tests                        |
+| =SPC m x= | Run an IO action                 |
+| =SPC m v= | Evaluate expression              |
+| =SPC m w= | Typecheck current file (watch)   |
+| =SPC m l= | Load file into codebase          |
+| =SPC m e= | Send region to REPL              |
+| =SPC m d= | Send definition at point to REPL |
+
+#+begin_src emacs-lisp
+(use-package! unison-ts-mode
+  :defer t
+  :config
+  (unison-ts-mode-setup-lsp)
+  (add-hook 'unison-ts-mode-hook #'lsp-deferred)
+  (map! :map unison-ts-mode-map
+        :localleader
+        :desc "REPL"            "r" #'unison-ts-repl
+        :desc "Add"             "a" #'unison-ts-add
+        :desc "Update"          "u" #'unison-ts-update
+        :desc "Test"            "t" #'unison-ts-test
+        :desc "Run"             "x" #'unison-ts-run
+        :desc "Eval"            "v" #'unison-ts-eval
+        :desc "Watch"           "w" #'unison-ts-watch
+        :desc "Load"            "l" #'unison-ts-load
+        :desc "Send region"     "e" #'unison-ts-send-region
+        :desc "Send definition" "d" #'unison-ts-send-definition))
+#+end_src
+** Protocol Buffers
+[[https://github.com/protocolbuffers/protobuf/blob/main/editors/protobuf-mode.el][protobuf-mode]] — major mode for editing =.proto= files (syntax highlighting, indentation). Doom's =format= module auto-integrates with =clang-format=.
+
+#+begin_src emacs-lisp
+(use-package! protobuf-mode
+  :defer t)
+#+end_src
 * Just
 [[https://github.com/leon-barrett/just-mode.el][just-mode]] — syntax highlighting and indentation for justfiles.
 [[https://github.com/psibi/justl.el][justl]] — transient UI to list and run just recipes interactively.

@@ -24,6 +24,9 @@
 ;; TODO how to install this?
 ;; (package! prolog :recipe (:host github :ropo "jamesnvc/lsp_server"))
 
+;; protobuf
+(package! protobuf-mode)
+
 ;; justfile support
 (package! just-mode)
 (package! justl)
@@ -41,6 +44,10 @@
 
 (package! copilot
   :recipe (:host github :repo "zerolfx/copilot.el" :files ("*.el" "dist")))
+
+;; unison
+(package! unison-ts-mode
+  :recipe (:host github :repo "fmguerreiro/unison-ts-mode"))
 
 ;; version control — syntax-highlighted diffs
 (package! magit-delta)
