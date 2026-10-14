@@ -27,6 +27,7 @@
   - [[#tmux][tmux]]
     - [[#key-bindings][Key Bindings]]
   - [[#posix-shell-for-emacs-internals][POSIX Shell for Emacs Internals]]
+  - [[#vterm-scroll-lock][vterm Scroll Lock]]
 - [[#tramp][Tramp]]
 - [[#spell-checker][Spell Checker]]
 - [[#dired][dired]]
@@ -320,6 +321,90 @@ Use bash internally, but keep fish for interactive terminals.
 (setq shell-file-name (executable-find "bash"))
 (setq-default vterm-shell (executable-find "fish"))
 (setq-default explicit-shell-file-name (executable-find "fish"))
+#+end_src
+** vterm Scroll Lock
+vterm's C module yanks the viewport to the cursor on every redraw, making it
+impossible to read scrollback while output is flowing. This auto-enters
+=vterm-copy-mode= (freezing display) on scroll-up and auto-exits when you return
+to the bottom, giving seamless scroll-lock without manual mode toggling.
+
+| Key | Action                                   |
+|-----+------------------------------------------|
+| =C-u= | scroll half-page up (enters copy-mode)   |
+| =C-b= | scroll full page up (enters copy-mode)   |
+| =C-d= | scroll half-page down (exits at bottom)  |
+| =C-f= | scroll full page down (exits at bottom)  |
+| =gg=  | jump to top of buffer (enters copy-mode) |
+| =G=   | jump to live cursor (exits copy-mode)    |
+
+#+begin_src emacs-lisp
+(defun pipboy/vterm-scroll-up ()
+  "Scroll up in vterm, entering copy-mode to freeze output."
+  (interactive)
+  (unless vterm-copy-mode (vterm-copy-mode 1))
+  (evil-scroll-up nil))
+
+(defun pipboy/vterm-scroll-page-up ()
+  "Scroll page up in vterm, entering copy-mode to freeze output."
+  (interactive)
+  (unless vterm-copy-mode (vterm-copy-mode 1))
+  (evil-scroll-page-up 1))
+
+(defun pipboy/vterm--maybe-exit-copy-mode ()
+  "Exit copy-mode if the bottom of the buffer is visible."
+  (when (and vterm-copy-mode
+             (pos-visible-in-window-p (1- (point-max))))
+    (vterm-copy-mode -1)
+    (vterm-reset-cursor-point)))
+
+(defun pipboy/vterm-scroll-down ()
+  "Scroll down in vterm, exiting copy-mode at bottom."
+  (interactive)
+  (if vterm-copy-mode
+      (progn
+        (evil-scroll-down nil)
+        (pipboy/vterm--maybe-exit-copy-mode))
+    (evil-scroll-down nil)))
+
+(defun pipboy/vterm-scroll-page-down ()
+  "Scroll page down in vterm, exiting copy-mode at bottom."
+  (interactive)
+  (if vterm-copy-mode
+      (progn
+        (evil-scroll-page-down 1)
+        (pipboy/vterm--maybe-exit-copy-mode))
+    (evil-scroll-page-down 1)))
+
+(defun pipboy/vterm-goto-bottom ()
+  "Exit copy-mode and jump to live terminal cursor."
+  (interactive)
+  (when vterm-copy-mode (vterm-copy-mode -1))
+  (vterm-reset-cursor-point))
+
+(defun pipboy/vterm-goto-top ()
+  "Enter copy-mode and jump to top of buffer."
+  (interactive)
+  (unless vterm-copy-mode (vterm-copy-mode 1))
+  (goto-char (point-min)))
+
+(after! vterm
+  ;; Scroll-up bindings on vterm-mode-map — active when NOT in copy-mode.
+  ;; (use-local-map nil) in copy-mode removes vterm-mode-map from the keymap
+  ;; chain, so these only fire outside copy-mode, which is what we want.
+  (evil-define-key* 'normal vterm-mode-map
+    (kbd "C-u") #'pipboy/vterm-scroll-up
+    (kbd "C-b") #'pipboy/vterm-scroll-page-up
+    (kbd "gg")  #'pipboy/vterm-goto-top)
+
+  ;; All bindings on vterm-copy-mode-map — active INSIDE copy-mode.
+  ;; This minor-mode map stays in the keymap chain even after (use-local-map nil).
+  (evil-define-key* 'normal vterm-copy-mode-map
+    (kbd "C-u") #'pipboy/vterm-scroll-up
+    (kbd "C-b") #'pipboy/vterm-scroll-page-up
+    (kbd "C-d") #'pipboy/vterm-scroll-down
+    (kbd "C-f") #'pipboy/vterm-scroll-page-down
+    (kbd "G")   #'pipboy/vterm-goto-bottom
+    (kbd "gg")  #'pipboy/vterm-goto-top))
 #+end_src
 * Tramp
 From the [[https://www.gnu.org/software/emacs/manual/html_node/tramp/Frequently-Asked-Questions.html][tramp FAQ page]]:
