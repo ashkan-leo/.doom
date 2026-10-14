@@ -73,8 +73,10 @@
 - [[#languages][Languages]]
   - [[#lsp][LSP]]
     - [[#configuration][Configuration]]
+    - [[#monorepo-project-root-detection][Monorepo Project Root Detection]]
     - [[#autocompletion][Autocompletion]]
     - [[#lsp-ui-configurations][LSP UI Configurations]]
+    - [[#headerline-breadcrumbs][Headerline Breadcrumbs]]
   - [[#dap][DAP]]
   - [[#python][Python]]
     - [[#repl][REPL]]
@@ -1184,6 +1186,16 @@ and stops at the *first* build-system marker it finds.
                       :background "#0A2933"
                       :foreground "#C61C6F"))
 #+END_SRC
+
+*** Headerline Breadcrumbs
+Show the file's project-relative directory path and current code symbol in a
+header line at the top of the buffer. Useful when the parent directory is generic
+(e.g. =src/=) — the full path from project root is always visible.
+
+#+begin_src emacs-lisp
+(after! lsp-mode
+  (setq lsp-headerline-breadcrumb-enable t))
+#+end_src
 
 ** DAP
 Doom's =tools/debugger= module now uses [[https://github.com/svaante/dape][dape]] instead of =dap-mode=. All
