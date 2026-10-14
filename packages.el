@@ -48,6 +48,11 @@
 (package! ghostel)
 (package! evil-ghostel)
 
+;; agent-shell - Claude Code in a native Emacs buffer over ACP, no terminal
+(package! shell-maker)
+(package! acp)
+(package! agent-shell)
+
 (package! copilot
   :recipe (:host github :repo "zerolfx/copilot.el" :files ("*.el" "dist")))
 

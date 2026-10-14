@@ -1440,6 +1440,7 @@ Three layers of AI tooling, each serving a different purpose:
 |-----------------+-----------------------------------------+------------------|
 | gptel (LLM)     | Chat, explain, rewrite — multi-backend  | =SPC o l=          |
 | Claude Code IDE | Agentic CLI: edits files, runs commands | =SPC o c=          |
+| Agent Shell     | Claude Code in a native Emacs buffer    | =SPC o g=          |
 | Copilot         | Inline code completion as you type      | =TAB= in prog-mode |
 
 ** LLM (gptel)
@@ -1722,6 +1723,36 @@ changes.
       :desc "Menu"                   "m" #'claude-code-ide-menu
       :desc "Widen window"           "=" #'pipboy/claude-wider
       :desc "Narrow window"          "-" #'pipboy/claude-narrower)
+#+end_src
+
+** Agent Shell
+[[https://github.com/xenodium/agent-shell][agent-shell]] runs Claude Code in an ordinary Emacs buffer instead of a
+terminal. It talks to Claude through ACP (Agent Client Protocol), so evil,
+search and scrolling work with no terminal workarounds. It is on trial next to
+Claude Code IDE.
+
+Requirements:
+- The ACP adapter on =PATH=: =npm install -g @agentclientprotocol/claude-agent-acp=.
+- A Claude login. The default authentication reuses the login of the =claude= CLI.
+
+| Key          | Action                                          |
+|--------------+-------------------------------------------------|
+| =SPC o g=    | Start or reuse an agent shell for this project  |
+| =RET=        | Send the prompt (queued while Claude is busy)   |
+| =M-RET=      | Steer: send the prompt into the running turn    |
+| =C-c C-c=    | Interrupt                                       |
+| =C-c C-m=    | Set the session mode (permissions)              |
+| =C-c C-v=    | Set the model                                   |
+| =TAB=        | Move between permission buttons and other items |
+
+#+begin_src emacs-lisp
+(use-package! agent-shell
+  :commands agent-shell
+  :config
+  (setq agent-shell-preferred-agent-config
+        (agent-shell-anthropic-make-claude-code-config)))
+
+(map! :leader :desc "Agent shell" "o g" #'agent-shell)
 #+end_src
 
 ** Copilot
