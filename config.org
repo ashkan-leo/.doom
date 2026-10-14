@@ -183,13 +183,56 @@ Set the cursor colors in vi editing mode.
 #+end_src
 ** Modeline
 *** Configure doom-modeline
+
+Custom style =truncate-with-project-keep-parent= — like =truncate-with-project= but
+keeps the file's parent directory untruncated for readability.
+
+Given =~/Projects/FOSS/emacs/lisp/comint.el= with project root =emacs/=:
+- =truncate-with-project=:             =emacs/l/comint.el=
+- =truncate-with-project-keep-parent=: =emacs/lisp/comint.el=
+
 #+BEGIN_SRC emacs-lisp
+(defadvice! pipboy/doom-modeline-buffer-file-name-keep-parent-a ()
+  "Add `truncate-with-project-keep-parent' buffer file name style.
+Like `truncate-with-project' but keeps the file's parent directory full."
+  :before-until #'doom-modeline-buffer-file-name
+  (when (eq doom-modeline-buffer-file-name-style 'truncate-with-project-keep-parent)
+    (let* ((buffer-file-name (doom-modeline--format-buffer-file-name))
+           (buffer-file-truename (doom-modeline--format-buffer-file-truename buffer-file-name))
+           (project-root (file-local-name (doom-modeline-project-root)))
+           (file-name
+            (concat
+             (propertize
+              (concat (file-name-nondirectory (directory-file-name project-root)) "/")
+              'face 'doom-modeline-project-dir)
+             (propertize
+              (when-let* ((relative-path (file-relative-name
+                                          (or (file-name-directory
+                                               (if doom-modeline-buffer-file-true-name
+                                                   buffer-file-truename buffer-file-name))
+                                              "./")
+                                          project-root)))
+                (if (string= relative-path "./")
+                    ""
+                  (substring (shrink-path--dirs-internal relative-path nil) 1)))
+              'face 'doom-modeline-buffer-path)
+             (propertize (file-name-nondirectory buffer-file-name)
+                         'face 'doom-modeline-buffer-file))))
+      (propertize file-name
+                  'mouse-face 'mode-line-highlight
+                  'help-echo (concat buffer-file-truename
+                                     (unless (string= (file-name-nondirectory buffer-file-truename)
+                                                      (buffer-name))
+                                       (concat "\n" (buffer-name)))
+                                     "\nmouse-1: Previous buffer\nmouse-3: Next buffer")
+                  'local-map mode-line-buffer-identification-keymap))))
+
 (setopt doom-modeline-icon (display-graphic-p)
        doom-modeline-major-mode-icon t
        doom-modeline-hud t
        doom-modeline-lsp t
-       doom-modeline-buffer-file-name-style 'truncate-with-project
        doom-modeline-buffer-encoding nil)
+(setq doom-modeline-buffer-file-name-style 'truncate-with-project-keep-parent)
 #+END_SRC
 *** Show battery usage
 Ignore any error here. If running on a PC or server there is no battery status
