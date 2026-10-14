@@ -41,6 +41,12 @@
   :recipe (:host github :repo "eschulte/emacs-web-server"))
 (package! claude-code-ide
   :recipe (:host github :repo "manzaltu/claude-code-ide.el"))
+;; libghostty-backed terminal: implements synchronized output (DEC 2026), which
+;; vterm's libvterm cannot, so Claude Code's repaints stop flickering.
+;; MELPA recipes are used as-is: ghostel's pulls in the Zig sources needed by
+;; `ghostel-module-compile', and evil-ghostel lives in a repo subdirectory.
+(package! ghostel)
+(package! evil-ghostel)
 
 (package! copilot
   :recipe (:host github :repo "zerolfx/copilot.el" :files ("*.el" "dist")))

@@ -1571,6 +1571,43 @@ and write files, run shell commands, and make multi-step changes autonomously.
 Requires the =claude= CLI in PATH (installed via =npm i -g @anthropic-ai/claude-code=)
 and uses your existing Claude subscription — *no separate API key needed*.
 
+*Terminal backend:* the session runs inside a terminal emulator buffer, and
+claude-code-ide supports three. We use [[https://github.com/dakra/ghostel][ghostel]], which is upstream's
+recommendation: it drives libghostty-vt (the VT engine behind the Ghostty
+terminal) through a Zig dynamic module, and unlike vterm's libvterm it
+implements synchronized output (DEC 2026). Claude Code repaints a large region
+on every spinner frame; without synchronized output each partial redraw is
+visible, which is the "dancing text" that vterm and eat both suffer from.
+Ghostel's native module is a prebuilt binary that downloads on first use, so no
+Zig toolchain is needed — =M-x ghostel-module-compile= builds from source instead.
+
+*Scrolling:* =~/.claude/settings.json= saves ="tui": "fullscreen"=, which renders
+Claude on the terminal alternate screen — the buffer then holds only the visible
+screen, so there is nothing to scroll or search, and evil-ghostel disables its
+prompt-editing commands (they are gated on =ghostel-alt-screen-p=). Emacs sessions
+force the classic renderer with =--settings '{"tui": "default"}'= in the flags
+above, which puts the whole transcript in the buffer as ordinary text: =ESC= then
+=j=/=k=/=C-u=/=C-d= scroll it and =C-s=/=C-r= search it, =i= returns to the prompt.
+=--settings= layers onto the settings files rather than replacing them. Sessions
+outside Emacs keep fullscreen ([[https://code.claude.com/docs/en/fullscreen][docs]]: =Ctrl+O= transcript mode, PgUp/PgDn).
+
+The =CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN=1= environment variable is documented as
+the equivalent switch but does not override the saved ="tui"= setting: sessions
+carrying it in their environment still came up on the alternate screen.
+
+*Keys Claude never sees:* =ghostel-keymap-exceptions= reserves =C-c= (with =C-x=,
+=C-u=, =C-h=, =M-x=, =M-:=, =C-\\=) for Emacs, so =C-c= alone never reaches Claude.
+=C-c C-c= sends one literal =C-c=; Claude's "press Ctrl-C twice to exit" therefore
+needs =C-c C-c= twice. Arrow keys reach Claude only in insert state — in normal
+state evil's motion map binds them to cursor motion. =C-c M-d= (=ghostel-char-mode=)
+hands every key including =C-c= and the arrows straight to Claude; =M-RET= exits it.
+
+*ESC:* claude-code-ide routes insert-state =ESC= to evil rather than to the
+terminal (=claude-code-ide-ghostel-evil-escape=, default ='evil=), which is what
+makes the scrolling above work. The tradeoff is that Claude no longer receives
+=ESC= as its interrupt key — =M-x evil-ghostel-toggle-send-escape= (=C-c C-r=) flips
+the routing when you need to interrupt a run.
+
 | Key       | Action                              |
 |-----------+-------------------------------------|
 | =SPC o c c= | Open/start Claude (primary action)  |
@@ -1585,62 +1622,72 @@ and uses your existing Claude subscription — *no separate API key needed*.
 | =SPC o c == | Widen Claude window by 15 cols      |
 | =SPC o c -= | Narrow Claude window by 15 cols     |
 
+=evil-ghostel= ships in the ghostel repo and keeps the terminal cursor in sync
+with point across evil state changes, so =hjkl= navigation lands where it looks
+like it should.
+
+#+begin_src emacs-lisp
+(use-package! evil-ghostel
+  :after (ghostel evil)
+  :hook (ghostel-mode . evil-ghostel-mode))
+#+end_src
+
+*Permissions:* =claude-code-ide-cli-extra-flags= is the package's only hook for
+CLI arguments — the string is appended verbatim to the =claude= command line.
+=--permission-mode auto= is Claude Code's auto mode: Claude screens each tool
+call for risky actions and prompt injection, runs the ones it judges lower-risk
+without asking, and blocks the rest. That removes the constant prompting for
+routine reads and edits while still stopping on anything destructive.
+
+Passing the flag here makes Emacs sessions independent of the =defaultMode= in
+=~/.claude/settings.json= — they start in auto mode even if the global default
+changes.
+
 #+begin_src emacs-lisp
 (use-package! claude-code-ide
   :defer t
   :config
-  ;; Using eat instead of vterm. Both backends suffer from a flicker/jump glitch
-  ;; caused by Claude Code's spinner and bullet Unicode characters (✢✳∗✻✽ ⏺)
-  ;; having ambiguous East Asian width — Emacs miscalculates their display width,
-  ;; causing text to "dance". The char-width-table fix below resolves most of it.
-  ;; See: https://github.com/manzaltu/claude-code-ide.el/issues/131
-  ;; An anti-flicker branch exists (PR #158) but is not yet merged.
+  ;; Claude Code's spinner and bullet characters (✢✳∗✻✽ ⏺) have ambiguous East
+  ;; Asian width: the terminal grid treats them as one column while Emacs draws
+  ;; them as two, which shifts everything to their right.
   (dolist (range '((#x23FA . #x23FA)   ; ⏺ bullet
                    (#x2700 . #x27BF)   ; Dingbats (spinner chars ✢✳✻✽)
                    (#x2200 . #x22FF))) ; Math operators (∗)
     (set-char-table-range char-width-table range 1))
 
-  ;; Replace ⏺ (U+23FA) with ● (U+25CF) at the raw byte level before vterm
-  ;; renders. U+23FA has broken descent metrics in fallback fonts (STIX Two Math),
-  ;; causing vertical misalignment. U+25CF renders natively in most monospace fonts.
-  ;; Must use unibyte strings because vterm--filter receives raw UTF-8 bytes.
-  (with-eval-after-load 'vterm
-    (defadvice! pipboy/vterm-replace-bullet (fn process input)
-      :around #'vterm--filter
-      (funcall fn process
-               (string-replace (unibyte-string #xe2 #x8f #xba)
-                               (unibyte-string #xe2 #x97 #x8f)
-                               input))))
-
-  (setq claude-code-ide-terminal-backend 'vterm
-        claude-code-ide-vterm-render-delay 0.08
+  (setq claude-code-ide-terminal-backend 'ghostel
         claude-code-ide-window-side       'right
         claude-code-ide-window-width      100
         claude-code-ide-focus-on-open     t
-        claude-code-ide-use-ide-diff      t)
+        claude-code-ide-use-ide-diff      t
+        claude-code-ide-cli-extra-flags
+        (concat "--permission-mode auto "
+                ;; Classic (main-screen) renderer: keeps the transcript in the
+                ;; buffer so Emacs scrolling, search, and evil prompt editing work.
+                "--settings '{\"tui\": \"default\"}'"))
 
   (claude-code-ide-emacs-tools-setup)
 
-  ;; Strip CLAUDECODE env var so the CLI doesn't think it's a nested session.
-  ;; Belt-and-suspenders: clear from process-environment AND override via
-  ;; vterm-environment (vterm's C fork may bypass the Lisp variable).
-  (defadvice! pipboy/claude-unset-claudecode (fn buffer-name working-dir port continue resume session-id)
+  ;; Per-session environment overrides. The ghostel backend spawns Claude
+  ;; through `process-environment' (the vterm backend used `vterm-environment'),
+  ;; so the bindings go there.
+  ;; - CLAUDECODE is dropped so the CLI doesn't think it's a nested session.
+  ;;   The renderer is selected by --settings in the flags above, not here.
+  (defadvice! pipboy/claude-session-env (fn &rest args)
     :around #'claude-code-ide--create-terminal-session
     (let ((process-environment
            (cl-remove-if (lambda (s) (string-prefix-p "CLAUDECODE=" s))
-                         process-environment))
-          (vterm-environment
-           (cons "CLAUDECODE="
-                 (if (boundp 'vterm-environment) vterm-environment nil))))
-      (funcall fn buffer-name working-dir port continue resume session-id)))
+                         process-environment)))
+      (apply fn args)))
 
   ;; Guard against race condition: if Claude exits during the stabilization
-  ;; delay, vterm kills the buffer before display code runs.
+  ;; delay, the backend kills the buffer before display code runs.
   (defadvice! pipboy/claude-guard-dead-buffer (fn buffer)
     :around #'claude-code-ide--display-buffer-in-side-window
     (if (buffer-live-p buffer)
         (funcall fn buffer)
       (message "Claude session buffer was killed before display — check *Messages* for exit details")))
+
   (defadvice! pipboy/claude-focus-after-mention-a (&rest _)
     "Jump to the Claude window after sending selection."
     :after #'claude-code-ide-insert-at-mentioned
