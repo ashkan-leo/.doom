@@ -13,6 +13,8 @@
 
 ;; org babel
 (package! ob-prolog)
+(package! mermaid-mode)
+(package! ob-mermaid)
 
 ;; dash at point
 (package! dash-at-point)

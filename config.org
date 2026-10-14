@@ -62,7 +62,9 @@
   - [[#org-export][org-export]]
     - [[#latex][LaTex]]
   - [[#org-babel][org-babel]]
+    - [[#graphviz-dot][Graphviz (dot)]]
     - [[#prolog][Prolog]]
+    - [[#mermaid][Mermaid]]
   - [[#org-drill][org-drill]]
 - [[#latex-1][LaTeX]]
 - [[#flycheck][Flycheck]]
@@ -1006,6 +1008,27 @@ Load =ob-dot= so =#+begin_src dot= blocks work, and auto-display resulting image
 (use-package! ob-prolog
   :defer
   :after org-mod)
+#+END_SRC
+*** Mermaid
+
+[[https://github.com/abrochard/mermaid-mode][mermaid-mode]] for =.mmd= buffers (syntax highlighting + =C-c C-c= to compile), and [[https://github.com/arnm/ob-mermaid][ob-mermaid]] so =#+begin_src mermaid= blocks render inline in org buffers.
+
+Requires the =mmdc= binary from [[https://github.com/mermaid-js/mermaid-cli][mermaid-cli]] on =$PATH=.
+
+#+BEGIN_SRC emacs-lisp
+(use-package! mermaid-mode
+  :defer t
+  :mode "\\.mmd\\'")
+
+(use-package! ob-mermaid
+  :after org
+  :init
+  ;; Let org-babel find mmdc — fall back to PATH lookup so the config still
+  ;; works on hosts where mermaid-cli is installed outside /opt/homebrew.
+  (setq ob-mermaid-cli-path (or (executable-find "mmdc") "mmdc"))
+  :config
+  (add-to-list 'org-babel-load-languages '(mermaid . t) t)
+  (org-babel-do-load-languages 'org-babel-load-languages org-babel-load-languages))
 #+END_SRC
 ** org-drill
 #+BEGIN_SRC emacs-lisp
